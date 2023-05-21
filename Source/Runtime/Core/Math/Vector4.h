@@ -73,7 +73,7 @@ public:
         : x(inX)
         , y(inY)
         , z(inZ)
-        , z(inW)
+        , w(inW)
     {}
 
     /**
