@@ -121,7 +121,7 @@ public:
      * 
      * @param scalar The value to initialize the components with.
      */
-    FORCEINLINE Vector3(T scalar)
+    FORCEINLINE explicit Vector3(T scalar)
         : x(scalar)
         , y(scalar)
         , z(scalar)
