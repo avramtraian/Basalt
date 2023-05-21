@@ -14,7 +14,7 @@ namespace Geometry
 {
 
 /**
- * A vector in 4-dimensional space, composed of X, Y, Z components.
+ * A vector in 4-dimensional space, composed of X, Y, Z, W components.
  * Has a floating point precision.
  * 
  * @tparam T The floating point precision of the vector. Must be float or double.
