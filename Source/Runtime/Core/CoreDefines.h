@@ -136,3 +136,11 @@
     #define FORCEINLINE                 __forceinline
     #define BASALT_DEBUGBREAK           __debugbreak()
 #endif // BASALT_COMPILER_MSVC
+
+///
+/// Compiler-agnostic utilities.
+///
+
+#define KiB                             (1024)
+#define MiB                             (1024 * 1024)
+#define GiB                             (1024 * 1024 * 1024)
