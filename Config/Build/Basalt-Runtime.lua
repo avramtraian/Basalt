@@ -1,0 +1,30 @@
+-- Copyright (c) 2023 Basalt Technology Group. All rights reserved.
+
+group "Core"
+project "Basalt-Runtime"
+    location "%{wks.location}Source/Runtime"
+    BuildDefaultConfiguration()
+
+    kind "SharedLib"
+    language "C++"
+    cppdialect "C++17"
+
+    staticruntime "Off"
+    rtti "Off"
+    exceptionhandling "Off"
+
+    files
+    {
+        "%{prj.location}/**.h",
+        "%{prj.location}/**.cpp"
+    }
+
+    defines
+    {
+        "BASALT_EXPORT_API"
+    }
+
+    includedirs
+    {
+        IncludeDirectories["Runtime"]
+    }

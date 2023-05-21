@@ -1,0 +1,14 @@
+# Binaries.
+Binaries/Win64/
+Binaries/Linux/
+Binaries/MacOS/
+
+# Intermediate files.
+Intermediate/
+
+# Project files.
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
