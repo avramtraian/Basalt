@@ -141,6 +141,11 @@
 /// Compiler-agnostic utilities.
 ///
 
+#define BIT(N)                          (1 << (N))
+#define GET_BIT(X, N)                   ((X) & BIT(N))
+#define ENABLE_BIT(X, N)                ((X) |= BIT(N))
+#define DISABLE_BIT(X, N)               ((X) &= (~BIT(N)))
+
 #define KiB                             (1024)
 #define MiB                             (1024 * 1024)
 #define GiB                             (1024 * 1024 * 1024)
