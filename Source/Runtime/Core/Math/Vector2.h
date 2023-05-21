@@ -13,6 +13,12 @@ namespace Basalt
 namespace Geometry
 {
 
+// Forward declaration. Used for conversion constructors.
+template<typename T>
+struct Vector3;
+template<typename T>
+struct Vector4;
+
 /**
  * A vector in 2-dimensional space, composed of X, Y components.
  * Has a floating point precision.
@@ -111,6 +117,25 @@ public:
         y = other.y;
         return *this;
     }
+
+public:
+    /**
+     * Converts a 3-component vector to a 2-component vector.
+     * This operation is performed by dropping the Z-component from
+     * the 3-component vector and only copying the X and Y components.
+     *
+     * @param vector3 The 3-component vector used to initialize this.
+     */
+    FORCEINLINE explicit Vector2(const Vector3<T>& vector3); // Defined in "VectorCommon.h".
+
+    /**
+     * Converts a 4-component vector to a 2-component vector.
+     * This operation is performed by dropping the Z and W components from
+     * the 4-component vector and only copying the X and Y components.
+     *
+     * @param vector4 The 4-component vector used to initialize this.
+     */
+    FORCEINLINE explicit Vector2(const Vector4<T>& vector4); // Defined in "VectorCommon.h".
 
 public:
     /** @return The squared length of the vector. */

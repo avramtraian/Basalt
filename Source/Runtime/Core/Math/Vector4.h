@@ -13,6 +13,12 @@ namespace Basalt
 namespace Geometry
 {
 
+// Forward declaration. Used for conversion constructors.
+template<typename T>
+struct Vector2;
+template<typename T>
+struct Vector3;
+
 /**
  * A vector in 4-dimensional space, composed of X, Y, Z, W components.
  * Has a floating point precision.
@@ -102,6 +108,48 @@ public:
         w = other.w;
         return *this;
     }
+
+public:
+    /**
+     * Converts a 2-component vector to a 4-component vector.
+     * This operation is performed by copying the X and Y components
+     * from the 2-component vector and initializing the Z and W components with 0.
+     * 
+     * @param vector2 The 2-component vector used to initialize this.
+     */
+    FORCEINLINE explicit Vector4(const Vector2<T>& vector2); // Defined in "VectorCommon.h".
+
+    /**
+     * Converts a 2-component vector to a 4-component vector.
+     * This operation is performed by copying the X and Y components
+     * from the 2-component vector and initializing Z and W with the
+     * given values.
+     * 
+     * @param vector2 The 2-component vector used to initialize this.
+     * @param inZ The value used to initialize the Z-component.
+     * @param inZ The value used to initialize the W-component.
+     */
+    FORCEINLINE Vector4(const Vector2<T>& vector2, T inZ, T inW); // Defined in "VectorCommon.h".
+
+    /**
+     * Converts a 3-component vector to a 4-component vector.
+     * This operation is performed by copying the X, Y and Z components
+     * from the 3-component vector and initializing the W-component with 0.
+     * 
+     * @param vector3 The 3-component vector used to initialize this.
+     */
+    FORCEINLINE explicit Vector4(const Vector3<T>& vector3); // Defined in "VectorCommon.h".
+
+    /**
+     * Converts a 3-component vector to a 4-component vector.
+     * This operation is performed by copying the X, Y and Z components
+     * from the 3-component vector and initializing the W-component with
+     * the given value.
+     * 
+     * @param vector3 The 3-component vector used to initialize this.
+     * @param inW The value used to initialize the W-component.
+     */
+    FORCEINLINE Vector4(const Vector3<T>& vector3, T inW); // Defined in "VectorCommon.h".
 
 public:
     /**
