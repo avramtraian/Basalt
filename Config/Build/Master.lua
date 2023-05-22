@@ -5,7 +5,9 @@ workspace "Basalt"
 
     configurations
     {
-        "Debug", "Release", "Shipping"
+        "Game_Debug", "Game_Release", "Game_Shipping",
+
+        "Editor_Debug", "Editor_Release"
     }
 
     platforms
@@ -42,28 +44,34 @@ function BuildDefaultConfiguration()
     filter "platforms:MacOS"
         defines "BASALT_PLATFORM_MACOS=1"
 
-    filter "configurations:Debug"
+    filter "configurations:Game_Debug or Editor_Debug"
         runtime "Debug"
         optimize "Off"
         symbols "On"
         defines "BASALT_BUILD_DEBUG=1"
 
-    filter "configurations:Release"
+    filter "configurations:Game_Release or Editor_Release"
         runtime "Release"
         optimize "On"
         symbols "On"
         defines "BASALT_BUILD_RELEASE=1"
 
-    filter "configurations:Shipping"
+    filter "configurations:Game_Shipping"
         runtime "Release"
         optimize "Speed"
         symbols "Off"
         defines "BASALT_BUILD_SHIPPING=1"
 
+    filter "configurations:Game_Debug or Game_Release or Game_Shipping"
+        defines "BASALT_BUILD_GAME=1"
+
+    filter "configurations:Editor_Debug or Editor_Release"
+        defines "BASALT_BUILD_EDITOR=1"
+
     filter {}
 
     objdir "%{wks.location}Intermediate"
-    targetdir "%{wks.location}Binaries/%{cfg.platform}"
+    targetdir "%{wks.location}Binaries/%{cfg.platform}/%{cfg.buildcfg}"
 end
 
 include "Basalt-Runtime"

@@ -87,7 +87,7 @@
 #define BASALT_S_API
 
 ///
-/// Configuration build target macros.
+/// Build configuration macros.
 ///
 
 #ifndef BASALT_BUILD_DEBUG
@@ -101,6 +101,22 @@
 #ifndef BASALT_BUILD_SHIPPING
     #define BASALT_BUILD_SHIPPING       0
 #endif // BASALT_BUILD_SHIPPING
+
+/**
+ * Build engine target macros.
+ */
+
+#ifndef BASALT_BUILD_GAME
+    #define BASALT_BUILD_GAME           0
+#endif // BASALT_BUILD_GAME
+
+#ifndef BASALT_BUILD_EDITOR
+    #define BASALT_BUILD_EDITOR         0
+#endif // BASALT_BUILD_EDITOR
+
+#if !BASALT_BUILD_GAME && !BASALT_BUILD_EDITOR
+    #error No engine target was specified!
+#endif // Any engine target.
 
 ///
 /// Compiler-detection macros.
@@ -146,11 +162,13 @@
 #define LIKELY                          [[likely]]
 #define UNLIKELY                        [[unlikely]]
 
+/** Bit manipulation utilities. */
 #define BIT(N)                          (1 << (N))
 #define GET_BIT(X, N)                   ((X) & BIT(N))
 #define ENABLE_BIT(X, N)                ((X) |= BIT(N))
 #define DISABLE_BIT(X, N)               ((X) &= (~BIT(N)))
 
+/** Multiples of the unit byte. Allows for easier conversions. */
 #define KiB                             (1024)
 #define MiB                             (1024 * 1024)
 #define GiB                             (1024 * 1024 * 1024)
