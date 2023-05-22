@@ -9,6 +9,15 @@
 namespace Basalt
 {
 
+bool Memory::Initialize(const MemoryDescription& description)
+{
+    return true;
+}
+
+void Memory::Shutdown()
+{
+}
+
 void Memory::Copy(void* destination, void* source, Usize bytesCount)
 {
     std::memcpy(destination, source, bytesCount);

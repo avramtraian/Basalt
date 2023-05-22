@@ -4,9 +4,19 @@
 
 #include "Core/CoreDefines.h"
 #include "Core/CoreTypes.h"
+#include "Core/CommandLine.h"
 
 namespace Basalt
 {
+
+/**
+ * Structure that describes the behavior of the memory system.
+ */
+struct MemoryDescription
+{
+    /** The command line arguments passed when the application was run. */
+    CommandLineArguments commandLine;
+};
 
 /**
  * The memory class is responsible for management of the memory system.
@@ -20,8 +30,10 @@ public:
     /**
      * Initializes the memory system. No memory allocations or deallocations
      * could be performed before this function is invoked.
+     * 
+     * @param description The description of the memory system.
      */
-    static bool Initialize();
+    static bool Initialize(const MemoryDescription& description);
 
     /**
      * Shuts down the memory system. No memory allocations or deallocations

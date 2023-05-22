@@ -4,6 +4,7 @@
 
 #include "CoreDefines.h"
 #include "CoreTypes.h"
+#include "CommandLine.h"
 #include "Math/MathUtilities.h"
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
