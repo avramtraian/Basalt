@@ -138,8 +138,13 @@
 #endif // BASALT_COMPILER_MSVC
 
 ///
-/// Compiler-agnostic utilities.
+/// Compiler-agnostic attributes & utilities.
 ///
+
+#define NODISCARD                       [[nodiscard]]
+#define MAYBE_UNUSED                    [[maybe_unused]]
+#define LIKELY                          [[likely]]
+#define UNLIKELY                        [[unlikely]]
 
 #define BIT(N)                          (1 << (N))
 #define GET_BIT(X, N)                   ((X) & BIT(N))
