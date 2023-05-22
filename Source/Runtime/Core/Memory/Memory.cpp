@@ -18,7 +18,7 @@ void Memory::Shutdown()
 {
 }
 
-void Memory::Copy(void* destination, void* source, Usize bytesCount)
+void Memory::Copy(void* destination, const void* source, Usize bytesCount)
 {
     std::memcpy(destination, source, bytesCount);
 }

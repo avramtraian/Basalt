@@ -51,7 +51,7 @@ public:
      * @param source Pointer to the buffer where the bytes are copied from.
      * @param bytesCount The number of bytes to copy.
      */
-    static void Copy(void* destination, void* source, Usize bytesCount);
+    static void Copy(void* destination, const void* source, Usize bytesCount);
 
     /**
      * Sets each byte from a memory block to a specified value.
