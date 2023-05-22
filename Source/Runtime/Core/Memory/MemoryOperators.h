@@ -14,11 +14,6 @@ void* operator new(Basalt::Usize bytesCount, const char* fileName, Basalt::U32 l
     return Basalt::Memory::AllocateTagged(bytesCount, fileName, lineNumber);
 }
 
-void* operator new(Basalt::Usize, void* memoryBlock) noexcept
-{
-    return memoryBlock;
-}
-
 void operator delete(void* memoryBlock)
 {
     Basalt::Memory::Free(memoryBlock);

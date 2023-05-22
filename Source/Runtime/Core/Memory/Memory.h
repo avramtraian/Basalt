@@ -6,6 +6,8 @@
 #include "Core/CoreTypes.h"
 #include "Core/CommandLine.h"
 
+#include <new>
+
 namespace Basalt
 {
 
@@ -116,9 +118,6 @@ NODISCARD void* operator new(Basalt::Usize bytesCount);
 
 /** New operator that provides information about the file and line number from where the allocation is called. */
 NODISCARD void* operator new(Basalt::Usize bytesCount, const char* fileName, Basalt::U32 lineNumber) noexcept;
-
-/** Placement new operator. Constructs the object on the given memory block. */
-NODISCARD void* operator new(Basalt::Usize bytesCount, void* memoryBlock) noexcept;
 
 /** Default delete operator. */
 void operator delete(void* memoryBlock);
