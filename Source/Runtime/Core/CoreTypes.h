@@ -54,6 +54,8 @@ using Usize = PlatformTypes::Usize;
 /** A signed integer the same size as a pointer. */
 using Ssize = PlatformTypes::Ssize;
 
+/** Value that represents an invalid size. Usually interpreted as an error. */
+constexpr Usize InvalidSize = static_cast<Usize>(-1);
 
 static_assert(sizeof(U8) == 1);
 static_assert(sizeof(U16) == 2);
