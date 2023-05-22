@@ -90,17 +90,17 @@
 /// Configuration build target macros.
 ///
 
-#ifndef BASALT_TARGET_DEBUG
-    #define BASALT_TARGET_DEBUG         0
-#endif // BASALT_TARGET_DEBUG
+#ifndef BASALT_BUILD_DEBUG
+    #define BASALT_BUILD_DEBUG          0
+#endif // BASALT_BUILD_DEBUG
 
-#ifndef BASALT_TARGET_RELEASE
-    #define BASALT_TARGET_RELEASE       0
-#endif // BASALT_TARGET_RELEASE
+#ifndef BASALT_BUILD_RELEASE
+    #define BASALT_BUILD_RELEASE        0
+#endif // BASALT_BUILD_RELEASE
 
-#ifndef BASALT_TARGET_SHIPPING
-    #define BASALT_TARGET_SHIPPING      0
-#endif // BASALT_TARGET_SHIPPING
+#ifndef BASALT_BUILD_SHIPPING
+    #define BASALT_BUILD_SHIPPING       0
+#endif // BASALT_BUILD_SHIPPING
 
 ///
 /// Compiler-detection macros.

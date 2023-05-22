@@ -46,19 +46,19 @@ function BuildDefaultConfiguration()
         runtime "Debug"
         optimize "Off"
         symbols "On"
-        defines "BASALT_TARGET_DEBUG=1"
+        defines "BASALT_BUILD_DEBUG=1"
 
     filter "configurations:Release"
         runtime "Release"
         optimize "On"
         symbols "On"
-        defines "BASALT_TARGET_RELEASE=1"
+        defines "BASALT_BUILD_RELEASE=1"
 
     filter "configurations:Shipping"
         runtime "Release"
         optimize "Speed"
         symbols "Off"
-        defines "BASALT_TARGET_SHIPPING=1"
+        defines "BASALT_BUILD_SHIPPING=1"
 
     filter {}
 
