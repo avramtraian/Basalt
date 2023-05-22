@@ -1,0 +1,55 @@
+// Copyright (c) 2023 Basalt Technology Group. All rights reserved.
+
+#pragma once
+
+#include "Engine.h"
+
+namespace Basalt
+{
+
+#if BASALT_BUILD_EDITOR
+    /**
+     * This function instantiates the global engine and it defined by the client
+     * in the editor builds.
+     *
+     * @return The global engine instance.
+     */
+    Engine* InstantiateEngine();
+#endif // BASALT_BUILD_EDITOR
+
+/**
+ * The application entry point. This is the root of the engine call-stack.
+ * It is invoked from the platform specific entry point `WinMain()` (on
+ * Windows) or `main()` (on other platforms).
+ * 
+ * @param commandLine The command line arguments passed when the application was run.
+ * @param instantiateEngine The function that instantiates the engine. It will be
+ *                          called at a later time, when the engine instance is created.
+ * 
+ * @return The application exit code.
+ */
+BASALT_API I32 GuardedMain(const CommandLineArguments& commandLine, Engine*(*instantiateEngine)(void));
+
+} // namespace Basalt
+
+#if BASALT_PLATFORM_WINDOWS
+    #include <Windows.h>
+
+    INT WinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstance, _In_ LPSTR commandLine, _In_ int showCommand)
+    {
+        // Query the command line arguments passed to the application.
+        Basalt::CommandLineArguments commandArguments;
+        commandArguments.arguments = __argv;
+        commandArguments.argumentsCount = __argc;
+
+        // Invoke the engine platform-agnostic entry point.
+#if BASALT_BUILD_EDITOR
+        // NOTE: It is up to the client to ensure that `Basalt::InstantiateEngine()` is defined.
+        return (INT)Basalt::GuardedMain(commandArguments, Basalt::InstantiateEngine);
+#endif // BASALT_BUILD_EDITOR
+
+#if BASALT_BUILD_GAME
+        return (INT)Basalt::GuardedMain(commandArguments, nullptr);
+#endif // BASALT_BUILD_GAME
+    }
+#endif // BASALT_PLATFORM_WINDOWS
