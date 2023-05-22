@@ -57,11 +57,11 @@ public:
     static void Zero(void* destination, Usize bytesCount);
 
 public:
-    static void* AllocateRaw(Usize bytesCount);
+    NODISCARD static void* AllocateRaw(Usize bytesCount);
 
-    static void* Allocate(Usize bytesCount);
+    NODISCARD static void* Allocate(Usize bytesCount);
 
-    static void* AllocateTagged(Usize bytesCount, const char* fileName, U32 lineNumber);
+    NODISCARD static void* AllocateTagged(Usize bytesCount, const char* fileName, U32 lineNumber);
 
     /**
      * Frees a memory block from the heap. This function can only release
@@ -100,13 +100,13 @@ public:
 #define bnew                            new(__FILE__, __LINE__)
 
 /** Default new operator. Allows third-party code to use the Basalt memory system. */
-void* operator new(Basalt::Usize bytesCount);
+NODISCARD void* operator new(Basalt::Usize bytesCount);
 
 /** New operator that provides information about the file and line number from where the allocation is called. */
-void* operator new(Basalt::Usize bytesCount, const char* fileName, Basalt::U32 lineNumber);
+NODISCARD void* operator new(Basalt::Usize bytesCount, const char* fileName, Basalt::U32 lineNumber) noexcept;
 
 /** Placement new operator. Constructs the object on the given memory block. */
-void* operator new(Basalt::Usize bytesCount, void* memoryBlock);
+NODISCARD void* operator new(Basalt::Usize bytesCount, void* memoryBlock) noexcept;
 
 /** Default delete operator. */
 void operator delete(void* memoryBlock);

@@ -9,12 +9,12 @@ void* operator new(Basalt::Usize bytesCount)
     return Basalt::Memory::Allocate(bytesCount);
 }
 
-void* operator new(Basalt::Usize bytesCount, const char* fileName, Basalt::U32 lineNumber)
+void* operator new(Basalt::Usize bytesCount, const char* fileName, Basalt::U32 lineNumber) noexcept
 {
     return Basalt::Memory::AllocateTagged(bytesCount, fileName, lineNumber);
 }
 
-void* operator new(Basalt::Usize, void* memoryBlock)
+void* operator new(Basalt::Usize, void* memoryBlock) noexcept
 {
     return memoryBlock;
 }
