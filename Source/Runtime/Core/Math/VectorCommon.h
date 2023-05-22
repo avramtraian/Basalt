@@ -8,6 +8,8 @@
 
 namespace Basalt
 {
+
+/** The namespace that contains all templated math objects. */
 namespace Geometry
 {
 
