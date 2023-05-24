@@ -8,9 +8,7 @@
 
 namespace Basalt
 {
-
-/** The namespace that contains all templated math objects. */
-namespace Geometry
+namespace Math
 {
 
 template<typename T>
@@ -78,5 +76,5 @@ FORCEINLINE Vector4<T>::Vector4(const Vector3<T>& vector3, T inW)
     , w(inW)
 {}
 
-} // namespace Basalt::Geometry
+} // namespace Basalt::Math
 } // namespace Basalt

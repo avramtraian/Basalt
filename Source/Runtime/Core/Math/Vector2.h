@@ -8,9 +8,7 @@
 
 namespace Basalt
 {
-
-/** The namespace that contains all templated math objects. */
-namespace Geometry
+namespace Math
 {
 
 // Forward declaration. Used for conversion constructors.
@@ -298,12 +296,12 @@ FORCEINLINE static Vector2<T> operator*(T scalar, const Vector2<T>& vector)
     return vector * scalar;
 }
 
-} // namespace Basalt::Geometry
+} // namespace Basalt::Math
 
 /** A 2-component vector with 32-bit floating point precision. */
-using Vector2f = Geometry::Vector2<F32>;
+using Vector2f = Math::Vector2<F32>;
 
 /** A 2-component vector with 64-bit floating point precision. */
-using Vector2d = Geometry::Vector2<F64>;
+using Vector2d = Math::Vector2<F64>;
 
 } // namespace Basalt

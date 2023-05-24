@@ -7,9 +7,7 @@
 
 namespace Basalt
 {
-
-/** The namespace that contains all templated math objects. */
-namespace Geometry
+namespace Math
 {
 
 /**
@@ -204,12 +202,12 @@ public:
     T z;
 };
 
-} // namespace Basalt::Geometry
+} // namespace Basalt::Math
 
 /** A 3-component vector with 32-bit signed integer precision. */
-using IntVector3i = Geometry::IntVector3<I32>;
+using IntVector3i = Math::IntVector3<I32>;
 
 /** A 3-component vector with 32-bit unsigned integer precision. */
-using IntVector3u = Geometry::IntVector3<U32>;
+using IntVector3u = Math::IntVector3<U32>;
 
 } // namespace Basalt
