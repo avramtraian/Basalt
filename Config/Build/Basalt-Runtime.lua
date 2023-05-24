@@ -16,7 +16,8 @@ project "Basalt-Runtime"
     files
     {
         "%{prj.location}/**.h",
-        "%{prj.location}/**.cpp"
+        "%{prj.location}/**.cpp",
+        "%{prj.location}/**.inl"
     }
 
     defines

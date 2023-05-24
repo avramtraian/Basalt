@@ -21,7 +21,8 @@ project "Basalt-Editor"
     files
     {
         "%{prj.location}/**.h",
-        "%{prj.location}/**.cpp"
+        "%{prj.location}/**.cpp",
+        "%{prj.location}/**.inl"
     }
 
     includedirs
