@@ -321,6 +321,8 @@ public:
     /**
      * Removes the last `count` elements from the array.
      * If the array doesn't have at least `count` elements, an assert will be issued.
+     * 
+     * @param count The number of elements to pop from the array.
      */
     FORCEINLINE void PopBack(Usize count)
     {
