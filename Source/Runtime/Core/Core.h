@@ -6,6 +6,7 @@
 #include "CommandLine.h"
 #include "CoreDefines.h"
 #include "CoreTypes.h"
+#include "Core/Containers/FixedArray.h"
 #include "Core/Containers/String.h"
 #include "Core/Containers/StringView.h"
 #include "Math/MathUtilities.h"
