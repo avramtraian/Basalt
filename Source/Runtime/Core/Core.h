@@ -11,6 +11,8 @@
 #include "Core/Containers/String.h"
 #include "Core/Containers/StringView.h"
 #include "Math/MathUtilities.h"
+#include "Math/IntVector2.h"
+#include "Math/IntVector3.h"
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
