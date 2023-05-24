@@ -76,4 +76,43 @@ static_assert(sizeof(B32) == 4);
 static_assert(sizeof(Usize) == sizeof(void*));
 static_assert(sizeof(Ssize) == sizeof(void*));
 
+template<typename T>
+struct RemoveReference
+{
+    using Type = T;
+};
+
+template<typename T>
+struct RemoveReference<T&>
+{
+    using Type = T;
+};
+
+template<typename T>
+struct RemoveReference<T&&>
+{
+    using Type = T;
+};
+
+template<typename T>
+using RemoveReferenceType = typename RemoveReference<T>::Type;
+
+template<typename T>
+constexpr RemoveReferenceType<T>&& Move(T&& object) noexcept
+{
+    return static_cast<RemoveReferenceType<T>&&>(object);
+}
+
+template< class T >
+constexpr T&& Forward(RemoveReferenceType<T>& object) noexcept
+{
+    return static_cast<T&&>(object);
+}
+
+template< class T >
+constexpr T&& Forward(RemoveReferenceType<T>&& object) noexcept
+{
+    return static_cast<T&&>(object);
+}
+
 } // namespace Basalt
