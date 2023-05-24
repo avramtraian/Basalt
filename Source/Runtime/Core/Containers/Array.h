@@ -240,7 +240,7 @@ public:
             ReAllocate(NextCapacity(m_count + 1));
         }
 
-        m_count++;
+        ++m_count;
     }
 
     /**
