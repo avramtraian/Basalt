@@ -154,8 +154,8 @@ public:
      * @param axis The axis to get.
      * @return A reference to the component on the given axis.
      */
-    FORCEINLINE T& GetAxis(Axis axis) { return (&x)[(Usize)axis]; }
-    FORCEINLINE const T& GetAxis(Axis axis) const { return (&x)[(Usize)axis]; }
+    FORCEINLINE T& GetAxis(EAxis axis) { return (&x)[(Usize)axis]; }
+    FORCEINLINE const T& GetAxis(EAxis axis) const { return (&x)[(Usize)axis]; }
 
 public:
     /**

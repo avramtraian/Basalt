@@ -46,7 +46,7 @@ public:
     /**
      * Default constructor. Initializes each components with 0.
      */
-    FORCEINLINE Vector4()
+    FORCEINLINE constexpr Vector4()
         : x(T(0))
         , y(T(0))
         , z(T(0))
@@ -156,8 +156,8 @@ public:
      * @param axis The axis to get.
      * @return A reference to the component on the given axis.
      */
-    FORCEINLINE T& GetAxis(Axis axis) { return (&x)[(Usize)axis]; }
-    FORCEINLINE const T& GetAxis(Axis axis) const { return (&x)[(Usize)axis]; }
+    FORCEINLINE T& GetAxis(EAxis axis) { return (&x)[(Usize)axis]; }
+    FORCEINLINE const T& GetAxis(EAxis axis) const { return (&x)[(Usize)axis]; }
 
 public:
     /**

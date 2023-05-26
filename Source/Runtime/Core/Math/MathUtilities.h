@@ -20,9 +20,17 @@ namespace Math
 {
 
 /** Four-dimensional space axes. */
-enum class Axis
+enum class EAxis : U8
 {
     X = 0, Y = 1, Z = 2, W = 3
+};
+
+enum EAxisEnum : U8
+{
+    EAxis_X = (U8)EAxis::X,
+    EAxis_Y = (U8)EAxis::Y,
+    EAxis_Z = (U8)EAxis::Z,
+    EAxis_W = (U8)EAxis::W,
 };
 
 constexpr float PI = 3.1415926535F;
