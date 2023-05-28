@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Basalt Technology Group.
+// Copyright (c) 2023 Basalt Technology Group. All rights reserved.
 
 #pragma once
 
