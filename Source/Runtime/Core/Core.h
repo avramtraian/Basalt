@@ -11,6 +11,7 @@
 #include "Core/Containers/InlineArray.h"
 #include "Core/Containers/String.h"
 #include "Core/Containers/StringView.h"
+#include "Math/Color.h"
 #include "Math/IntVector2.h"
 #include "Math/IntVector3.h"
 #include "Math/MathUtilities.h"
