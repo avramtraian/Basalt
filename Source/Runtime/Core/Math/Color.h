@@ -13,7 +13,7 @@ namespace Math
 /**
  * Enumeration of different kinds of gamma corrections that the engine converts from/to.
  */
-enum class EGammeSpace : U8
+enum class EGammaSpace : U8
 {
     /** Value that represents an error. */
     Invalid = 0,
@@ -232,7 +232,7 @@ public:
 
 } // namespace Basalt::Math
 
-using Math::EGammeSpace;
+using Math::EGammaSpace;
 using Math::LinearColor;
 
 } // namespace Basalt
