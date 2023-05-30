@@ -147,6 +147,10 @@ public:
     /** Wrapper around `FindFirstOf()`. */
     FORCEINLINE Usize Find(StringView substring) const { return FindFirstOf(substring); }
 
+public:
+    bool operator==(const StringView& other) const;
+    bool operator!=(const StringView& other) const;
+
 private:
     /** Pointer to the buffer that contains the string data. */
     const char* m_viewData;

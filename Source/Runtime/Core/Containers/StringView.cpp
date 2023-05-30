@@ -83,4 +83,27 @@ Usize StringView::FindLastOf(StringView substring) const
     return InvalidPos;
 }
 
+bool StringView::operator==(const StringView& other) const
+{
+    if (m_bytesCount != other.m_bytesCount)
+    {
+        return false;
+    }
+
+    for (Usize i = 0; i < m_bytesCount; ++i)
+    {
+        if (m_viewData[i] != other.m_viewData[i])
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool StringView::operator!=(const StringView& other) const
+{
+    return !(*this == other);
+}
+
 } // namespace Basalt
