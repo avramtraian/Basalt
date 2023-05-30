@@ -153,6 +153,11 @@
     #define BASALT_DEBUGBREAK           __debugbreak()
 #endif // BASALT_COMPILER_MSVC
 
+#if BASALT_COMPILER_MSVC
+    // class 'A' needs to have dll-interface to be used by clients of class 'B'
+    #pragma warning(disable : 4251)
+#endif // BASALT_COMPILER_MSVC
+
 ///
 /// Compiler-agnostic attributes & utilities.
 ///
