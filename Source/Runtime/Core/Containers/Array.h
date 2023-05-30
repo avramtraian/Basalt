@@ -244,7 +244,7 @@ public:
             ReAllocate(NextCapacity(m_count + 1));
         }
 
-        ++m_count;
+        return m_elements[m_count++];
     }
 
     /**
