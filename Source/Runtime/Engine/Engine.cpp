@@ -9,7 +9,7 @@ Engine* GEngine = nullptr;
 
 bool Engine::Initialize(const EngineDescription& description)
 {
-    GEngine = description.instantiateEngine();
+    GEngine = description.instantiate_engine();
     return true;
 }
 

@@ -9,6 +9,7 @@
 #include "Core/Containers/Array.h"
 #include "Core/Containers/FixedArray.h"
 #include "Core/Containers/InlineArray.h"
+#include "Core/Containers/Optional.h"
 #include "Core/Containers/String.h"
 #include "Core/Containers/StringView.h"
 #include "Math/Color.h"

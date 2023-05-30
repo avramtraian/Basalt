@@ -16,8 +16,6 @@ namespace Basalt
  */
 struct MemoryDescription
 {
-    /** The command line arguments passed when the application was run. */
-    CommandLineArguments commandLine;
 };
 
 /**
