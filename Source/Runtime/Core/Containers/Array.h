@@ -484,6 +484,79 @@ public:
     }
 
 public:
+    /**
+     * Find the lowest index of a stored element that matches the given element.
+     * The elements are compared using their equality check operator.
+     * 
+     * @param element The element to search for.
+     * @return The index where the element is stored. If the element is not present in the array,
+     *         `InvalidSize` will be returned.
+     */
+    FORCEINLINE Usize Find(const ElementType& element) const
+    {
+        for (Usize index = 0; index < m_count; ++index)
+        {
+            if (m_elements[index] == element)
+            {
+                return index;
+            }
+        }
+
+        return InvalidSize;
+    }
+
+    /**
+     * Find the lowest index of a stored element that matches the given element.
+     * The elements are compared using the provided function.
+     *
+     * @param element The element to search for.
+     * @param comare_func The function used to compare the elements. Takes two
+     *                    `ElementType` const references as parameters and returns
+     *                    a boolean that represents the elements equality.
+     * 
+     * @return The index where the element is stored. If the element is not present in the array,
+     *         `InvalidSize` will be returned.
+     */
+    template<typename CompareFunc>
+    FORCEINLINE Usize Find(const ElementType& element, CompareFunc comare_func) const
+    {
+        for (Usize index = 0; index < m_count; ++index)
+        {
+            if (comare_func(m_elements[index], element))
+            {
+                return index;
+            }
+        }
+
+        return InvalidSize;
+    }
+
+    /**
+     * Checks if the given element exists in the array.
+     * The elements are compared using their equality check operator.
+     * 
+     * @param element The element to check against.
+     * @return True if the element exists in the array; False otherwise.
+     */
+    FORCEINLINE bool Contains(const ElementType& element) const
+    {
+        return (Find(element) != InvalidSize);
+    }
+
+    /**
+     * Checks if the given element exists in the array.
+     * The elements are compared using the provided function.
+     *
+     * @param element The element to check against.
+     * @return True if the element exists in the array; False otherwise.
+     */
+    template<typename CompareFunc>
+    FORCEINLINE bool Contains(const ElementType& element, CompareFunc compare_func) const
+    {
+        return (Find(element, compare_func) != InvalidSize);
+    }
+
+public:
     /** @return A forward iterator that points to the first element in the array. */
     FORCEINLINE Iterator begin() { return Iterator(m_elements); }
     FORCEINLINE ConstIterator begin() const { return ConstIterator(m_elements); }
