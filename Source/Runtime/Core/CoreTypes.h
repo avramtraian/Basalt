@@ -115,4 +115,7 @@ constexpr T&& Forward(RemoveReferenceType<T>&& object) noexcept
     return static_cast<T&&>(object);
 }
 
+#define BT_NON_COPYABLE(TYPENAME)   TYPENAME(const TYPENAME&) = delete
+#define BT_NON_MOVABLE(TYPENAME)    TYPENAME(TYPENAME&&) noexcept = delete
+
 } // namespace Basalt
