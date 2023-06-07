@@ -4,7 +4,7 @@
 
 #include "Core/CoreDefines.h"
 #include "Core/CoreTypes.h"
-#include "Core/AssertionMacros.h"
+#include "Core/Misc/AssertionMacros.h"
 #include "Core/Memory/Memory.h"
 
 namespace Basalt

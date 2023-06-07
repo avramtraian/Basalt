@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "CoreDefines.h"
-#include "CoreTypes.h"
+#include "Core/CoreDefines.h"
+#include "Core/CoreTypes.h"
 #include "Core/Containers/Array.h"
 #include "Core/Containers/Optional.h"
 #include "Core/Containers/StringView.h"

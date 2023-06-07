@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "CoreDefines.h"
-#include "CoreTypes.h"
+#include "Core/CoreDefines.h"
+#include "Core/CoreTypes.h"
 
 /**
  * Enables checks even in shipping build. Useful when you have Shipping-only

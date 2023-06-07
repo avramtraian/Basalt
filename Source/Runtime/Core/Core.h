@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "AssertionMacros.h"
-#include "CommandLine.h"
+#include "Misc/AssertionMacros.h"
+#include "Misc/CommandLine.h"
 #include "CoreDefines.h"
 #include "CoreTypes.h"
 #include "Core/Containers/Array.h"
