@@ -23,3 +23,6 @@
 #include "Math/Vector4.h"
 #include "Math/VectorCommon.h"
 #include "Memory/Memory.h"
+#include "Misc/IterationDecision.h"
+#include "Misc/MatchDecision.h"
+#include "Logging/LogMacros.h"
