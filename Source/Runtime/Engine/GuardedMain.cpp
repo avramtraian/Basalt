@@ -6,6 +6,7 @@
 #include "GameEngine.h"
 
 #include "Core/Memory/Memory.h"
+#include "Core/Logging/Logger.h"
 
 namespace Basalt
 {
@@ -27,6 +28,13 @@ BASALT_API I32 GuardedMain(const char* command_line, Engine*(*instantiate_engine
     }
 
     CommandLine::Parse();
+
+    LoggerDescription logger_description;
+
+    if (!Logger::Initialize(logger_description))
+    {
+        return BT_EXIT_SYSTEM_INITIALIZATION_FAILED;
+    }
 
     // Engine initialization.
     
@@ -60,6 +68,7 @@ BASALT_API I32 GuardedMain(const char* command_line, Engine*(*instantiate_engine
 
     // Core systems shut down.
 
+    Logger::Shutdown();
     Memory::Shutdown();
 
     return 0;
