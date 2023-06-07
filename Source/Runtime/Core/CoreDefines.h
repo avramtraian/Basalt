@@ -173,6 +173,8 @@
 #define ENABLE_BIT(X, N)                ((X) |= BIT(N))
 #define DISABLE_BIT(X, N)               ((X) &= (~BIT(N)))
 
+#define BT_ARRAY_COUNT(A)               (sizeof(A) / sizeof(A[0]))
+
 /** Multiples of the unit byte. Allows for easier conversions. */
 #define KiB                             (1024)
 #define MiB                             (1024 * 1024)

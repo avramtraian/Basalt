@@ -4,7 +4,7 @@
 
 #include "Core/CoreDefines.h"
 #include "Core/CoreTypes.h"
-#include "Core/AssertionMacros.h"
+#include "Core/Misc/AssertionMacros.h"
 
 namespace Basalt
 {
@@ -33,6 +33,18 @@ public:
     static Usize Length(const char* string);
 
     /**
+     * Counts the number of bytes an UTF-8 encoded string occupies.
+     * This function evaluates `length` characters, even if a null-terminated character is encountered.
+     * If the provided string is not valid UTF-8, an assert will be issued.
+     * 
+     * @param string Pointer to the UTF-8 encoded string.
+     * @param length The number of characters to evaluate.
+     * 
+     * @return The number of bytes the string occupies.
+     */
+    static Usize BytesCount(const char* string, Usize length);
+
+    /**
      * Converts a codepoint to an UTF-8 encoded sequence of bytes.
      * 
      * @param codepoint The codepoint to convert.
@@ -56,7 +68,7 @@ public:
      * @return The UTF-8 codepoint. If the byte sequence is not valid, `InvalidUTF8Codepoint`
       *        will be returned.
      */
-    static UTF8Codepoint BytesToCodepoint(const void* buffer, U32* outCodepointWidth = nullptr);
+    static UTF8Codepoint BytesToCodepoint(const void* buffer, U32* out_codepoint_width = nullptr);
 
     /**
      * Calculates the width of the codepoint that is represented by a given byte sequence.

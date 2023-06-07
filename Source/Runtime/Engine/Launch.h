@@ -28,28 +28,23 @@ namespace Basalt
  * 
  * @return The application exit code.
  */
-BASALT_API I32 GuardedMain(const CommandLineArguments& commandLine, Engine*(*instantiateEngine)(void));
+BASALT_API I32 GuardedMain(const char* command_line, Engine*(*instantiate_engine)(void));
 
 } // namespace Basalt
 
 #if BASALT_PLATFORM_WINDOWS
     #include <Windows.h>
 
-    INT WinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previousInstance, _In_ LPSTR commandLine, _In_ int showCommand)
+    INT WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR command_line, _In_ int)
     {
-        // Query the command line arguments passed to the application.
-        Basalt::CommandLineArguments commandArguments;
-        commandArguments.arguments = __argv;
-        commandArguments.argumentsCount = __argc;
-
         // Invoke the engine platform-agnostic entry point.
 #if BASALT_BUILD_EDITOR
         // NOTE: It is up to the client to ensure that `Basalt::InstantiateEngine()` is defined.
-        return (INT)Basalt::GuardedMain(commandArguments, Basalt::InstantiateEngine);
+        return (INT)Basalt::GuardedMain(command_line, Basalt::InstantiateEngine);
 #endif // BASALT_BUILD_EDITOR
 
 #if BASALT_BUILD_GAME
-        return (INT)Basalt::GuardedMain(commandArguments, nullptr);
+        return (INT)Basalt::GuardedMain(command_line, nullptr);
 #endif // BASALT_BUILD_GAME
     }
 #endif // BASALT_PLATFORM_WINDOWS

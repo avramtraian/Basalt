@@ -2,42 +2,56 @@
 
 #include "Core/Core.h"
 #include "Engine.h"
+#include "ExitCodes.h"
 #include "GameEngine.h"
+
+#include "Core/Memory/Memory.h"
+#include "Core/Logging/Logger.h"
 
 namespace Basalt
 {
 
-BASALT_API I32 GuardedMain(const CommandLineArguments& commandLine, Engine*(*instantiateEngine)(void))
+BASALT_API I32 GuardedMain(const char* command_line, Engine*(*instantiate_engine)(void))
 {
     // Core systems initialization.
 
-    MemoryDescription memoryDescription;
-    memoryDescription.commandLine = commandLine;
-
-    if (!Memory::Initialize(memoryDescription))
+    if (!CommandLine::Set(command_line))
     {
-        return EXIT_FAILURE;
+        return BT_EXIT_COMMAND_LINE_OVERFLOW;
+    }
+
+    MemoryDescription memory_description;
+
+    if (!Memory::Initialize(memory_description))
+    {
+        return BT_EXIT_SYSTEM_INITIALIZATION_FAILED;
+    }
+
+    CommandLine::Parse();
+
+    LoggerDescription logger_description;
+
+    if (!Logger::Initialize(logger_description))
+    {
+        return BT_EXIT_SYSTEM_INITIALIZATION_FAILED;
     }
 
     // Engine initialization.
     
-    EngineDescription engineDescription;
-    engineDescription.commandLine = commandLine;
-
+    EngineDescription engine_description;
 #if BASALT_BUILD_GAME
-    instantiateEngine = []() -> Engine* { return bnew GameEngine(); };
+    instantiate_engine = []() -> Engine* { return bnew GameEngine(); };
 #endif // BASALT_BUILD_GAME
-    
-    engineDescription.instantiateEngine = instantiateEngine;
+    engine_description.instantiate_engine = instantiate_engine;
 
-    if (!Engine::Initialize(engineDescription))
+    if (!Engine::Initialize(engine_description))
     {
-        return EXIT_FAILURE;
+        return BT_EXIT_SYSTEM_INITIALIZATION_FAILED;
     }
 
     if (!GEngine->PostInitialize())
     {
-        return EXIT_FAILURE;
+        return BT_EXIT_SYSTEM_INITIALIZATION_FAILED;
     }
     
     // Engine ticking.
@@ -54,6 +68,7 @@ BASALT_API I32 GuardedMain(const CommandLineArguments& commandLine, Engine*(*ins
 
     // Core systems shut down.
 
+    Logger::Shutdown();
     Memory::Shutdown();
 
     return 0;

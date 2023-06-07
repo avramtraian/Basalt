@@ -17,11 +17,8 @@ class Engine;
  */
 struct EngineDescription
 {
-    /** The command line arguments passed when the application was run. */
-    CommandLineArguments commandLine;
-
     /** The callback that will be invoked in order to instantiate the global engine. */
-    Engine*(*instantiateEngine)(void) = nullptr;
+    Engine*(*instantiate_engine)(void) = nullptr;
 };
 
 /**

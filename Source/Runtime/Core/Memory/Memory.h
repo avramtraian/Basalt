@@ -4,7 +4,7 @@
 
 #include "Core/CoreDefines.h"
 #include "Core/CoreTypes.h"
-#include "Core/CommandLine.h"
+#include "Core/Misc/CommandLine.h"
 
 #include <new>
 
@@ -16,8 +16,6 @@ namespace Basalt
  */
 struct MemoryDescription
 {
-    /** The command line arguments passed when the application was run. */
-    CommandLineArguments commandLine;
 };
 
 /**
