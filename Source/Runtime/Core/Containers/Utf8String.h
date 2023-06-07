@@ -68,7 +68,7 @@ public:
      * @return The UTF-8 codepoint. If the byte sequence is not valid, `InvalidUTF8Codepoint`
       *        will be returned.
      */
-    static UTF8Codepoint BytesToCodepoint(const void* buffer, U32* outCodepointWidth = nullptr);
+    static UTF8Codepoint BytesToCodepoint(const void* buffer, U32* out_codepoint_width = nullptr);
 
     /**
      * Calculates the width of the codepoint that is represented by a given byte sequence.
