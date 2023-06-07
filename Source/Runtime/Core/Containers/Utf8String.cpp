@@ -24,6 +24,20 @@ Usize UTF8Calls::Length(const char* string)
     return length;
 }
 
+Usize UTF8Calls::BytesCount(const char* string, Usize length)
+{
+    Usize bytes_count = 0;
+
+    for (Usize index = 0; index < length; ++index)
+    {
+        const U32 width = UTF8Calls::BytesToCodepointWidth(string + bytes_count);
+        Check(width > 0); // Invalid UTF-8 string.
+        bytes_count += width;
+    }
+
+    return bytes_count;
+}
+
 U32 UTF8Calls::CodepointToBytes(UTF8Codepoint codepoint, void* buffer)
 {
     U8* bytes = (U8*)buffer;
