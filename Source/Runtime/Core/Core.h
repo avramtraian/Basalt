@@ -10,6 +10,7 @@
 #include "Containers/FixedArray.h"
 #include "Containers/InlineArray.h"
 #include "Containers/Optional.h"
+#include "Containers/Span.h"
 #include "Containers/String.h"
 #include "Containers/StringView.h"
 #include "Math/Color.h"
