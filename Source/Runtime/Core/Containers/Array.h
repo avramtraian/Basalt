@@ -270,13 +270,13 @@ public:
      * A memory reallocation might occur, if the internal buffer is not
      * sufficient to store the new element.
      *
-     * @param newElement The element to move in-place.
+     * @param new_element The element to move in-place.
      * @return Reference to the newly added element.
      */
-    FORCEINLINE ElementType& Add(ElementType&& newElement)
+    FORCEINLINE ElementType& Add(ElementType&& new_element)
     {
         ElementType& slot = AddUninitialized();
-        new (&slot) ElementType(Move(newElement));
+        new (&slot) ElementType(Move(new_element));
         return slot;
     }
 
@@ -332,9 +332,9 @@ public:
     {
         Check(m_count >= count);
 
-        for (Usize i = m_count - count; i < m_count; ++i)
+        for (Usize index = m_count - count; index < m_count; ++index)
         {
-            m_elements[i].~ElementType();
+            m_elements[index].~ElementType();
         }
 
         m_count -= count;
@@ -346,9 +346,9 @@ public:
      */
     FORCEINLINE void Clear()
     {
-        for (Usize i = 0; i < m_count; ++i)
+        for (Usize index = 0; index < m_count; ++index)
         {
-            m_elements[i].~ElementType();
+            m_elements[index].~ElementType();
         }
 
         m_count = 0;
@@ -375,31 +375,31 @@ public:
             return;
         }
 
-        ElementType* newElements = AllocateMemory(m_count);
-        MoveElements(newElements, m_elements, m_count);
+        ElementType* new_elements = AllocateMemory(m_count);
+        MoveElements(new_elements, m_elements, m_count);
         ReleaseMemory(m_elements, m_capacity);
 
-        m_elements = newElements;
+        m_elements = new_elements;
         m_capacity = m_count;
     }
 
     /**
      * Sets the capacity of the internal memory buffer.
-     * If `newCapacity` is less than `Count()`, an assert will be issued.
-     * Unless `newCapacity` is equal to `Capacity()`, this function will allocate.
+     * If `new_capacity` is less than `Count()`, an assert will be issued.
+     * Unless `new_capacity` is equal to `Capacity()`, this function will allocate.
      * 
-     * @param newCapacity The new capacity. Must be greater or equal than `Count()`.
+     * @param new_capacity The new capacity. Must be greater or equal than `Count()`.
      */
-    FORCEINLINE void SetCapacity(Usize newCapacity)
+    FORCEINLINE void SetCapacity(Usize new_capacity)
     {
-        Check(newCapacity > m_count);
+        Check(new_capacity > m_count);
         
-        if (newCapacity == m_capacity)
+        if (new_capacity == m_capacity)
         {
             return;
         }
 
-        ReAllocate(newCapacity);
+        ReAllocate(new_capacity);
     }
 
     /**
@@ -407,23 +407,23 @@ public:
      * If the new count is greater than the current count, the newly created
      * elements are not initialized in any way.
      * 
-     * @param newCount The new number of elements that are stored in the array.
+     * @param new_count The new number of elements that are stored in the array.
      */
-    FORCEINLINE void SetCountUninitialized(Usize newCount)
+    FORCEINLINE void SetCountUninitialized(Usize new_count)
     {
-        if (newCount > m_capacity)
+        if (new_count > m_capacity)
         {
-            ReAllocate(NextCapacity(newCount));
+            ReAllocate(NextCapacity(new_count));
         }
         else
         {
-            for (Usize i = newCount; i < m_count; ++i)
+            for (Usize index = new_count; index < m_count; ++index)
             {
-                m_elements[i].~ElementType();
+                m_elements[index].~ElementType();
             }
         }
 
-        m_count = newCount;
+        m_count = new_count;
     }
 
     /**
@@ -431,17 +431,17 @@ public:
      * If the new count is greater than the current count, the newly created
      * elements are initialized using their copy constructor.
      *
-     * @param newCount The new number of elements that are stored in the array.
+     * @param new_count The new number of elements that are stored in the array.
      * @param element The value used to initialize newly added elements, if any.
      */
-    FORCEINLINE void SetCount(Usize newCount, const ElementType& element)
+    FORCEINLINE void SetCount(Usize new_count, const ElementType& element)
     {
-        const Usize oldCount = m_count;
-        SetCountUninitialized(newCount);
+        const Usize old_count = m_count;
+        SetCountUninitialized(new_count);
 
-        for (Usize i = oldCount; i < m_count; ++i)
+        for (Usize index = old_count; index < m_count; ++index)
         {
-            new (m_elements + i) ElementType(element);
+            new (m_elements + index) ElementType(element);
         }
     }
 
@@ -450,17 +450,17 @@ public:
      * If the new count is greater than the current count, the newly created
      * elements are initialized using their default constructor.
      *
-     * @param newCount The new number of elements that are stored in the array.
+     * @param new_count The new number of elements that are stored in the array.
      * @param element The value used to initialize newly added elements, if any.
      */
-    FORCEINLINE void SetCountDefaulted(Usize newCount)
+    FORCEINLINE void SetCountDefaulted(Usize new_count)
     {
-        const Usize oldCount = m_count;
-        SetCountUninitialized(newCount);
+        const Usize old_count = m_count;
+        SetCountUninitialized(new_count);
 
-        for (Usize i = oldCount; i < m_count; ++i)
+        for (Usize index = old_count; index < m_count; ++index)
         {
-            new (m_elements + i) ElementType();
+            new (m_elements + index) ElementType();
         }
     }
 
@@ -472,14 +472,14 @@ public:
      * @param newCount The new number of elements that are stored in the array.
      * @param element The value used to initialize newly added elements, if any.
      */
-    FORCEINLINE void SetCountZeroed(Usize newCount)
+    FORCEINLINE void SetCountZeroed(Usize new_count)
     {
-        const Usize oldCount = m_count;
-        SetCountUninitialized(newCount);
+        const Usize old_count = m_count;
+        SetCountUninitialized(new_count);
         
-        if (m_count > oldCount)
+        if (m_count > old_count)
         {
-            Memory::Zero(m_elements + oldCount, (m_count - oldCount) * sizeof(ElementType));
+            Memory::Zero(m_elements + old_count, (m_count - old_count) * sizeof(ElementType));
         }
     }
 
@@ -613,9 +613,9 @@ private:
      */
     FORCEINLINE void CopyElements(ElementType* destination, const ElementType* source, Usize count)
     {
-        for (Usize i = 0; i < count; ++i)
+        for (Usize index = 0; index < count; ++index)
         {
-            new (destination + i) ElementType(source[i]);
+            new (destination + index) ElementType(source[index]);
         }
     }
 
@@ -632,39 +632,39 @@ private:
      */
     FORCEINLINE void MoveElements(ElementType* destination, ElementType* source, Usize count)
     {
-        for (Usize i = 0; i < count; ++i)
+        for (Usize index = 0; index < count; ++index)
         {
-            new (destination + i) ElementType(Move(source[i]));
-            source[i].~ElementType();
+            new (destination + index) ElementType(Move(source[index]));
+            source[index].~ElementType();
         }
     }
 
-    FORCEINLINE Usize NextCapacity(Usize requiredCount) const
+    FORCEINLINE Usize NextCapacity(Usize required_count) const
     {
         // The capacity is given by a geometric series. This growth rate
         // provides a good balance between memory efficiency and performance.
         const Usize geometric = m_capacity + m_capacity / 2;
 
-        if (requiredCount > geometric)
+        if (required_count > geometric)
         {
             // Geometric growth is not sufficient.
-            return requiredCount;
+            return required_count;
         }
 
         // Geometric growth is sufficient.
         return geometric;
     }
 
-    FORCEINLINE void ReAllocate(Usize newCapacity)
+    FORCEINLINE void ReAllocate(Usize new_capacity)
     {
-        Check(newCapacity > m_capacity);
+        Check(new_capacity > m_capacity);
 
-        ElementType* newElements = AllocateMemory(newCapacity);
-        MoveElements(newElements, m_elements, m_count);
+        ElementType* new_elements = AllocateMemory(new_capacity);
+        MoveElements(new_elements, m_elements, m_count);
         ReleaseMemory(m_elements, m_capacity);
 
-        m_elements = newElements;
-        m_capacity = newCapacity;
+        m_elements = new_elements;
+        m_capacity = new_capacity;
     }
 
 private:
