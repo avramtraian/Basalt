@@ -49,21 +49,21 @@ BASALT_API I32 GuardedMain(const char* command_line, Engine*(*instantiate_engine
         return BT_EXIT_SYSTEM_INITIALIZATION_FAILED;
     }
 
-    if (!GEngine->PostInitialize())
+    if (!g_engine->PostInitialize())
     {
         return BT_EXIT_SYSTEM_INITIALIZATION_FAILED;
     }
     
     // Engine ticking.
 
-    while (GEngine->IsRunning())
+    while (g_engine->IsRunning())
     {
-        GEngine->Tick();
+        g_engine->Tick();
     }
 
     // Engine shut down.
 
-    GEngine->PreShutdown();
+    g_engine->PreShutdown();
     Engine::Shutdown();
 
     // Core systems shut down.
