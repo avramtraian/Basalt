@@ -5,18 +5,18 @@
 namespace Basalt
 {
 
-Engine* GEngine = nullptr;
+Engine* g_engine = nullptr;
 
 bool Engine::Initialize(const EngineDescription& description)
 {
-    GEngine = description.instantiate_engine();
+    g_engine = description.instantiate_engine();
     return true;
 }
 
 void Engine::Shutdown()
 {
-    delete GEngine;
-    GEngine = nullptr;
+    delete g_engine;
+    g_engine = nullptr;
 }
 
 bool Engine::IsRunning() const

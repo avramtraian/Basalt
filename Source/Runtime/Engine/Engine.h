@@ -59,6 +59,6 @@ public:
  * Pointer to the global engine instance.
  * Allows to get access to the engine systems during runtime.
  */
-BASALT_API extern Engine* GEngine;
+BASALT_API extern Engine* g_engine;
 
 } // namespace Basalt
