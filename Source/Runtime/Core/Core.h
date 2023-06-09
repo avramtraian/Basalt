@@ -13,6 +13,7 @@
 #include "Containers/Span.h"
 #include "Containers/String.h"
 #include "Containers/StringView.h"
+#include "Containers/Unique.h"
 #include "Math/Color.h"
 #include "Math/IntVector2.h"
 #include "Math/IntVector3.h"
