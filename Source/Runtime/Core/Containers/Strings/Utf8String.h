@@ -57,7 +57,7 @@ public:
      *                          If the byte sequence is not valid UTF-8, this will be
      *                          set to zero.
      * 
-     * @return The UTF-8 codepoint. If the byte sequence is not valid, `InvalidUTF8Codepoint`
+     * @return The UTF-8 codepoint. If the byte sequence is not valid, `InvalidUnicodeCodepoint`
       *        will be returned.
      */
     static UnicodeCodepoint BytesToCodepoint(const void* buffer, U32* out_codepoint_width = nullptr);
