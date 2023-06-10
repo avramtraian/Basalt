@@ -12,6 +12,7 @@
 #include "Containers/Optional.h"
 #include "Containers/Span.h"
 #include "Containers/Strings/String.h"
+#include "Containers/Strings/StringBuilder.h"
 #include "Containers/Strings/StringView.h"
 #include "Containers/Unique.h"
 #include "Math/Color.h"

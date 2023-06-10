@@ -161,6 +161,9 @@ private:
 
     /** The number of bytes the string occupies, including the null-terminating byte. */
     Usize m_bytesCount;
+
+private:
+    friend class StringBuilder;
 };
 
 } // namespace Basalt
