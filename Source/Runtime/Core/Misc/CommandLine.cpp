@@ -2,7 +2,7 @@
 
 #include "CommandLine.h"
 
-#include "Core/Containers/AsciiString.h"
+#include "Core/Containers/Strings/AsciiString.h"
 #include "Core/Memory/Memory.h"
 
 namespace Basalt

@@ -4,7 +4,7 @@
 
 #include "Core/CoreDefines.h"
 #include "Core/CoreTypes.h"
-#include "Core/Containers/StringView.h"
+#include "Core/Containers/Strings/StringView.h"
 #include "Core/Math/Color.h"
 #include "Core/Misc/DateTime.h"
 

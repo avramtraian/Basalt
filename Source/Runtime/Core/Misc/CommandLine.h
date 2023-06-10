@@ -6,8 +6,8 @@
 #include "Core/CoreTypes.h"
 #include "Core/Containers/Array.h"
 #include "Core/Containers/Optional.h"
-#include "Core/Containers/StringView.h"
-#include "Core/Containers/String.h"
+#include "Core/Containers/Strings/StringView.h"
+#include "Core/Containers/Strings/String.h"
 
 namespace Basalt
 {

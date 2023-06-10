@@ -2,7 +2,7 @@
 
 #include "Logger.h"
 #include "Core/Misc/AssertionMacros.h"
-#include "Core/Containers/Utf8String.h"
+#include "Core/Containers/Strings/Utf8String.h"
 #include "Core/Memory/Memory.h"
 #include "Core/Platform/Platform.h"
 
