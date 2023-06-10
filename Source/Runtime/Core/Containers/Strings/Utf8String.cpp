@@ -2,6 +2,8 @@
 
 #include "Utf8String.h"
 
+#include "Core/Misc/AssertionMacros.h"
+
 namespace Basalt
 {
 
@@ -11,13 +13,13 @@ Usize UTF8Calls::Length(const char* string)
     
     while (*string)
     {
-        const U32 codepointWidth = UTF8Calls::BytesToCodepointWidth(string);
-        if (codepointWidth == 0)
+        const U32 codepoint_width = UTF8Calls::BytesToCodepointWidth(string);
+        if (codepoint_width == 0)
         {
             return InvalidSize;
         }
 
-        string += codepointWidth;
+        string += codepoint_width;
         ++length;
     }
 
