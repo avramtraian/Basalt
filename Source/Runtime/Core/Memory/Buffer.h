@@ -60,4 +60,51 @@ public:
     Usize size;
 };
 
+struct BASALT_API ScopedBuffer
+{
+public:
+    ScopedBuffer() = default;
+
+    FORCEINLINE explicit ScopedBuffer(Usize initial_size)
+        : m_buffer(initial_size)
+    {}
+
+    FORCEINLINE explicit ScopedBuffer(Buffer buffer)
+        : m_buffer(buffer)
+    {}
+
+    FORCEINLINE ~ScopedBuffer()
+    {
+        Release();
+    }
+
+public:
+    FORCEINLINE U8* Data() const { return m_buffer.data; }
+
+    FORCEINLINE Usize Size() const { return m_buffer.size; }
+
+    FORCEINLINE Buffer& RawBuffer() { return m_buffer; }
+    FORCEINLINE const Buffer& RawBuffer() const { return m_buffer; }
+
+public:
+    FORCEINLINE void Invalidate(Usize in_size)
+    {
+        m_buffer.Invalidate(in_size);
+    }
+
+    FORCEINLINE void Release()
+    {
+        m_buffer.Release();
+    }
+
+    template<typename T>
+    FORCEINLINE T* As() const { return m_buffer.As<T>(); }
+
+    template<typename T>
+    FORCEINLINE Usize CountOf() const { return m_buffer.CountOf<T>(); }
+
+private:
+    Buffer m_buffer;
+};
+
 } // namespace Basalt
