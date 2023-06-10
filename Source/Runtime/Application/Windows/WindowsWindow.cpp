@@ -26,6 +26,9 @@ bool WindowsWindow::Initialize(const WindowDescription& description)
 
     m_position_x = description.client_x;
     m_position_y = description.client_y;
+    
+    ScopedBuffer title_buffer;
+    StringBuilder::DynamicToUTF16(StringView(*description.title, description.title.BytesCount()), title_buffer.RawBuffer());
 
     DWORD window_ex_style = 0;
     DWORD window_style = 0;
@@ -36,7 +39,7 @@ bool WindowsWindow::Initialize(const WindowDescription& description)
     m_window_handle = ::CreateWindowEx(
         window_ex_style,
         WindowClassName,
-        L"Basalt Editor - Win64 - Untitled*",
+        title_buffer.As<wchar_t>(),
         window_style,
         0, 0, 0, 0, // The window size and position will be set later.
         NULL, NULL, GetModuleHandle(NULL), NULL

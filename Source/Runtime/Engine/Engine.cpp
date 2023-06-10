@@ -26,10 +26,15 @@ bool Engine::Initialize(const EngineDescription& description)
 
     WindowDescription window_description = {};
     window_description.mode = EWindowMode::Windowed;
+    window_description.title = "Basalt Editor - Win64 - Untitled*"sv;
 
     g_engine->m_primary_window = Window::Create();
     Check(g_engine->m_primary_window);
-    g_engine->m_primary_window->Initialize(window_description);
+    if (!g_engine->m_primary_window->Initialize(window_description))
+    {
+        BT_LOG_ERROR(Engine, "Failed to initialize the primary window! Aborting.");
+        return false;
+    }
 
     g_engine->m_is_running = true;
 

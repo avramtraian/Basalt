@@ -30,7 +30,7 @@ struct WindowDescription
 {
 
     /** The title of the window. Will be displayed if the window is windowed. */
-    StringView title = "Basalt Window"sv;
+    String title = "Basalt Window"sv;
 
     /**
      * The width of the window client area.
