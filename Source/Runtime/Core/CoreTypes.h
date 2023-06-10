@@ -54,9 +54,6 @@ using Usize = PlatformTypes::Usize;
 /** A signed integer the same size as a pointer. */
 using Ssize = PlatformTypes::Ssize;
 
-/** Value that represents an invalid size. Usually interpreted as an error. */
-constexpr Usize InvalidSize = static_cast<Usize>(-1);
-
 static_assert(sizeof(U8) == 1);
 static_assert(sizeof(U16) == 2);
 static_assert(sizeof(U32) == 4);
@@ -75,6 +72,15 @@ static_assert(sizeof(B32) == 4);
 
 static_assert(sizeof(Usize) == sizeof(void*));
 static_assert(sizeof(Ssize) == sizeof(void*));
+
+/** Value that represents an invalid size. Usually interpreted as an error. */
+constexpr Usize InvalidSize = static_cast<Usize>(-1);
+
+/** Primitive type that represents an Unicode codepoint. Can be assumed to always be 32-bit. */
+using UnicodeCodepoint = U32;
+
+/** Codepoint that represents an invalid value. Usually used to signal errors. */
+constexpr UnicodeCodepoint InvalidUnicodeCodepoint = static_cast<UnicodeCodepoint>(-1);
 
 template<typename T>
 struct RemoveReference

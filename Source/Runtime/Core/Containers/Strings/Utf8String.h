@@ -10,14 +10,6 @@ namespace Basalt
 {
 
 /**
- * Primitive type that represents an UTF-8 codepoint.
- * Because the UTF-8 encoding allows characters of 4-bytes the most, this is basically a `U32`.
- */
-using UTF8Codepoint = U32;
-
-constexpr UTF8Codepoint InvalidUTF8Codepoint = -1;
-
-/**
  * Structure that contains all of the utility functions that manipulate UTF-8
  * encoded strings and codepoints.
  */
@@ -55,7 +47,7 @@ public:
      * @return The width (in bytes) of the codepoint. If zero is returned, the
      *         provided codepoint is not valid UTF-8.
      */
-    static U32 CodepointToBytes(UTF8Codepoint codepoint, void* buffer);
+    static U32 CodepointToBytes(UnicodeCodepoint codepoint, void* buffer);
 
     /**
      * Converts an UTF-8 encoded byte sequence to a codepoint.
@@ -68,7 +60,7 @@ public:
      * @return The UTF-8 codepoint. If the byte sequence is not valid, `InvalidUTF8Codepoint`
       *        will be returned.
      */
-    static UTF8Codepoint BytesToCodepoint(const void* buffer, U32* out_codepoint_width = nullptr);
+    static UnicodeCodepoint BytesToCodepoint(const void* buffer, U32* out_codepoint_width = nullptr);
 
     /**
      * Calculates the width of the codepoint that is represented by a given byte sequence.

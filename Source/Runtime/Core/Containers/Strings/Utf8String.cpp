@@ -38,7 +38,7 @@ Usize UTF8Calls::BytesCount(const char* string, Usize length)
     return bytes_count;
 }
 
-U32 UTF8Calls::CodepointToBytes(UTF8Codepoint codepoint, void* buffer)
+U32 UTF8Calls::CodepointToBytes(UnicodeCodepoint codepoint, void* buffer)
 {
     U8* bytes = (U8*)buffer;
 
@@ -75,7 +75,7 @@ U32 UTF8Calls::CodepointToBytes(UTF8Codepoint codepoint, void* buffer)
     return 0;
 }
 
-UTF8Codepoint UTF8Calls::BytesToCodepoint(const void* buffer, U32* out_codepoint_width /*= nullptr*/)
+UnicodeCodepoint UTF8Calls::BytesToCodepoint(const void* buffer, U32* out_codepoint_width /*= nullptr*/)
 {
     const U8* bytes = (const U8*)buffer;
 
@@ -96,7 +96,7 @@ UTF8Codepoint UTF8Calls::BytesToCodepoint(const void* buffer, U32* out_codepoint
             *out_codepoint_width = 2;
         }
 
-        UTF8Codepoint codepoint = 0;
+        UnicodeCodepoint codepoint = 0;
         codepoint += (bytes[0] & 0x1F) << 6;
         codepoint += (bytes[1] & 0x3F) << 0;
         return codepoint;
@@ -109,7 +109,7 @@ UTF8Codepoint UTF8Calls::BytesToCodepoint(const void* buffer, U32* out_codepoint
             *out_codepoint_width = 3;
         }
 
-        UTF8Codepoint codepoint = 0;
+        UnicodeCodepoint codepoint = 0;
         codepoint += (bytes[0] & 0x1F) << 12;
         codepoint += (bytes[1] & 0x3F) << 6;
         codepoint += (bytes[2] & 0x3F) << 0;
@@ -123,7 +123,7 @@ UTF8Codepoint UTF8Calls::BytesToCodepoint(const void* buffer, U32* out_codepoint
             *out_codepoint_width = 4;
         }
 
-        UTF8Codepoint codepoint = 0;
+        UnicodeCodepoint codepoint = 0;
         codepoint += (bytes[0] & 0x1F) << 18;
         codepoint += (bytes[1] & 0x3F) << 12;
         codepoint += (bytes[2] & 0x3F) << 6;
@@ -135,7 +135,7 @@ UTF8Codepoint UTF8Calls::BytesToCodepoint(const void* buffer, U32* out_codepoint
     {
         *out_codepoint_width = 0;
     }
-    return InvalidUTF8Codepoint;
+    return InvalidUnicodeCodepoint;
 }
 
 U32 UTF8Calls::BytesToCodepointWidth(const void* buffer)
