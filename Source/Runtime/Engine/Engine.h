@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Application/Window.h"
 #include "Core/Core.h"
 
 namespace Basalt
@@ -50,9 +51,18 @@ public:
     virtual void PreShutdown() {}
 
     /** @return Whether or not to keep ticking the engine. */
-    bool IsRunning() const;
+    bool IsRunning();
 
     virtual void Tick();
+
+    virtual Window* GetWindowByHandle(WindowHandle window_handle);
+
+private:
+    /** Whether or not the engine is running. While this is true, the engine will keep ticking. */
+    bool m_is_running = false;
+
+    /** The window where the game/viewport will be displayed. Has control over the lifetime of the application. */
+    Unique<Window> m_primary_window;
 };
 
 /**
