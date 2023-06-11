@@ -2,6 +2,8 @@
 
 #include "WindowsWindow.h"
 
+#include "Application/KeyEvents.h"
+#include "Application/MouseEvents.h"
 #include "Application/WindowEvents.h"
 #include "Engine/Engine.h"
 
@@ -20,6 +22,8 @@ bool WindowsWindow::Initialize(const WindowDescription& description)
 
     // The platform call is performed only when the first window is created.
     WindowsWindow::RegisterWindowClass();
+
+    m_event_callback = description.event_callback;
 
     m_width = description.client_width;
     m_height = description.client_height;
@@ -192,8 +196,335 @@ void WindowsWindow::RegisterWindowClass()
     }
 }
 
+namespace Utils
+{
+
+FORCEINLINE static EKey TranslateKeyCode(WPARAM win32_code)
+{
+    switch (win32_code)
+    {
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+        {
+            return (EKey)((U16)EKey::Zero + (win32_code - '0'));
+        }
+
+        case 'A':
+        case 'B':
+        case 'C':
+        case 'D':
+        case 'E':
+        case 'F':
+        case 'G':
+        case 'H':
+        case 'I':
+        case 'J':
+        case 'K':
+        case 'L':
+        case 'M':
+        case 'N':
+        case 'O':
+        case 'P':
+        case 'Q':
+        case 'R':
+        case 'S':
+        case 'T':
+        case 'U':
+        case 'V':
+        case 'W':
+        case 'X':
+        case 'Y':
+        case 'Z':
+        {
+            return (EKey)((U16)EKey::A + (win32_code - 'A'));
+        }
+
+        case VK_SHIFT:      return EKey::Shift;
+        case VK_CONTROL:    return EKey::Control;
+        case VK_MENU:       return EKey::Alt;
+        case VK_ESCAPE:     return EKey::Escape;
+        case VK_SPACE:      return EKey::Space;
+        case VK_RETURN:     return EKey::Enter;
+        case VK_BACK:       return EKey::Backspace;
+        case VK_TAB:        return EKey::Tab;
+        case VK_CAPITAL:    return EKey::CapsLock;
+        case VK_NUMLOCK:    return EKey::NumLock;
+
+        case VK_LEFT:       return EKey::Left;
+        case VK_RIGHT:      return EKey::Right;
+        case VK_UP:         return EKey::Up;
+        case VK_DOWN:       return EKey::Down;
+
+        case VK_OEM_PLUS:   return EKey::Plus;
+        case VK_OEM_MINUS:  return EKey::Minus;
+        case VK_OEM_COMMA:  return EKey::Comma;
+        case VK_OEM_PERIOD: return EKey::Period;
+
+        case VK_OEM_1:      return EKey::Semicolon;
+        case VK_OEM_2:      return EKey::ForwardSlash;
+        case VK_OEM_5:      return EKey::Backslash;
+        case VK_OEM_3:      return EKey::BackQuote;
+        case VK_OEM_4:      return EKey::LeftBracket;
+        case VK_OEM_6:      return EKey::RightBracket;
+        case VK_OEM_7:      return EKey::Apostrophe;
+
+        case VK_INSERT:     return EKey::Insert;
+        case VK_DELETE:     return EKey::Delete;
+
+        case VK_NUMPAD0:    return EKey::Numpad0;
+        case VK_NUMPAD1:    return EKey::Numpad1;
+        case VK_NUMPAD2:    return EKey::Numpad2;
+        case VK_NUMPAD3:    return EKey::Numpad3;
+        case VK_NUMPAD4:    return EKey::Numpad4;
+        case VK_NUMPAD5:    return EKey::Numpad5;
+        case VK_NUMPAD6:    return EKey::Numpad6;
+        case VK_NUMPAD7:    return EKey::Numpad7;
+        case VK_NUMPAD8:    return EKey::Numpad8;
+        case VK_NUMPAD9:    return EKey::Numpad9;
+
+        case VK_MULTIPLY:   return EKey::Multiply;
+        case VK_ADD:        return EKey::Add;
+        case VK_SUBTRACT:   return EKey::Subtract;
+        case VK_DIVIDE:     return EKey::Divide;
+        case VK_DECIMAL:    return EKey::Decimal;
+
+        case VK_PRIOR:      return EKey::PageUp;
+        case VK_NEXT:       return EKey::PageDown;
+        case VK_END:        return EKey::End;
+        case VK_HOME:       return EKey::Home;
+
+        case VK_F1:         return EKey::F1;
+        case VK_F2:         return EKey::F2;
+        case VK_F3:         return EKey::F3;
+        case VK_F4:         return EKey::F4;
+        case VK_F5:         return EKey::F5;
+        case VK_F6:         return EKey::F6;
+        case VK_F7:         return EKey::F7;
+        case VK_F8:         return EKey::F8;
+        case VK_F9:         return EKey::F9;
+        case VK_F10:        return EKey::F10;
+        case VK_F11:        return EKey::F11;
+        case VK_F12:        return EKey::F12;
+        case VK_F13:        return EKey::F13;
+        case VK_F14:        return EKey::F14;
+        case VK_F15:        return EKey::F15;
+        case VK_F16:        return EKey::F16;
+        case VK_F17:        return EKey::F17;
+        case VK_F18:        return EKey::F18;
+        case VK_F19:        return EKey::F19;
+        case VK_F20:        return EKey::F20;
+
+        // Unsupported key codes.
+        case VK_OEM_102:
+        {
+            return EKey::Unknown;
+        }
+    }
+
+    BT_LOG_WARN(Engine, "Unknown key code encountered: %d", (int)win32_code);
+    return EKey::Unknown;
+}
+
+} // namespace Basalt::Utils
+
 LRESULT WindowsWindow::MessageCallback(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param)
 {
+    switch (message)
+    {
+        case WM_CLOSE:
+        {
+            WindowsWindow* window = (WindowsWindow*)g_engine->GetWindowByHandle(window_handle);
+            if (!window)
+            {
+                break;
+            }
+
+            window->m_is_pending_close = true;
+
+            if (window->m_event_callback)
+            {
+                WindowClosedEvent ev;
+                window->m_event_callback(window->GetNativeHandle(), &ev);
+            }
+            
+            return 0;
+        }
+
+        case WM_SIZE:
+        {
+            const U32 width = (U32)LOWORD(l_param);
+            const U32 height = (U32)HIWORD(l_param);
+
+            WindowsWindow* window = (WindowsWindow*)g_engine->GetWindowByHandle(window_handle);
+            if (!window)
+            {
+                break;
+            }
+
+            window->m_width = width;
+            window->m_height = height;
+
+            if (window->m_event_callback)
+            {
+                WindowResizedEvent ev(width, height);
+                window->m_event_callback(window->GetNativeHandle(), &ev);
+            }
+
+            return 0;
+        }
+
+        case WM_MOVE:
+        {
+            POINTS point = MAKEPOINTS(l_param);
+
+            WindowsWindow* window = (WindowsWindow*)g_engine->GetWindowByHandle(window_handle);
+            if (!window)
+            {
+                break;
+            }
+
+            window->m_position_x = point.x;
+            window->m_position_y = point.y;
+
+            if (window->m_event_callback)
+            {
+                WindowMovedEvent ev((I32)point.x, (I32)point.y);
+                window->m_event_callback(window->GetNativeHandle(), &ev);
+            }
+
+            return 0;
+        }
+
+        case WM_MOUSEMOVE:
+        {
+            POINTS point = MAKEPOINTS(l_param);
+
+            WindowsWindow* window = (WindowsWindow*)g_engine->GetWindowByHandle(window_handle);
+            if (!window || !window->m_event_callback)
+            {
+                break;
+            }
+
+            MouseMovedEvent ev((I32)point.x, (I32)point.y);
+            window->m_event_callback(window->GetNativeHandle(), &ev);
+            return 0;
+        }
+
+        case WM_LBUTTONDOWN:
+        {
+            WindowsWindow* window = (WindowsWindow*)g_engine->GetWindowByHandle(window_handle);
+            if (!window || !window->m_event_callback)
+            {
+                break;
+            }
+
+            MouseButtonPressedEvent ev(EMouseButton::Left);
+            window->m_event_callback(window->GetNativeHandle(), &ev);
+            return 0;
+        }
+
+        case WM_LBUTTONUP:
+        {
+            WindowsWindow* window = (WindowsWindow*)g_engine->GetWindowByHandle(window_handle);
+            if (!window || !window->m_event_callback)
+            {
+                break;
+            }
+
+            MouseButtonReleasedEvent ev(EMouseButton::Left);
+            window->m_event_callback(window->GetNativeHandle(), &ev);
+            return 0;
+        }
+
+        case WM_RBUTTONDOWN:
+        {
+            WindowsWindow* window = (WindowsWindow*)g_engine->GetWindowByHandle(window_handle);
+            if (!window || !window->m_event_callback)
+            {
+                break;
+            }
+
+            MouseButtonPressedEvent ev(EMouseButton::Right);
+            window->m_event_callback(window->GetNativeHandle(), &ev);
+            return 0;
+        }
+
+        case WM_RBUTTONUP:
+        {
+            WindowsWindow* window = (WindowsWindow*)g_engine->GetWindowByHandle(window_handle);
+            if (!window || !window->m_event_callback)
+            {
+                break;
+            }
+
+            MouseButtonReleasedEvent ev(EMouseButton::Right);
+            window->m_event_callback(window->GetNativeHandle(), &ev);
+            return 0;
+        }
+
+        case WM_MBUTTONDOWN:
+        {
+            WindowsWindow* window = (WindowsWindow*)g_engine->GetWindowByHandle(window_handle);
+            if (!window || !window->m_event_callback)
+            {
+                break;
+            }
+
+            MouseButtonPressedEvent ev(EMouseButton::Middle);
+            window->m_event_callback(window->GetNativeHandle(), &ev);
+            return 0;
+        }
+
+        case WM_MBUTTONUP:
+        {
+            WindowsWindow* window = (WindowsWindow*)g_engine->GetWindowByHandle(window_handle);
+            if (!window || !window->m_event_callback)
+            {
+                break;
+            }
+
+            MouseButtonReleasedEvent ev(EMouseButton::Middle);
+            window->m_event_callback(window->GetNativeHandle(), &ev);
+            return 0;
+        }
+
+        case WM_KEYDOWN:
+        case WM_SYSKEYDOWN:
+        {
+            WindowsWindow* window = (WindowsWindow*)g_engine->GetWindowByHandle(window_handle);
+            if (!window || !window->m_event_callback)
+            {
+                break;
+            }
+
+            KeyPressedEvent ev(Utils::TranslateKeyCode(w_param));
+            window->m_event_callback(window->GetNativeHandle(), &ev);
+            return 0;
+        }
+
+        case WM_KEYUP:
+        case WM_SYSKEYUP:
+        {
+            WindowsWindow* window = (WindowsWindow*)g_engine->GetWindowByHandle(window_handle);
+            if (!window || !window->m_event_callback)
+            {
+                break;
+            }
+
+            KeyReleasedEvent ev(Utils::TranslateKeyCode(w_param));
+            window->m_event_callback(window->GetNativeHandle(), &ev);
+            return 0;
+        }
+    }
+
     return ::DefWindowProc(window_handle, message, w_param, l_param);
 }
 

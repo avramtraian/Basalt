@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Application/Event.h"
 #include "Core/Core.h"
 
 namespace Basalt
@@ -23,11 +24,16 @@ enum class EWindowMode
 /** Native window handle. */
 using WindowHandle = void*;
 
+/** Function pointer that represents the callback that will be invoked when a message is received. */
+using PFN_WindowEventCallback = void(*)(WindowHandle, Event*);
+
 /**
  * Structure that describes the behavior and appearance of a window.
  */
 struct WindowDescription
 {
+    /** Function pointer to the callback that will be invoked when a window event will be received. */
+    PFN_WindowEventCallback event_callback = nullptr;
 
     /** The title of the window. Will be displayed if the window is windowed. */
     String title = "Basalt Window"sv;

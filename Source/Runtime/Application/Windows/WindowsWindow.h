@@ -40,7 +40,7 @@ private:
 
     static void ReadWindowDescription(const WindowDescription& description, DWORD& out_style, DWORD& out_ex_style);
 
-    static LRESULT MessageCallback(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param);
+    static LRESULT MessageCallback(HWND, UINT, WPARAM, LPARAM);
 
 private:
     HWND m_window_handle = NULL;

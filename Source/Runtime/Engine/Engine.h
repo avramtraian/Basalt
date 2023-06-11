@@ -10,6 +10,7 @@ namespace Basalt
 
 /** Forward declarations. */
 class Engine;
+class Event;
 
 /**
  * Structure that describes the behavior of the engine. It is
@@ -57,7 +58,13 @@ public:
 
     virtual Window* GetWindowByHandle(WindowHandle window_handle);
 
-private:
+protected:
+    static void OnWindowEventCallback(WindowHandle window_handle, Event* event);
+
+protected:
+    virtual void HandleWindowEventCallback(WindowHandle window_handle, Event* event);
+
+protected:
     /** Whether or not the engine is running. While this is true, the engine will keep ticking. */
     bool m_is_running = false;
 

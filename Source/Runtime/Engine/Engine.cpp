@@ -25,6 +25,7 @@ bool Engine::Initialize(const EngineDescription& description)
     }
 
     WindowDescription window_description = {};
+    window_description.event_callback = Engine::OnWindowEventCallback;
     window_description.mode = EWindowMode::Windowed;
     window_description.title = "Basalt Editor - Win64 - Untitled*"sv;
 
@@ -69,6 +70,19 @@ void Engine::Tick()
 Window* Engine::GetWindowByHandle(WindowHandle window_handle)
 {
     return (m_primary_window->GetNativeHandle() == window_handle) ? m_primary_window.Get() : nullptr;
+}
+
+void Engine::OnWindowEventCallback(WindowHandle window_handle, Event* event)
+{
+    g_engine->HandleWindowEventCallback(window_handle, event);
+}
+
+void Engine::HandleWindowEventCallback(WindowHandle window_handle, Event* event)
+{
+    if (window_handle == m_primary_window->GetNativeHandle())
+    {
+        EventDispatcher dispatcher = EventDispatcher(event);
+    }
 }
 
 } // namespace Basalt
