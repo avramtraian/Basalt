@@ -7,65 +7,65 @@ namespace Basalt
 {
 
 String::String()
-    : m_bytesCount(1)
+    : m_bytes_count(1)
 {
     // Set the null-terminating byte.
-    m_heapData[0] = 0;
+    m_inline_data[0] = 0;
 }
     
 String::String(const String& other)
-    : m_bytesCount(other.m_bytesCount)
+    : m_bytes_count(other.m_bytes_count)
 {
-    char* destinationBuffer;
-    const char* sourceBuffer;
+    char* destination_buffer;
+    const char* source_buffer;
 
-    if (m_bytesCount <= InlineCapacity)
+    if (m_bytes_count <= InlineCapacity)
     {
-        destinationBuffer = m_inlineData;
-        sourceBuffer = other.m_inlineData;
+        destination_buffer = m_inline_data;
+        source_buffer = other.m_inline_data;
     }
     else
     {
-        m_heapData = AllocateMemory(m_bytesCount);
-        destinationBuffer = m_heapData;
-        sourceBuffer = other.m_heapData;
+        m_heap_data = AllocateMemory(m_bytes_count);
+        destination_buffer = m_heap_data;
+        source_buffer = other.m_heap_data;
     }
 
-    Memory::Copy(destinationBuffer, sourceBuffer, m_bytesCount);
+    Memory::Copy(destination_buffer, source_buffer, m_bytes_count);
 }
 
 String::String(String&& other) noexcept
-    : m_bytesCount(other.m_bytesCount)
-    , m_heapData(other.m_heapData)
+    : m_bytes_count(other.m_bytes_count)
+    , m_heap_data(other.m_heap_data)
 {
-    other.m_bytesCount = 1;
-    other.m_inlineData[0] = 0;
+    other.m_bytes_count = 1;
+    other.m_inline_data[0] = 0;
 }
 
 String::String(StringView view)
-    : m_bytesCount(view.m_bytesCount + 1)
+    : m_bytes_count(view.m_bytesCount + 1)
 {
     char* destinationBuffer;
 
-    if (m_bytesCount <= InlineCapacity)
+    if (m_bytes_count <= InlineCapacity)
     {
-        destinationBuffer = m_inlineData;
+        destinationBuffer = m_inline_data;
     }
     else
     {
-        m_heapData = AllocateMemory(m_bytesCount);
-        destinationBuffer = m_heapData;
+        m_heap_data = AllocateMemory(m_bytes_count);
+        destinationBuffer = m_heap_data;
     }
 
-    Memory::Copy(destinationBuffer, view.m_viewData, m_bytesCount - 1);
-    destinationBuffer[m_bytesCount - 1] = 0;
+    Memory::Copy(destinationBuffer, view.m_viewData, m_bytes_count - 1);
+    destinationBuffer[m_bytes_count - 1] = 0;
 }
 
 String::~String()
 {
-    if (m_bytesCount > InlineCapacity)
+    if (m_bytes_count > InlineCapacity)
     {
-        ReleaseMemory(m_heapData, m_bytesCount);
+        ReleaseMemory(m_heap_data, m_bytes_count);
     }
 }
 
@@ -73,7 +73,7 @@ String& String::operator=(const String& other)
 {
     StringView view;
     view.m_viewData = other.Data();
-    view.m_bytesCount = other.m_bytesCount;
+    view.m_bytesCount = other.m_bytes_count;
 
     AssignView(view);
     return *this;
@@ -81,16 +81,16 @@ String& String::operator=(const String& other)
 
 String& String::operator=(String&& other) noexcept
 {
-    if (m_bytesCount > InlineCapacity)
+    if (m_bytes_count > InlineCapacity)
     {
-        ReleaseMemory(m_heapData, m_bytesCount);
+        ReleaseMemory(m_heap_data, m_bytes_count);
     }
 
-    m_bytesCount = other.m_bytesCount;
-    m_heapData = other.m_heapData;
+    m_bytes_count = other.m_bytes_count;
+    m_heap_data = other.m_heap_data;
 
-    other.m_bytesCount = 1;
-    other.m_inlineData[0] = 0;
+    other.m_bytes_count = 1;
+    other.m_inline_data[0] = 0;
 
     return *this;
 }
@@ -101,12 +101,12 @@ String& String::operator=(StringView view)
     return *this;
 }
 
-char* String::AllocateMemory(Usize bytesCount)
+char* String::AllocateMemory(Usize bytes_count)
 {
-    return (char*)Memory::AllocateTaggedI(bytesCount);
+    return (char*)Memory::AllocateTaggedI(bytes_count);
 }
 
-void String::ReleaseMemory(char* data, Usize bytesCount)
+void String::ReleaseMemory(char* data, Usize bytes_count)
 {
     Memory::Free(data);
 }
@@ -117,31 +117,31 @@ void String::AssignView(StringView view)
 
     if (view.m_bytesCount < InlineCapacity)
     {
-        destinationBuffer = m_inlineData;
+        destinationBuffer = m_inline_data;
 
-        if (m_bytesCount > InlineCapacity)
+        if (m_bytes_count > InlineCapacity)
         {
-            ReleaseMemory(m_heapData, m_bytesCount);
+            ReleaseMemory(m_heap_data, m_bytes_count);
         }
     }
     else
     {
-        if (m_bytesCount <= InlineCapacity)
+        if (m_bytes_count <= InlineCapacity)
         {
-            m_heapData = AllocateMemory(view.m_bytesCount + 1);
+            m_heap_data = AllocateMemory(view.m_bytesCount + 1);
         }
-        else if (m_bytesCount != view.m_bytesCount)
+        else if (m_bytes_count != view.m_bytesCount)
         {
-            ReleaseMemory(m_heapData, m_bytesCount);
-            m_heapData = AllocateMemory(view.m_bytesCount + 1);
+            ReleaseMemory(m_heap_data, m_bytes_count);
+            m_heap_data = AllocateMemory(view.m_bytesCount + 1);
         }
 
-        destinationBuffer = m_heapData;
+        destinationBuffer = m_heap_data;
     }
 
-    m_bytesCount = view.m_bytesCount + 1;
+    m_bytes_count = view.m_bytesCount + 1;
     Memory::Copy(destinationBuffer, view.m_viewData, view.m_bytesCount);
-    destinationBuffer[m_bytesCount - 1] = 0;
+    destinationBuffer[m_bytes_count - 1] = 0;
 }
 
 } // namespace Basalt

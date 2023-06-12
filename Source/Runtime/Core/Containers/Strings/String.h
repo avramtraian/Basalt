@@ -62,8 +62,8 @@ public:
 
 public:
     /** @return Pointer to the buffer where the elements are stored. The memory could be on the heap or on the stack. */
-    FORCEINLINE char* Data() { return (m_bytesCount <= InlineCapacity) ? m_inlineData : m_heapData; }
-    FORCEINLINE const char* Data() const { return (m_bytesCount <= InlineCapacity) ? m_inlineData : m_heapData; }
+    FORCEINLINE char* Data() { return (m_bytes_count <= InlineCapacity) ? m_inline_data : m_heap_data; }
+    FORCEINLINE const char* Data() const { return (m_bytes_count <= InlineCapacity) ? m_inline_data : m_heap_data; }
 
     /** Wrappers around `Data()`. */
     FORCEINLINE char* operator*() { return Data(); }
@@ -73,14 +73,14 @@ public:
     FORCEINLINE const char* c_str() const { return Data(); }
     
     /** @return True if the string is empty (there are no characters except the null-terminating one); False otherwise. */
-    FORCEINLINE bool IsEmpty() const { return (m_bytesCount == 0); }
+    FORCEINLINE bool IsEmpty() const { return (m_bytes_count == 0); }
 
     /** @return The number of bytes, including the null-terminating byte, the string occupies. */
-    FORCEINLINE Usize BytesCount() const { return m_bytesCount; }
+    FORCEINLINE Usize BytesCount() const { return m_bytes_count; }
 
 public:
     /** @return A view towards this string. */
-    FORCEINLINE StringView ToView() const { return StringView(Data(), m_bytesCount - 1); }
+    FORCEINLINE StringView ToView() const { return StringView(Data(), m_bytes_count - 1); }
 
     /**
      * Function that creates a view towards a specified subregion of the original view.
@@ -125,7 +125,7 @@ private:
      * @param capacity The capacity (in bytes) of the memory block.
      * @return Pointer to the newly allocated memory buffer.
      */
-    char* AllocateMemory(Usize bytesCount);
+    char* AllocateMemory(Usize bytes_count);
 
     /**
      * Releases a memory block.
@@ -134,7 +134,7 @@ private:
      * @param elements Pointer to the memory buffer to release.
      * @param capacity The capacity (in bytes) of the memory block.
      */
-    void ReleaseMemory(char* data, Usize bytesCount);
+    void ReleaseMemory(char* data, Usize bytes_count);
 
     /**
      * Assigns a view to this string.
@@ -150,17 +150,17 @@ private:
          * Pointer to the heap buffer where the elements are stored.
          * If the string stores the elements inline, this variable contains invalid data.
          */
-        char* m_heapData;
+        char* m_heap_data;
 
         /**
          * The inline buffer where the elements are stored.
          * If the string stores the elements on the heap, this buffer contains invalid data.
          */
-        char m_inlineData[InlineCapacity];
+        char m_inline_data[InlineCapacity];
     };
 
     /** The number of bytes the string occupies, including the null-terminating byte. */
-    Usize m_bytesCount;
+    Usize m_bytes_count;
 
 private:
     friend class StringBuilder;
