@@ -43,7 +43,7 @@ String::String(String&& other) noexcept
 }
 
 String::String(StringView view)
-    : m_bytes_count(view.m_bytesCount + 1)
+    : m_bytes_count(view.m_bytes_count + 1)
 {
     char* destinationBuffer;
 
@@ -57,7 +57,7 @@ String::String(StringView view)
         destinationBuffer = m_heap_data;
     }
 
-    Memory::Copy(destinationBuffer, view.m_viewData, m_bytes_count - 1);
+    Memory::Copy(destinationBuffer, view.m_view_data, m_bytes_count - 1);
     destinationBuffer[m_bytes_count - 1] = 0;
 }
 
@@ -72,8 +72,8 @@ String::~String()
 String& String::operator=(const String& other)
 {
     StringView view;
-    view.m_viewData = other.Data();
-    view.m_bytesCount = other.m_bytes_count;
+    view.m_view_data = other.Data();
+    view.m_bytes_count = other.m_bytes_count;
 
     AssignView(view);
     return *this;
@@ -115,7 +115,7 @@ void String::AssignView(StringView view)
 {
     char* destinationBuffer;
 
-    if (view.m_bytesCount < InlineCapacity)
+    if (view.m_bytes_count < InlineCapacity)
     {
         destinationBuffer = m_inline_data;
 
@@ -128,19 +128,19 @@ void String::AssignView(StringView view)
     {
         if (m_bytes_count <= InlineCapacity)
         {
-            m_heap_data = AllocateMemory(view.m_bytesCount + 1);
+            m_heap_data = AllocateMemory(view.m_bytes_count + 1);
         }
-        else if (m_bytes_count != view.m_bytesCount)
+        else if (m_bytes_count != view.m_bytes_count)
         {
             ReleaseMemory(m_heap_data, m_bytes_count);
-            m_heap_data = AllocateMemory(view.m_bytesCount + 1);
+            m_heap_data = AllocateMemory(view.m_bytes_count + 1);
         }
 
         destinationBuffer = m_heap_data;
     }
 
-    m_bytes_count = view.m_bytesCount + 1;
-    Memory::Copy(destinationBuffer, view.m_viewData, view.m_bytesCount);
+    m_bytes_count = view.m_bytes_count + 1;
+    Memory::Copy(destinationBuffer, view.m_view_data, view.m_bytes_count);
     destinationBuffer[m_bytes_count - 1] = 0;
 }
 

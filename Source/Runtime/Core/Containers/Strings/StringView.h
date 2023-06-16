@@ -25,7 +25,7 @@ public:
      * @param asciiString The to string to transform into a view.
      * @return The view.
      */
-    static StringView FromUTF8(const char* utf8String);
+    static StringView FromUTF8(const char* utf8_string);
 
     /**
      * Creates a string view from an ASCII encoded, null-terminated C-style string.
@@ -33,28 +33,28 @@ public:
      * @param asciiString The to string to transform into a view.
      * @return The view.
      */
-    static StringView FromASCII(const char* asciiString);
+    static StringView FromASCII(const char* ascii_string);
 
 public:
     /** Default constructor. Creates an empty (or invalid) view. */
     FORCEINLINE constexpr StringView()
-        : m_viewData(nullptr)
-        , m_bytesCount(0)
+        : m_view_data(nullptr)
+        , m_bytes_count(0)
     {}
 
     /** Copy constructor. */
     FORCEINLINE constexpr StringView(const StringView& other)
-        : m_viewData(other.m_viewData)
-        , m_bytesCount(other.m_bytesCount)
+        : m_view_data(other.m_view_data)
+        , m_bytes_count(other.m_bytes_count)
     {}
 
     /** Move constructor. Leaves `other` as an empty (or invalid) view. */
     FORCEINLINE constexpr StringView(StringView&& other) noexcept
-        : m_viewData(other.m_viewData)
-        , m_bytesCount(other.m_bytesCount)
+        : m_view_data(other.m_view_data)
+        , m_bytes_count(other.m_bytes_count)
     {
-        other.m_viewData = nullptr;
-        other.m_bytesCount = 0;
+        other.m_view_data = nullptr;
+        other.m_bytes_count = 0;
     }
 
     /**
@@ -63,9 +63,9 @@ public:
      * @param string The C-style string.
      * @param bytesCount The number of bytes the string occupies.
      */
-    FORCEINLINE constexpr StringView(const char* string, Usize bytesCount)
-        : m_viewData(string)
-        , m_bytesCount(bytesCount)
+    FORCEINLINE constexpr StringView(const char* string, Usize bytes_count)
+        : m_view_data(string)
+        , m_bytes_count(bytes_count)
     {}
 
     /**
@@ -76,8 +76,8 @@ public:
      */
     FORCEINLINE StringView& operator=(const StringView& other)
     {
-        m_viewData = other.m_viewData;
-        m_bytesCount = other.m_bytesCount;
+        m_view_data = other.m_view_data;
+        m_bytes_count = other.m_bytes_count;
 
         return *this;
     }
@@ -90,17 +90,17 @@ public:
      */
     FORCEINLINE StringView& operator=(StringView&& other) noexcept
     {
-        m_viewData = other.m_viewData;
-        m_bytesCount = other.m_bytesCount;
-        other.m_viewData = nullptr;
-        other.m_bytesCount = 0;
+        m_view_data = other.m_view_data;
+        m_bytes_count = other.m_bytes_count;
+        other.m_view_data = nullptr;
+        other.m_bytes_count = 0;
 
         return *this;
     }
 
 public:
     /** @return Const pointer to the buffer where the view data is stored. */
-    FORCEINLINE const char* Data() const { return m_viewData; }
+    FORCEINLINE const char* Data() const { return m_view_data; }
 
     /** @return Const pointer to the buffer where the view data is stored. Wrapper around `Data()`. */
     FORCEINLINE const char* operator*() const { return Data(); }
@@ -109,10 +109,10 @@ public:
     FORCEINLINE const char* c_str() const { return Data(); }
 
     /** @return True if the view doesn't contain any characters; False otherwise. */
-    FORCEINLINE bool IsEmpty() const { return (m_bytesCount == 0); }
+    FORCEINLINE bool IsEmpty() const { return (m_bytes_count == 0); }
 
     /** @return The number of bytes the string view occupies. */
-    FORCEINLINE Usize BytesCount() const { return m_bytesCount; }
+    FORCEINLINE Usize BytesCount() const { return m_bytes_count; }
 
 public:
     /**
@@ -153,10 +153,10 @@ public:
 
 private:
     /** Pointer to the buffer that contains the string data. */
-    const char* m_viewData;
+    const char* m_view_data;
 
     /** The number of bytes the view ranges across. */
-    Usize m_bytesCount;
+    Usize m_bytes_count;
 
 private:
     friend class String;
@@ -176,10 +176,10 @@ private:
  * 
  * @return A view towards the string literal.
  */
-FORCEINLINE constexpr StringView operator""sv(const char* asciiString, Usize stringLength)
+FORCEINLINE constexpr StringView operator""sv(const char* ascii_string, Usize string_length)
 {
     // Because the string literal contains only ASCII characters, the string has as many bytes as characters.
-    return StringView(asciiString, stringLength);
+    return StringView(ascii_string, string_length);
 }
 
 #if BASALT_COMPILER_MSVC

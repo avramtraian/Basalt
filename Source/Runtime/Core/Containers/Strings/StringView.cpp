@@ -8,37 +8,37 @@
 namespace Basalt
 {
 
-StringView StringView::FromUTF8(const char* utf8String)
+StringView StringView::FromUTF8(const char* utf8_string)
 {
-    const Usize length = UTF8Calls::Length(utf8String);
+    const Usize length = UTF8Calls::Length(utf8_string);
     Check(length > 0); // The provided string contains invalid UTF-8.
-    return StringView(utf8String, length);
+    return StringView(utf8_string, length);
 }
 
-StringView StringView::FromASCII(const char* asciiString)
+StringView StringView::FromASCII(const char* ascii_string)
 {
-    return StringView(asciiString, ASCIICalls::Length(asciiString));
+    return StringView(ascii_string, ASCIICalls::Length(ascii_string));
 }
 
 StringView StringView::Substring(Usize offset, Usize count /*= 0*/) const
 {
     StringView substring;
-    substring.m_viewData = m_viewData;
+    substring.m_view_data = m_view_data;
 
-    for (Usize i = 0; i < offset; ++i)
+    for (Usize index = 0; index < offset; ++index)
     {
-        U32 codepointWidth;
-        UTF8Calls::BytesToCodepoint(substring.m_viewData, &codepointWidth);
-        Check(codepointWidth > 0); // The view contains invalid UTF-8.
-        substring.m_viewData += codepointWidth;
+        U32 codepoint_width;
+        UTF8Calls::BytesToCodepoint(substring.m_view_data, &codepoint_width);
+        Check(codepoint_width > 0); // The view contains invalid UTF-8.
+        substring.m_view_data += codepoint_width;
     }
 
-    for (Usize i = 0; i < count; ++i)
+    for (Usize index = 0; index < count; ++index)
     {
-        U32 codepointWidth;
-        UTF8Calls::BytesToCodepoint(substring.m_viewData + substring.m_bytesCount, &codepointWidth);
-        Check(codepointWidth > 0); // The view contains invalid UTF-8.
-        substring.m_bytesCount += codepointWidth;
+        U32 codepoint_width;
+        UTF8Calls::BytesToCodepoint(substring.m_view_data + substring.m_bytes_count, &codepoint_width);
+        Check(codepoint_width > 0); // The view contains invalid UTF-8.
+        substring.m_bytes_count += codepoint_width;
     }
 
     return substring;
@@ -46,32 +46,32 @@ StringView StringView::Substring(Usize offset, Usize count /*= 0*/) const
 
 Usize StringView::FindFirstOf(StringView substring) const
 {
-    if (substring.m_bytesCount >= m_bytesCount || substring.IsEmpty())
+    if (substring.m_bytes_count >= m_bytes_count || substring.IsEmpty())
     {
         return InvalidPos;
     }
 
-    Usize offsetLength = 0;
-    for (Usize offset = 0; offset < m_bytesCount - substring.m_bytesCount; ++offsetLength)
+    Usize offset_length = 0;
+    for (Usize offset_bytes = 0; offset_bytes < m_bytes_count - substring.m_bytes_count; ++offset_length)
     {
-        bool areEqual = true;
-        for (Usize i = 0; i < substring.m_bytesCount; ++i)
+        bool are_equal = true;
+        for (Usize i = 0; i < substring.m_bytes_count; ++i)
         {
-            if (m_viewData[offset + i] != substring.m_viewData[i])
+            if (m_view_data[offset_bytes + i] != substring.m_view_data[i])
             {
-                areEqual = false;
+                are_equal = false;
                 break;
             }
         }
 
-        if (areEqual)
+        if (are_equal)
         {
-            return offsetLength;
+            return offset_length;
         }
 
-        const U32 width = UTF8Calls::BytesToCodepointWidth(m_viewData + offset);
+        const U32 width = UTF8Calls::BytesToCodepointWidth(m_view_data + offset_bytes);
         Check(width > 0); // The view contains invalid UTF-8.
-        offset += width;
+        offset_bytes += width;
     }
 
     return InvalidPos;
@@ -85,14 +85,14 @@ Usize StringView::FindLastOf(StringView substring) const
 
 bool StringView::operator==(const StringView& other) const
 {
-    if (m_bytesCount != other.m_bytesCount)
+    if (m_bytes_count != other.m_bytes_count)
     {
         return false;
     }
 
-    for (Usize i = 0; i < m_bytesCount; ++i)
+    for (Usize i = 0; i < m_bytes_count; ++i)
     {
-        if (m_viewData[i] != other.m_viewData[i])
+        if (m_view_data[i] != other.m_view_data[i])
         {
             return false;
         }
