@@ -59,10 +59,7 @@ Usize StringBuilder::DynamicToUTF16(StringView utf8_view, Buffer& utf16_buffer)
 
         if (buffer_offset + written > utf16_buffer.size)
         {
-            Buffer new_buffer = Buffer(utf16_buffer.size + utf16_buffer.size / 2);
-            Memory::Copy(new_buffer.data, utf16_buffer.data, buffer_offset);
-            utf16_buffer.Release();
-            utf16_buffer = new_buffer;
+            utf16_buffer.Resize(utf16_buffer.size + utf16_buffer.size / 2);
         }
 
         Memory::Copy(utf16_buffer.data + buffer_offset, buffer, written);
