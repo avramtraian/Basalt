@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Core/Math/MathUtilities.h"
 #include "Memory.h"
 
 namespace Basalt
@@ -54,6 +55,20 @@ public:
 
     template<typename T>
     FORCEINLINE Usize CountOf() const { return (size / sizeof(T)); }
+
+    FORCEINLINE void Resize(Usize new_size)
+    {
+        if (new_size == size)
+        {
+            return;
+        }
+        
+        Buffer new_buffer = Buffer(new_size);
+        Memory::Copy(new_buffer.data, data, Math::Min(size, new_size));
+        
+        Release();
+        *this = new_buffer;
+    }
 
 public:
     U8* data;
