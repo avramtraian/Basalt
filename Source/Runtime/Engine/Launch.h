@@ -22,8 +22,8 @@ namespace Basalt
  * It is invoked from the platform specific entry point `WinMain()` (on
  * Windows) or `main()` (on other platforms).
  * 
- * @param commandLine The command line arguments passed when the application was run.
- * @param instantiateEngine The function that instantiates the engine. It will be
+ * @param command_line The command line arguments passed when the application was run.
+ * @param instantiate_engine The function that instantiates the engine. It will be
  *                          called at a later time, when the engine instance is created.
  * 
  * @return The application exit code.
