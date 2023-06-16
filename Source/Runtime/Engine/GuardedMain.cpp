@@ -5,6 +5,7 @@
 #include "ExitCodes.h"
 #include "GameEngine.h"
 
+#include "Core/Filesystem/FileManager.h"
 #include "Core/Memory/Memory.h"
 #include "Core/Logging/Logger.h"
 
@@ -28,6 +29,13 @@ BASALT_API I32 GuardedMain(const char* command_line, Engine*(*instantiate_engine
     }
 
     CommandLine::Parse();
+
+    FileManagerDescription file_manager_description = {};
+
+    if (!FileManager::Initialize(file_manager_description))
+    {
+        return BT_EXIT_SYSTEM_INITIALIZATION_FAILED;
+    }
 
     LoggerDescription logger_description;
 
@@ -69,6 +77,7 @@ BASALT_API I32 GuardedMain(const char* command_line, Engine*(*instantiate_engine
     // Core systems shut down.
 
     Logger::Shutdown();
+    FileManager::Shutdown();
     Memory::Shutdown();
 
     return 0;
