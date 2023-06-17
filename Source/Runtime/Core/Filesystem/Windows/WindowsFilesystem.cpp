@@ -44,7 +44,7 @@ bool WindowsFilesystem::IsFileHandleValid(FileHandle file_handle) const
 
 U64 WindowsFilesystem::FileSize(StringView filepath) const
 {
-    const TCHAR* win32_filepath = AllocatePath(filepath);
+    const wchar_t* win32_filepath = AllocatePath(filepath);
 
     WIN32_FILE_ATTRIBUTE_DATA attributes = {};
     BOOL result = GetFileAttributesEx(win32_filepath, GetFileExInfoStandard, &attributes);
@@ -75,7 +75,7 @@ FileHandle WindowsFilesystem::OpenForReading(StringView filepath, bool allow_wri
     DWORD create_mode = OPEN_EXISTING;
     DWORD attributes = FILE_ATTRIBUTE_NORMAL;
 
-    const TCHAR* win32_filepath = AllocatePath(filepath);
+    const wchar_t* win32_filepath = AllocatePath(filepath);
     file_handle.native_handle = CreateFile(win32_filepath, access_flags, share_mode, NULL, create_mode, attributes, NULL);
     ReleasePath(win32_filepath);
 
@@ -99,7 +99,7 @@ FileHandle WindowsFilesystem::OpenForWriting(StringView filepath, bool allow_rea
     DWORD create_mode = append ? OPEN_ALWAYS : CREATE_ALWAYS;
     DWORD attributes = FILE_ATTRIBUTE_NORMAL;
 
-    const TCHAR* win32_filepath = AllocatePath(filepath);
+    const wchar_t* win32_filepath = AllocatePath(filepath);
     file_handle.native_handle = CreateFile(win32_filepath, access_flags, share_mode, NULL, create_mode, attributes, NULL);
     ReleasePath(win32_filepath);
 
