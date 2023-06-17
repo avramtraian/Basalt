@@ -94,7 +94,7 @@ FileHandle WindowsFilesystem::OpenForWriting(StringView filepath, bool allow_rea
     m_last_error_code = EFilesystemError::Unknown;
     FileHandle file_handle = {};
 
-    DWORD access_flags = GENERIC_READ;
+    DWORD access_flags = GENERIC_WRITE;
     DWORD share_mode = allow_reading_while_open ? FILE_SHARE_READ : 0;
     DWORD create_mode = append ? OPEN_ALWAYS : CREATE_ALWAYS;
     DWORD attributes = FILE_ATTRIBUTE_NORMAL;
