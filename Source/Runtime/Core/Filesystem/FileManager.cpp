@@ -22,7 +22,7 @@ bool FileManager::Initialize(const FileManagerDescription& description)
         return false;
     }
 
-    s_file_manager = bnew FileManagerData();
+    s_file_manager = btnew FileManagerData();
     if (!s_file_manager)
     {
         // Failed to allocate memory for the file manager data.
@@ -61,7 +61,7 @@ void FileManager::Shutdown()
     // Release the internal filesystem.
     s_file_manager->filesystem.Release();
 
-    delete s_file_manager;
+    btdelete s_file_manager;
     s_file_manager = nullptr;
 }
 

@@ -23,7 +23,7 @@ bool Logger::Initialize(const LoggerDescription& description)
         return false;
     }
 
-    g_logger = bnew Logger();
+    g_logger = btnew Logger();
 
     Check(g_logger);
     if (!g_logger)
@@ -58,7 +58,7 @@ void Logger::Shutdown()
     g_logger->m_pages_buffer.Release();
     g_logger->m_formatting_buffer.Release();
 
-    delete g_logger;
+    btdelete g_logger;
     g_logger = nullptr;
 }
 
@@ -268,7 +268,7 @@ StringView Logger::WriteToPage(ELogCategory category, ELogSeverity severity, con
     Memory::Copy(message_data, buffer, message_bytes_count);
     if (heap_buffer)
     {
-        delete[] heap_buffer;
+        btdelete[] heap_buffer;
     }
 
     return StringView(message_data, message_bytes_count - 1);
@@ -283,8 +283,8 @@ U8* Logger::FormatLogMessage(Span<U8> stack_buffer, Usize* out_written_bytes, co
     while (written >= buffer_size)
     {
         buffer_size *= 2;
-        delete[] heap_buffer;
-        heap_buffer = bnew U8[buffer_size];
+        btdelete[] heap_buffer;
+        heap_buffer = btnew U8[buffer_size];
 
         written = vsnprintf((char*)heap_buffer, buffer_size, format, arg_list);
     }

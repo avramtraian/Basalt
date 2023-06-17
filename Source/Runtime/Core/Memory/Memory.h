@@ -109,7 +109,12 @@ public:
  * This macro should always be used instead of the default operator new, as
  * it provides memory tracking capabilities.
  */
-#define bnew                            new(__FILE__, __LINE__)
+#define btnew                           new(__FILE__, __LINE__)
+
+/**
+ * Wrapper around operator btdelete.
+ */
+#define btdelete                        delete
 
 /** Default new operator. Allows third-party code to use the Basalt memory system. */
 NODISCARD void* operator new(Basalt::Usize bytesCount);
@@ -117,5 +122,5 @@ NODISCARD void* operator new(Basalt::Usize bytesCount);
 /** New operator that provides information about the file and line number from where the allocation is called. */
 NODISCARD void* operator new(Basalt::Usize bytesCount, const char* fileName, Basalt::U32 lineNumber) noexcept;
 
-/** Default delete operator. */
+/** Default btdelete operator. */
 void operator delete(void* memoryBlock);

@@ -133,7 +133,7 @@ void WindowsFilesystem::ReleasePath(const wchar_t* filepath) const
     // TODO(traian): Because the path is allocated using the Buffer API, this deallocation
     //               will not be properly tracked by the memory profiler. Maybe `AllocatePath`
     //               should return a buffer object instead of the raw pointer?
-    delete[] filepath;
+    btdelete[] filepath;
 }
 
 } // namespace Basalt

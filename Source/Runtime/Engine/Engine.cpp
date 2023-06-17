@@ -45,7 +45,7 @@ bool Engine::Initialize(const EngineDescription& description)
 
 void Engine::Shutdown()
 {
-    delete g_engine;
+    btdelete g_engine;
     g_engine = nullptr;
 }
 

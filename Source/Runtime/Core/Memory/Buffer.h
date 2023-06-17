@@ -40,13 +40,13 @@ public:
     {
         Release();
 
-        data = bnew U8[in_size];
+        data = btnew U8[in_size];
         size = in_size;
     }
 
     FORCEINLINE void Release()
     {
-        delete[] data;
+        btdelete[] data;
         size = 0;
     }
 

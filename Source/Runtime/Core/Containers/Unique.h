@@ -24,7 +24,7 @@ public:
     FORCEINLINE static Unique<T> Create(Args&&... args)
     {
         Unique<T> result;
-        result.m_instance = bnew T(Forward<Args>(args)...);
+        result.m_instance = btnew T(Forward<Args>(args)...);
         return result;
     }
 
@@ -122,7 +122,7 @@ public:
     {
         if (m_instance)
         {
-            delete m_instance;
+            btdelete m_instance;
             m_instance = nullptr;
         }
     }

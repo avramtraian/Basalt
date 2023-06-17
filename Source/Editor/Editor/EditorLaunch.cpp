@@ -8,7 +8,7 @@ namespace Basalt
 
 Engine* InstantiateEngine()
 {
-    return bnew EditorEngine();
+    return btnew EditorEngine();
 }
 
 } // namespace Basalt
