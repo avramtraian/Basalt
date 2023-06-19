@@ -47,6 +47,7 @@ public:
     FORCEINLINE void Release()
     {
         btdelete[] data;
+        data = nullptr;
         size = 0;
     }
 
