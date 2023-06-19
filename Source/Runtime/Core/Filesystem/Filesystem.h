@@ -137,6 +137,52 @@ public:
      *         error occured. Inspect `GetLastErrorCode()` for more details.
      */
     virtual FileHandle OpenForWriting(StringView filepath, bool allow_reading_while_open, bool append) = 0;
+
+    /**
+     * Closes the given file handle.
+     * 
+     * @param file_handle Handle to the file to close. If this is an invalid file handle,
+     *                    no action will be performed.
+     */
+    virtual void CloseFileHandle(FileHandle& file_handle) = 0;
+
+    /**
+     * Reads data from a file.
+     * 
+     * Error codes:
+     *  - InvalidFileHandle => The provided file handle is invalid.
+     *  - Unknown           => An unknown error occurred.
+     * 
+     * @param file_handle           The handle to the file to read from.
+     * @param buffer                The memory buffer where the read bytes will be written to.
+     * @param bytes_count_to_read   The maximum number of bytes to read from. The provided
+     *                              buffer must be at least this bytes long.
+     * @param file_offset           The offset (in bytes) where the file reading should begin from.
+     *                              If this is greater or equal to the total file size, no action will
+     *                              be performed - not an error.
+     * 
+     * @return The number of bytes read from the file. If this is not less or equal to `bytes_count_to_read`,
+     *         or it is equal to -1, an error occurred. Inspect `GetLastErrorCode()` for more details.
+     */
+    virtual U64 ReadFromFile(FileHandle file_handle, void* buffer, U64 bytes_count_to_read, U64 file_offset) = 0;
+
+    /**
+     * Writes data to a file.
+     * 
+     * Error codes:
+     *  - InvalidFileHandle => The provided file handle is invalid.
+     *  - Unknown => An unknown error occurred.
+     * 
+     * @param file_handle   The handle to the file to write to.
+     * @param buffer        The memory buffer where the bytes to write to the file are located.
+     * @param bytes_count   The number of bytes to write to the file. The provided buffer
+     *                      must be at least this bytes long. If this value is 0, an assert
+     *                      will be issued.
+     * 
+     * @return The number of bytes written to the file. If this value is not equal to
+     *         `bytes_count` an error occurred. Inspect `GetLastErrorCode()` for more details.
+     */
+    virtual U64 WriteToFile(FileHandle file_handle, const void* buffer, U64 bytes_count) = 0;
 };
 
 } // namespace Basalt

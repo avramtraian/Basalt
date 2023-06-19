@@ -121,6 +121,8 @@ EFileError FileManager::CreateWriter(FileWriter* out_writer, StringView filepath
     out_writer->m_file_handle = handle;
     out_writer->m_is_valid = true;
     out_writer->m_path = filepath;
+
+    out_writer->m_buffer.Invalidate(128);
     
     Check(out_writer->IsValid());
     return EFileError::Success;
@@ -214,6 +216,34 @@ FileReader::~FileReader()
     Close();
 }
 
+EFileError FileReader::ReadBytes(void* buffer, Usize bytes_count_to_read, Usize* read_bytes_count)
+{
+    if (!IsValid())
+    {
+        return EFileError::InvalidFileHandle;
+    }
+
+    if (bytes_count_to_read == 0)
+    {
+        return EFileError::Success;
+    }
+
+    U64 read = s_file_manager->filesystem->ReadFromFile(m_file_handle, buffer, bytes_count_to_read, m_file_offset);
+    if (read > bytes_count_to_read)
+    {
+        // TODO(traian): Set the proper error code.
+        return EFileError::Unknown;
+    }
+
+    if (read_bytes_count)
+    {
+        *read_bytes_count = read;
+    }
+
+    m_file_offset += read;
+    return EFileError::Success;
+}
+
 void FileReader::Close()
 {
     if (!m_is_valid)
@@ -229,6 +259,57 @@ FileWriter::~FileWriter()
     Close();
 }
 
+EFileError FileWriter::WriteBytes(const void* buffer, U64 bytes_count)
+{
+    if (!IsValid())
+    {
+        return EFileError::InvalidFileHandle;
+    }
+
+    if (bytes_count == 0)
+    {
+        return EFileError::Success;
+    }
+
+    if (m_buffer.IsEmpty())
+    {
+        U64 written = s_file_manager->filesystem->WriteToFile(m_file_handle, buffer, bytes_count);
+        if (written < bytes_count)
+        {
+            return EFileError::Unknown;
+        }
+    }
+    else
+    {
+        U64 offset = 0;
+        while (offset < bytes_count)
+        {
+            U64 size = Math::Min(bytes_count - offset, (U64)m_buffer.Available());
+            m_buffer.PushBytes((const U8*)buffer + offset, size);
+            offset += size;
+        
+            if (m_buffer.Available() == 0)
+            {
+                Flush();
+            }
+        }
+    }
+
+    return EFileError::Success;
+}
+
+void FileWriter::Flush()
+{
+    // Explicitly flushing an invalid file writer will trigger an assert.
+    Check(IsValid());
+
+    if (!m_buffer.IsEmpty())
+    {
+        s_file_manager->filesystem->WriteToFile(m_file_handle, m_buffer.Data(), m_buffer.Offset());
+        m_buffer.Reset();
+    }
+}
+
 void FileWriter::Close()
 {
     if (!m_is_valid)
@@ -236,7 +317,11 @@ void FileWriter::Close()
         return;
     }
 
+    Flush();
+    m_buffer.Release();
+    s_file_manager->filesystem->CloseFileHandle(m_file_handle);
     m_is_valid = false;
 }
 
 } // namespace Basalt
+ 

@@ -4,6 +4,7 @@
 
 #include "Core/CoreDefines.h"
 #include "Core/CoreTypes.h"
+#include "Core/Memory/StackBuffer.h"
 #include "Core/Misc/DateTime.h"
 #include "Core/Misc/IterationDecision.h"
 #include "Filesystem.h"
@@ -18,32 +19,37 @@ enum class EFileError
 {
     /** The operation was successful. */
     Success = 0,
+    /** An unknown error occurred. */
+    Unknown = 0,
+
     /** The file located at the given path wasn't found in the filesystem. */
     FileNotFound,
     /** No filesystem was initialized at the time of calling the function. */
     NoFilesystem,
     /** The file reader or writer was already initialized. */
     AlreadyInitialized,
+    /** The internal/provided file handle is not valid. */
+    InvalidFileHandle,
 
     MaxEnumValue
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////// FILE READING API ///////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /**
- * Flags that describe how the file should be written to.
+ * Flags that describe how the file should be read from.
+ * Each flag represents a bit, so the flags can be | together.
  */
-struct EFileWrite
+struct EFileRead
 {
     enum Type : U32
     {
         /** No flags specified. */
         None = 0,
-
-        /** If the file doesn't exist, it will be created */
-        AlwaysOpen,
-        /** Allows other processes to read this file while it is opened for writing by this process. */
-        AllowReadingWhileOpen,
-        /** Append the data to the previously existing data. */
-        Append,
+        /** Allows other processes to write to this file while it is opened for reading by this process. */
+        AllowWritingWhileOpen   = BIT(0),
     };
 };
 
@@ -64,6 +70,20 @@ public:
     FORCEINLINE operator bool() const { return m_is_valid; }
 
 public:
+    EFileError ReadBytes(void* buffer, Usize bytes_count_to_read, Usize* read_bytes_count);
+
+    template<typename T>
+    FORCEINLINE EFileError Read(T* destination_object_instance)
+    {
+        return ReadBytes(Buffer(destination_object_instance, sizeof(T)));
+    }
+
+    template<typename T>
+    FORCEINLINE EFileError ReadArray(T* destination_array, Usize count)
+    {
+        return ReadBytes(Buffer(destination_array, count * sizeof(T)));
+    }
+
     void Close();
 
 private:
@@ -73,21 +93,33 @@ private:
 
     bool m_is_valid = false;
 
+    U64 m_file_offset = 0;
+
 private:
     friend class FileManager;
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////// FILE WRITING API ///////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /**
- * Flags that describe how the file should be read from.
+ * Flags that describe how the file should be written to.
+ * Each flag represents a bit, so the flags can be | together.
  */
-struct EFileRead
+struct EFileWrite
 {
     enum Type : U32
     {
         /** No flags specified. */
         None = 0,
-        /** Allows other processes to write to this file while it is opened for reading by this process. */
-        AllowWritingWhileOpen,
+
+        /** If the file doesn't exist, it will be created */
+        AlwaysOpen              = BIT(0),
+        /** Allows other processes to read this file while it is opened for writing by this process. */
+        AllowReadingWhileOpen   = BIT(1),
+        /** Append the data to the previously existing data. */
+        Append                  = BIT(2),
     };
 };
 
@@ -108,6 +140,27 @@ public:
     FORCEINLINE operator bool() const { return m_is_valid; }
 
 public:
+    EFileError WriteBytes(const void* buffer, U64 bytes_count);
+    
+    template<typename T>
+    FORCEINLINE EFileError Write(const T& object_instance)
+    {
+        return WriteBytes(&object_instance, sizeof (T));
+    }
+
+    template<typename T>
+    FORCEINLINE EFileError WriteArray(const T* elements, Usize count)
+    {
+        return WriteBytes(elements, count * sizeof(T));
+    }
+
+    FORCEINLINE EFileError Write(StringView utf8_string)
+    {
+        return WriteBytes(utf8_string.Data(), utf8_string.BytesCount());
+    }
+
+    void Flush();
+
     void Close();
 
 private:
@@ -117,9 +170,15 @@ private:
 
     bool m_is_valid = false;
 
+    StackBuffer m_buffer;
+
 private:
     friend class FileManager;
 };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////// FILE INFORMATION API /////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Structure that contains the information obtained by reading the file properties.
@@ -144,6 +203,10 @@ struct BASALT_S_API FileInformation
     /** Whether or not the file or directory is read-only. */
     bool is_readonly;
 };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////// FILE MANAGER API ///////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Base class for all directory visitors.

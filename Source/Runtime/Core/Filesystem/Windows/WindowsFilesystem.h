@@ -31,6 +31,12 @@ public:
 
     virtual FileHandle OpenForWriting(StringView filepath, bool allow_reading_while_open, bool append) override;
 
+    virtual void CloseFileHandle(FileHandle& file_handle) override;
+
+    virtual U64 ReadFromFile(FileHandle file_handle, void* buffer, U64 bytes_count_to_read, U64 file_offset) override;
+
+    virtual U64 WriteToFile(FileHandle file_handle, const void* buffer, U64 bytes_count) override;
+
 private:
     const wchar_t* AllocatePath(StringView filepath) const;
     void ReleasePath(const wchar_t* filepath) const;

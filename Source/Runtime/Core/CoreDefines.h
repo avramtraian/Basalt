@@ -167,6 +167,9 @@
 #define LIKELY                          [[likely]]
 #define UNLIKELY                        [[unlikely]]
 
+#define LOW_32BIT                       ((U64)0xFFFFFFFF)
+#define HIGH_32BIT                      ((U64)(LOW_32BIT << 32))
+
 /** Bit manipulation utilities. */
 #define BIT(N)                          (1 << (N))
 #define GET_BIT(X, N)                   ((X) & BIT(N))

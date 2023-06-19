@@ -120,6 +120,112 @@ FileHandle WindowsFilesystem::OpenForWriting(StringView filepath, bool allow_rea
     return file_handle;
 }
 
+void WindowsFilesystem::CloseFileHandle(FileHandle& file_handle)
+{
+    if (!IsFileHandleValid(file_handle))
+    {
+        // If the file handle is invalid, no action should be performed.
+        return;
+    }
+
+    CloseHandle(*file_handle);
+    file_handle.native_handle = INVALID_HANDLE_VALUE;
+    m_last_error_code = EFilesystemError::Success;
+}
+
+U64 WindowsFilesystem::ReadFromFile(FileHandle file_handle, void* buffer, U64 bytes_count_to_read, U64 file_offset)
+{
+    if (!IsFileHandleValid(file_handle))
+    {
+        m_last_error_code = EFilesystemError::InvalidFileHandle;
+        return -1;
+    }
+
+    if (file_handle.file_size >= file_offset)
+    {
+        m_last_error_code = EFilesystemError::Success;
+        return 0;
+    }
+
+    constexpr U64 MaxReadCount = 0xFFFFFFFF;
+
+    U64 total_bytes_to_read = Math::Min(file_handle.file_size - file_offset, bytes_count_to_read);
+    if (total_bytes_to_read <= MaxReadCount)
+    {
+        // The read operation can be performed with a single call to the Win32 API.
+
+        OVERLAPPED overlapped = {};
+        overlapped.Offset = file_offset & LOW_32BIT;
+        overlapped.OffsetHigh = file_offset >> 32;
+
+        DWORD read;
+        BOOL result = ReadFile(*file_handle, buffer, (DWORD)total_bytes_to_read, &read, &overlapped);
+        Check(read == total_bytes_to_read);
+
+        if (!result)
+        {
+            m_last_error_code = EFilesystemError::Unknown;
+            return -1;
+        }
+    }
+    else
+    {
+        U64 offset = 0;
+        while (offset < total_bytes_to_read)
+        {
+            OVERLAPPED overlapped = {};
+            overlapped.Offset = (file_offset + offset) & LOW_32BIT;
+            overlapped.OffsetHigh = (file_offset + offset) >> 32;
+
+            U64 bytes_to_read = Math::Min(total_bytes_to_read - offset, MaxReadCount);
+            DWORD read;
+            BOOL result = ReadFile(*file_handle, buffer, (DWORD)total_bytes_to_read, &read, &overlapped);
+            offset += read;
+
+            if (!result)
+            {
+                m_last_error_code = EFilesystemError::Unknown;
+                return -1;
+            }
+        }
+    }
+
+    m_last_error_code = EFilesystemError::Success;
+    return total_bytes_to_read;
+}
+
+U64 WindowsFilesystem::WriteToFile(FileHandle file_handle, const void* buffer, U64 bytes_count)
+{
+    Check(bytes_count > 0);
+
+    if (!IsFileHandleValid(file_handle))
+    {
+        m_last_error_code = EFilesystemError::InvalidFileHandle;
+        return 0;
+    }
+
+    constexpr U64 MaxWriteCount = 0xFFFFFFFF;
+
+    U64 offset = 0;
+    while (offset < bytes_count)
+    {
+        DWORD bytes_to_write = (DWORD)Math::Min(bytes_count - offset, MaxWriteCount);
+        DWORD bytes_written;
+        BOOL result = WriteFile(*file_handle, (const U8*)buffer + offset, bytes_to_write, &bytes_written, NULL);
+        offset += bytes_written;
+
+        if (!result)
+        {
+            // TODO(traian): Set the proper error code.
+            m_last_error_code = EFilesystemError::Unknown;
+            return 0;
+        }
+    }
+
+    m_last_error_code = EFilesystemError::Success;
+    return bytes_count;
+}
+
 const wchar_t* WindowsFilesystem::AllocatePath(StringView filepath) const
 {
     Buffer utf16_buffer = Buffer(m_filepath_buffer, sizeof(m_filepath_buffer) - sizeof(wchar_t));
