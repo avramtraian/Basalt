@@ -75,4 +75,15 @@ private:
     StringView m_title;
 };
 
+class BASALT_API WindowModeChangedEvent : public Event
+{
+public:
+    FORCEINLINE static EEventType GetStaticType() { return EEventType::WindowModeChanged; }
+
+public:
+    FORCEINLINE WindowModeChangedEvent()
+        : Event(GetStaticType())
+    {}
+};
+
 } // namespace Basalt

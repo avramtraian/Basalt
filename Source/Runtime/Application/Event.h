@@ -15,7 +15,7 @@ enum class EEventType : U8
     Unknown = 0,
 
     // Window events.
-    WindowClosed, WindowResized, WindowMoved, WindowTitleChanged,
+    WindowClosed, WindowResized, WindowMoved, WindowTitleChanged, WindowModeChanged,
     
     // Mouse events.
     MouseMoved, MouseButtonPressed, MouseButtonReleased, MouseWheelScrolled,
