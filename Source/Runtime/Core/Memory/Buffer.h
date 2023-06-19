@@ -35,6 +35,11 @@ public:
         Invalidate(initial_size);
     }
 
+    FORCEINLINE Buffer(void* in_data, Usize in_size)
+        : data((U8*)in_data)
+        , size(in_size)
+    {}
+
 public:
     FORCEINLINE void Invalidate(Usize in_size)
     {
