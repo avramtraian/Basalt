@@ -8,7 +8,7 @@
 namespace Basalt
 {
 
-Usize StringBuilder::ToUTF16(StringView utf8_view, Buffer utf16_buffer)
+Usize StringBuilder::ToUTF16(StringView utf8_view, Buffer utf16_buffer, bool include_null_termination_char)
 {
     Usize offset = 0;
     Usize buffer_offset = 0;
@@ -32,10 +32,22 @@ Usize StringBuilder::ToUTF16(StringView utf8_view, Buffer utf16_buffer)
         buffer_offset += written;
     }
 
+    if (include_null_termination_char && utf16_buffer.As<wchar_t>()[buffer_offset / 2 - 1] != 0)
+    {
+        if (buffer_offset + sizeof(wchar_t) > utf16_buffer.size)
+        {
+            // The buffer is not sufficient to also store the null-termination character.
+            return InvalidSize;
+        }
+
+        utf16_buffer.As<wchar_t>()[buffer_offset / 2] = 0;
+        buffer_offset += sizeof(wchar_t);
+    }
+
     return buffer_offset;
 }
 
-Usize StringBuilder::DynamicToUTF16(StringView utf8_view, Buffer& utf16_buffer)
+Usize StringBuilder::ToUTF16Dynamic(StringView utf8_view, Buffer& utf16_buffer, bool include_null_termination_char)
 {
     if (utf16_buffer.size < utf8_view.BytesCount() * 2)
     {
@@ -66,12 +78,94 @@ Usize StringBuilder::DynamicToUTF16(StringView utf8_view, Buffer& utf16_buffer)
         buffer_offset += written;
     }
 
+    if (include_null_termination_char && utf16_buffer.As<wchar_t>()[buffer_offset / 2 - 1] != 0)
+    {
+        if (buffer_offset + sizeof(wchar_t) > utf16_buffer.size)
+        {
+            utf16_buffer.Resize(buffer_offset + sizeof(wchar_t));
+        }
+
+        utf16_buffer.As<wchar_t>()[buffer_offset / 2] = 0;
+        buffer_offset += sizeof(wchar_t);
+    }
+
     return buffer_offset;
 }
 
-void StringBuilder::SetCapacity(Usize new_capacity)
+Usize StringBuilder::FromUTF16(const wchar_t* utf16_string, Buffer utf8_buffer, bool include_null_termination_char)
 {
+    Usize buffer_offset = 0;
 
+    while (*utf16_string)
+    {
+        U32 codepoint_width;
+        UnicodeCodepoint codepoint = UTF16Calls::BytesToCodepoint(utf16_string, &codepoint_width);
+        Check(codepoint_width > 0); // Invalid UTF-16 string.
+        utf16_string += codepoint_width / 2;
+
+        U8 buffer[4] = {};
+        U32 written = UTF8Calls::CodepointToBytes(codepoint, buffer);
+
+        if (buffer_offset + written > utf8_buffer.size)
+        {
+            // The buffer is not sufficient.
+            return InvalidSize;
+        }
+
+        Memory::Copy(utf8_buffer.data + buffer_offset, buffer, written);
+        buffer_offset += written;
+    }
+
+    if (include_null_termination_char)
+    {
+        if (buffer_offset == utf8_buffer.size)
+        {
+            // The buffer is not sufficient to also store the null-termination character.
+            return InvalidSize;
+        }
+
+        utf8_buffer.data[buffer_offset] = 0;
+        ++buffer_offset;
+    }
+
+    return buffer_offset;
+}
+
+Usize StringBuilder::FromUTF16Dynamic(const wchar_t* utf16_string, Buffer& utf8_buffer, bool include_null_termination_char)
+{
+    Usize buffer_offset = 0;
+
+    while (*utf16_string)
+    {
+        U32 codepoint_width;
+        UnicodeCodepoint codepoint = UTF16Calls::BytesToCodepoint(utf16_string, &codepoint_width);
+        Check(codepoint_width > 0); // Invalid UTF-16 string.
+        utf16_string += codepoint_width / 2;
+
+        U8 buffer[4] = {};
+        U32 written = UTF8Calls::CodepointToBytes(codepoint, buffer);
+
+        if (buffer_offset + written > utf8_buffer.size)
+        {
+            utf8_buffer.Resize(2 * utf8_buffer.size);
+        }
+
+        Memory::Copy(utf8_buffer.data + buffer_offset, buffer, written);
+        buffer_offset += written;
+    }
+
+    if (include_null_termination_char)
+    {
+        if (buffer_offset == utf8_buffer.size)
+        {
+            utf8_buffer.Resize(buffer_offset + sizeof(char));
+        }
+
+        utf8_buffer.data[buffer_offset] = 0;
+        ++buffer_offset;
+    }
+
+    return buffer_offset;
 }
 
 } // namespace Basalt

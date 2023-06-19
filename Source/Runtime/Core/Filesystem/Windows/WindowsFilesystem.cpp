@@ -228,24 +228,18 @@ U64 WindowsFilesystem::WriteToFile(FileHandle file_handle, const void* buffer, U
 
 const wchar_t* WindowsFilesystem::AllocatePath(StringView filepath) const
 {
-    Buffer utf16_buffer = Buffer(m_filepath_buffer, sizeof(m_filepath_buffer) - sizeof(wchar_t));
-    Usize written_count = StringBuilder::ToUTF16(filepath, utf16_buffer);
+    Buffer utf16_buffer = Buffer(m_filepath_buffer, sizeof(m_filepath_buffer));
+    Usize written_count = StringBuilder::ToUTF16(filepath, utf16_buffer, true);
     wchar_t* win32_filepath = utf16_buffer.As<wchar_t>();
 
     if (written_count == InvalidSize)
     {
         // The stack buffer is not sufficient to store the filepath.
         Buffer heap_buffer;
-        written_count = StringBuilder::DynamicToUTF16(filepath, heap_buffer);
+        written_count = StringBuilder::ToUTF16Dynamic(filepath, heap_buffer, true);
         win32_filepath = heap_buffer.As<wchar_t>();
-
-        if (heap_buffer.size == written_count)
-        {
-            heap_buffer.Resize(heap_buffer.size + sizeof(wchar_t));
-        }
     }
 
-    win32_filepath[written_count / 2] = 0;
     return win32_filepath;
 }
 
