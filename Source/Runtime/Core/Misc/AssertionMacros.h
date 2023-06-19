@@ -29,10 +29,12 @@
      * macro simply expands to nothing. It is important to remember that if the
      * debug checks are disabled, the given expression will not be called.
      */
-    #define CheckDebug(EXPRESSION)                      \
-        if (!(EXPRESSION))                              \
-        {                                               \
-            BASALT_DEBUGBREAK;                          \
+    #define CheckDebug(EXPRESSION)                                          \
+        if (!(EXPRESSION))                                                  \
+        {                                                                   \
+            ::Basalt::Debug::ReportAssertFailed(                            \
+                #EXPRESSION, __FILE__, BT_FUNCTION, __LINE__);              \
+            BASALT_DEBUGBREAK;                                              \
         }
     
      /**
@@ -43,10 +45,12 @@
       * 
       * If the expression fails, a formatted message will be logged.
       */
-    #define CheckDebugf(EXPRESSION, ...)                \
-        if (!(EXPRESSION))                              \
-        {                                               \
-            BASALT_DEBUGBREAK;                          \
+    #define CheckDebugf(EXPRESSION, ...)                                    \
+        if (!(EXPRESSION))                                                  \
+        {                                                                   \
+            ::Basalt::Debug::ReportAssertFailed(                            \
+                #EXPRESSION, __FILE__, BT_FUNCTION, __LINE__, __VA_ARGS__); \
+            BASALT_DEBUGBREAK;                                              \
         }
 #else
     #define CheckDebug(...) // Excluded from build.
@@ -61,10 +65,12 @@
      * to remember that if the debug checks are disabled, the given expression
      * will not be called.
      */
-    #define Check(EXPRESSION)                           \
-        if (!(EXPRESSION))                              \
-        {                                               \
-            BASALT_DEBUGBREAK;                          \
+    #define Check(EXPRESSION)                                               \
+        if (!(EXPRESSION))                                                  \
+        {                                                                   \
+            ::Basalt::Debug::ReportAssertFailed(                            \
+                #EXPRESSION, __FILE__, BT_FUNCTION, __LINE__);              \
+            BASALT_DEBUGBREAK;                                              \
         }
     
      /**
@@ -76,12 +82,31 @@
       *
       * If the expression fails, a formatted message will be logged.
       */
-    #define Checkf(EXPRESSION, ...)                     \
-        if (!(EXPRESSION))                              \
-        {                                               \
-            BASALT_DEBUGBREAK;                          \
+    #define Checkf(EXPRESSION, ...)                                         \
+        if (!(EXPRESSION))                                                  \
+        {                                                                   \
+            ::Basalt::Debug::ReportAssertFailed(                            \
+                #EXPRESSION, __FILE__, BT_FUNCTION, __LINE__, __VA_ARGS__); \
+            BASALT_DEBUGBREAK;                                              \
         }
 #else
     #define Check(...) // Excluded from build.
     #define Checkf(...) // Excluded from build.
 #endif // Checks enabled.
+
+namespace Basalt
+{
+    
+class BASALT_API Debug
+{
+public:
+    static void ReportAssertFailed(
+        const char* expression,
+        const char* filepath,
+        const char* function_name,
+        U32 line_number,
+        const char* message = nullptr, ...
+    );
+};
+
+} // namespace Basalt

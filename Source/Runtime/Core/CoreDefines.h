@@ -151,6 +151,7 @@
 #if BASALT_COMPILER_MSVC
     #define FORCEINLINE                 __forceinline
     #define BASALT_DEBUGBREAK           __debugbreak()
+    #define BT_FUNCTION                 __FUNCSIG__
 #endif // BASALT_COMPILER_MSVC
 
 #if BASALT_COMPILER_MSVC
