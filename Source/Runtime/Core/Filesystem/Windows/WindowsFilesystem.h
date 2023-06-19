@@ -26,7 +26,6 @@ public:
 
 public:
     virtual U64 FileSize(StringView filepath) const override;
-    virtual U64 FileSize(FileHandle file_handle) const override;
 
     virtual FileHandle OpenForReading(StringView filepath, bool allow_writing_while_open) override;
 
@@ -41,7 +40,7 @@ private:
 
     FilesystemDescription m_description;
 
-    EFilesystemError m_last_error_code = EFilesystemError::Success;
+    mutable EFilesystemError m_last_error_code = EFilesystemError::Success;
 
     mutable wchar_t m_filepath_buffer[256] = {};
 };
