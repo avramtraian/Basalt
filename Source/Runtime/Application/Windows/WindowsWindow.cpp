@@ -163,6 +163,27 @@ void WindowsWindow::SetMode(EWindowMode mode)
     }
 
     m_window_mode = mode;
+
+    if (m_window_mode == EWindowMode::Fullscreen)
+    {
+        U32 width, height;
+        I32 position_x, position_y;
+        GetFullscreenDimensions(&width, &height, &position_x, &position_y);
+
+        ::SetWindowLong(m_window_handle, GWL_STYLE, WS_POPUP);
+        ::SetWindowPos(m_window_handle, HWND_TOP, position_x, position_y, width, height, 0);
+    }
+    else if (m_window_mode == EWindowMode::Windowed)
+    {
+        // TODO(traian): Implement!
+        Check(false);
+    }
+
+    if (m_event_callback)
+    {
+        WindowModeChangedEvent ev;
+        m_event_callback(m_window_handle, &ev);
+    }
 }
 
 void WindowsWindow::ProcessMessages()
