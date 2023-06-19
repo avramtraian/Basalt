@@ -16,10 +16,12 @@ namespace Basalt
  */
 struct FileHandle
 {
-    // NOTE(traian): The default value represents the Win32 invalid handle value.
 
     /** The native file handle. */
     void* native_handle = (void*)(-1);
+
+    /** The size of the file, expressed in bytes. */
+    U64 file_size = 0;
 };
 
 enum class EFilesystemType : U8
@@ -62,9 +64,18 @@ public:
     virtual EFilesystemError GetLastErrorCode() const = 0;
 
 public:
+    /**
+     * Gets the size (in bytes) of a file.
+     * 
+     * Error codes:
+     *  - FileNotFound      => The provided file handle is invalid.
+     *  - FileIsDirectory   => The provided file handle represents a directory.
+     * 
+     * @param filepath The path to the file.
+     * @return The size (in bytes) of the file, or -1 if an error occurs.
+     */
     virtual U64 FileSize(StringView filepath) const = 0;
 
-    virtual U64 FileSize(FileHandle file_handle) const = 0;
 
     virtual FileHandle OpenForReading(StringView filepath, bool allow_writing_while_open) = 0;
 

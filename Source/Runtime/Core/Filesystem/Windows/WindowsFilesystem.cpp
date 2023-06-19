@@ -50,25 +50,25 @@ U64 WindowsFilesystem::FileSize(StringView filepath) const
     BOOL result = GetFileAttributesEx(win32_filepath, GetFileExInfoStandard, &attributes);
     ReleasePath(win32_filepath);
     
-    if (result == FALSE || attributes.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+    if (!result)
     {
+        m_last_error_code = EFilesystemError::FileNotFound;
         return -1;
     }
 
-    return (U64)attributes.nFileSizeLow | ((U64)attributes.nFileSizeHigh << 32);
-}
+    if (attributes.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+    {
+        m_last_error_code = EFilesystemError::FileIsDirectory;
+        return -1;
+    }
 
-U64 WindowsFilesystem::FileSize(FileHandle file_handle) const
-{
-    LARGE_INTEGER file_size;
-    BOOL result = GetFileSizeEx(file_handle.native_handle, &file_size);
-    return result ? file_size.QuadPart : -1;
+    m_last_error_code = EFilesystemError::Success;
+    return (U64)attributes.nFileSizeLow | ((U64)attributes.nFileSizeHigh << 32);
 }
 
 FileHandle WindowsFilesystem::OpenForReading(StringView filepath, bool allow_writing_while_open)
 {
-    m_last_error_code = EFilesystemError::Unknown;
-    FileHandle file_handle = {};
+    FileHandle file_handle;
 
     DWORD access_flags = GENERIC_READ;
     DWORD share_mode = FILE_SHARE_READ | (allow_writing_while_open ? FILE_SHARE_WRITE : 0);
@@ -85,14 +85,17 @@ FileHandle WindowsFilesystem::OpenForReading(StringView filepath, bool allow_wri
         return file_handle;
     }
 
+    LARGE_INTEGER file_size;
+    GetFileSizeEx(*file_handle, &file_size);
+    file_handle.file_size = file_size.QuadPart;
+
     m_last_error_code = EFilesystemError::Success;
     return file_handle;
 }
 
 FileHandle WindowsFilesystem::OpenForWriting(StringView filepath, bool allow_reading_while_open, bool append)
 {
-    m_last_error_code = EFilesystemError::Unknown;
-    FileHandle file_handle = {};
+    FileHandle file_handle;
 
     DWORD access_flags = GENERIC_WRITE;
     DWORD share_mode = allow_reading_while_open ? FILE_SHARE_READ : 0;
@@ -108,6 +111,10 @@ FileHandle WindowsFilesystem::OpenForWriting(StringView filepath, bool allow_rea
         m_last_error_code = EFilesystemError::FileNotFound;
         return file_handle;
     }
+
+    LARGE_INTEGER file_size;
+    GetFileSizeEx(*file_handle, &file_size);
+    file_handle.file_size = file_size.QuadPart;
 
     m_last_error_code = EFilesystemError::Success;
     return file_handle;
