@@ -115,25 +115,36 @@ FileHandle WindowsFilesystem::OpenForWriting(StringView filepath, bool allow_rea
 
 const wchar_t* WindowsFilesystem::AllocatePath(StringView filepath) const
 {
-    // NOTE(traian): The memory is not deallocated by the Buffer that stores it.
-    Buffer win32_path_buffer = Buffer(filepath.BytesCount() * 2);
-    Usize bytes_count = StringBuilder::DynamicToUTF16(filepath, win32_path_buffer);
+    Buffer utf16_buffer = Buffer(m_filepath_buffer, sizeof(m_filepath_buffer) - sizeof(wchar_t));
+    Usize written_count = StringBuilder::ToUTF16(filepath, utf16_buffer);
+    wchar_t* win32_filepath = utf16_buffer.As<wchar_t>();
 
-    if (bytes_count == win32_path_buffer.size)
+    if (written_count == InvalidSize)
     {
-        win32_path_buffer.Resize(bytes_count + sizeof(wchar_t));
+        // The stack buffer is not sufficient to store the filepath.
+        Buffer heap_buffer;
+        written_count = StringBuilder::DynamicToUTF16(filepath, heap_buffer);
+        win32_filepath = heap_buffer.As<wchar_t>();
+
+        if (heap_buffer.size == written_count)
+        {
+            heap_buffer.Resize(heap_buffer.size + sizeof(wchar_t));
+        }
     }
 
-    win32_path_buffer.As<wchar_t>()[bytes_count / sizeof(wchar_t)] = 0;
-    return win32_path_buffer.As<const wchar_t>();
+    win32_filepath[written_count / 2] = 0;
+    return win32_filepath;
 }
 
 void WindowsFilesystem::ReleasePath(const wchar_t* filepath) const
 {
-    // TODO(traian): Because the path is allocated using the Buffer API, this deallocation
-    //               will not be properly tracked by the memory profiler. Maybe `AllocatePath`
-    //               should return a buffer object instead of the raw pointer?
-    btdelete[] filepath;
+    if (filepath != &m_filepath_buffer[0])
+    {
+        // TODO(traian): Because the path is allocated using the Buffer API, this deallocation
+        //               will not be properly tracked by the memory profiler. Maybe `AllocatePath`
+        //               should return a buffer object instead of the raw pointer?
+        btdelete[] filepath;
+    }
 }
 
 } // namespace Basalt

@@ -33,22 +33,7 @@ public:
     virtual FileHandle OpenForWriting(StringView filepath, bool allow_reading_while_open, bool append) override;
 
 private:
-    /**
-     * Allocates memory to store the given filepath in Win32 API compatible mode.
-     * Usually, this means that the path is converted into UTF-16. Remember that
-     * all engine and game paths are UTF-8 encoded.
-     * The returned pointer must be manually released from memory, using `ReleasePath()`.
-     * 
-     * @param filepath The path to allocate memory for and convert. Must be valid UTF-8.
-     * @return Pointer to the newly allocated path. The pointer must be manually released.
-     */
     const wchar_t* AllocatePath(StringView filepath) const;
-
-    /**
-     * Releases a path from memory.
-     * 
-     * @param filepath The filepath to release.
-     */
     void ReleasePath(const wchar_t* filepath) const;
 
 private:
@@ -57,6 +42,8 @@ private:
     FilesystemDescription m_description;
 
     EFilesystemError m_last_error_code = EFilesystemError::Success;
+
+    mutable wchar_t m_filepath_buffer[256] = {};
 };
 
 } // namespace Basalt
