@@ -50,8 +50,11 @@ void Platform::CreateConsole()
         DestroyConsole();
     }
 
+#if BASALT_BUILD_SHIPPING
     AllocConsole();
     SetConsoleTitleA("Basalt Editor - Developer console");
+#endif // BASALT_BUILD_SHIPPING
+
     s_platform_data.console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
 }
 

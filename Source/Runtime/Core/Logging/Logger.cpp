@@ -38,6 +38,7 @@ bool Logger::Initialize(const LoggerDescription& description)
 
     g_logger->m_formatting_buffer.Invalidate(g_logger->m_page_size + 32);
 
+    // TODO(traian): The console log should not always be created in shipping configurations.
     Platform::CreateConsole();
     
     // Initialization is successful.

@@ -5,13 +5,18 @@ project "Basalt-Editor"
     location "%{wks.location}Source/Editor"
     BuildDefaultConfiguration()
 
-    kind "WindowedApp"
+    -- This value will get overwritten in shipping configurations.
+    kind "ConsoleApp"
     language "C++"
     cppdialect "C++17"
 
     staticruntime "Off"
     rtti "Off"
     exceptionhandling "Off"
+
+    filter "configurations:Game_Shipping"
+        kind "WindowedApp"
+    filter {}
 
     links
     {
