@@ -5,6 +5,9 @@
 #include "Utf16String.h"
 #include "Utf8String.h"
 
+#include <cstdarg>
+#include <cstdio>
+
 namespace Basalt
 {
 
@@ -166,6 +169,51 @@ Usize StringBuilder::FromUTF16Dynamic(const wchar_t* utf16_string, Buffer& utf8_
     }
 
     return buffer_offset;
+}
+
+Usize StringBuilder::FormatList(Buffer buffer, StringView format, va_list arg_list)
+{
+    // NOTE(traian): `vsnprintf` expects the provided unformatted string to be null-terminated.
+    //               When the custom formatter will be implemented, this allocation will be removed.
+    ScopedBuffer format_buffer = ScopedBuffer(format.BytesCount() + 1);
+    Memory::Copy(format_buffer.Data(), *format, format.BytesCount());
+    format_buffer.Data()[format.BytesCount()] = 0;
+
+    Usize written = vsnprintf(buffer.As<char>(), buffer.size, format_buffer.As<const char>(), arg_list);
+    Check(written >= 0); // Invalid UTF-8 string.
+
+    return (written < buffer.size) ? written + 1 : InvalidSize;
+}
+
+Usize StringBuilder::FormatDynamicList(Buffer& buffer, StringView format, va_list arg_list)
+{
+    if (buffer.size < format.BytesCount())
+    {
+        buffer.Resize(format.BytesCount() + format.BytesCount() / 4);
+    }
+
+    va_list original_arg_list = arg_list;
+    Usize written = InvalidSize;
+
+    // NOTE(traian): `vsnprintf` expects the provided unformatted string to be null-terminated.
+    //               When the custom formatter will be implemented, this allocation will be removed.
+    ScopedBuffer format_buffer = ScopedBuffer(format.BytesCount() + 1);
+    Memory::Copy(format_buffer.Data(), *format, format.BytesCount());
+    format_buffer.Data()[format.BytesCount()] = 0;
+
+    while (true)
+    {
+        Usize written = vsnprintf(buffer.As<char>(), buffer.size, format_buffer.As<const char>(), arg_list);
+        Check(written >= 0); // Invalid UTF-8 string.
+
+        if (written < buffer.size)
+        {
+            return written + 1;
+        }
+
+        buffer.Resize(2 * buffer.size);
+        arg_list = original_arg_list;
+    }
 }
 
 } // namespace Basalt
