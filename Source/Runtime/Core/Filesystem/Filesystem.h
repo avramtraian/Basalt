@@ -16,12 +16,16 @@ namespace Basalt
  */
 struct FileHandle
 {
-
+public:
     /** The native file handle. */
     void* native_handle = (void*)(-1);
 
     /** The size of the file, expressed in bytes. */
     U64 file_size = 0;
+
+public:
+    /** @return The native handle. */
+    FORCEINLINE void* operator*() const { return native_handle; }
 };
 
 enum class EFilesystemType : U8

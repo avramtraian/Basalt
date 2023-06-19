@@ -39,7 +39,7 @@ void WindowsFilesystem::Shutdown()
 
 bool WindowsFilesystem::IsFileHandleValid(FileHandle file_handle) const
 {
-    return (file_handle.native_handle != INVALID_HANDLE_VALUE);
+    return (*file_handle != INVALID_HANDLE_VALUE);
 }
 
 U64 WindowsFilesystem::FileSize(StringView filepath) const
@@ -76,10 +76,10 @@ FileHandle WindowsFilesystem::OpenForReading(StringView filepath, bool allow_wri
     DWORD attributes = FILE_ATTRIBUTE_NORMAL;
 
     const wchar_t* win32_filepath = AllocatePath(filepath);
-    file_handle.native_handle = CreateFile(win32_filepath, access_flags, share_mode, NULL, create_mode, attributes, NULL);
+    file_handle.native_handle = CreateFileW(win32_filepath, access_flags, share_mode, NULL, create_mode, attributes, NULL);
     ReleasePath(win32_filepath);
 
-    if (file_handle.native_handle == INVALID_HANDLE_VALUE)
+    if (*file_handle == INVALID_HANDLE_VALUE)
     {
         m_last_error_code = EFilesystemError::FileNotFound;
         return file_handle;
@@ -103,10 +103,10 @@ FileHandle WindowsFilesystem::OpenForWriting(StringView filepath, bool allow_rea
     DWORD attributes = FILE_ATTRIBUTE_NORMAL;
 
     const wchar_t* win32_filepath = AllocatePath(filepath);
-    file_handle.native_handle = CreateFile(win32_filepath, access_flags, share_mode, NULL, create_mode, attributes, NULL);
+    file_handle.native_handle = CreateFileW(win32_filepath, access_flags, share_mode, NULL, create_mode, attributes, NULL);
     ReleasePath(win32_filepath);
 
-    if (file_handle.native_handle == INVALID_HANDLE_VALUE)
+    if (*file_handle == INVALID_HANDLE_VALUE)
     {
         m_last_error_code = EFilesystemError::FileNotFound;
         return file_handle;
