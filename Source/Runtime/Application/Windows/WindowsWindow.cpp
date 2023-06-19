@@ -30,13 +30,17 @@ bool WindowsWindow::Initialize(const WindowDescription& description)
 
     m_position_x = description.client_x;
     m_position_y = description.client_y;
-    
-    ScopedBuffer title_buffer;
-    StringBuilder::DynamicToUTF16(StringView(*description.title, description.title.BytesCount()), title_buffer.RawBuffer());
 
+    m_window_mode = description.mode;
+
+    m_title = description.title;
+    
     DWORD window_ex_style = 0;
     DWORD window_style = 0;
     WindowsWindow::ReadWindowDescription(description, window_style, window_ex_style);
+
+    ScopedBuffer title_buffer;
+    StringBuilder::ToUTF16Dynamic(m_title.ToView(), title_buffer.RawBuffer(), true);
 
     // NOTE(traian): Creating the window will post events to the message queue. But since
     //               the window handle hasn't been acquired yet, they will be ignored.
@@ -55,7 +59,7 @@ bool WindowsWindow::Initialize(const WindowDescription& description)
         return false;
     }
 
-    if (description.mode == EWindowMode::Fullscreen)
+    if (m_window_mode == EWindowMode::Fullscreen)
     {
         U32 width, height;
         I32 x, y;
@@ -80,6 +84,85 @@ WindowsWindow::~WindowsWindow()
     {
         ::DestroyWindow(m_window_handle);
     }
+}
+
+void WindowsWindow::SetWidth(U32 client_width)
+{
+    if (m_width == client_width)
+    {
+        return;
+    }
+
+    ReshapeWindow(client_width, m_height, m_position_x, m_position_y);
+}
+
+void WindowsWindow::SetHeight(U32 client_height)
+{
+    if (m_height == client_height)
+    {
+        return;
+    }
+
+    ReshapeWindow(m_width, client_height, m_position_x, m_position_y);
+}
+
+void WindowsWindow::SetSize(U32 client_width, U32 client_height)
+{
+    if (m_width == client_width && m_height == client_height)
+    {
+        return;
+    }
+
+    ReshapeWindow(client_width, client_height, m_position_x, m_position_y);
+}
+
+void WindowsWindow::SetPositionX(I32 client_x)
+{
+    if (m_position_x == client_x)
+    {
+        return;
+    }
+
+    ReshapeWindow(m_width, m_height, client_x, m_position_y);
+}
+
+void WindowsWindow::SetPositionY(I32 client_y)
+{
+    if (m_position_y == client_y)
+    {
+        return;
+    }
+
+    ReshapeWindow(m_width, m_height, m_position_x, client_y);
+}
+
+void WindowsWindow::SetPosition(I32 client_x, I32 client_y)
+{
+    if (m_position_x == client_x && m_position_y == client_y)
+    {
+        return;
+    }
+
+    ReshapeWindow(m_width, m_height, client_x, client_y);
+}
+
+void WindowsWindow::SetTitle(StringView title)
+{
+    Buffer title_buffer;
+    StringBuilder::ToUTF16Dynamic(title, title_buffer, true);
+
+    ::SetWindowText(m_window_handle, title_buffer.As<wchar_t>());
+    title_buffer.Release();
+}
+
+void WindowsWindow::SetMode(EWindowMode mode)
+{
+    if (mode == m_window_mode)
+    {
+        return;
+    }
+
+    m_window_mode = mode;
 }
 
 void WindowsWindow::ProcessMessages()
@@ -401,6 +484,31 @@ LRESULT WindowsWindow::MessageCallback(HWND window_handle, UINT message, WPARAM 
             }
 
             return 0;
+        }
+
+        case WM_SETTEXT:
+        {
+            const wchar_t* title = (const wchar_t*)l_param;
+
+            WindowsWindow* window = (WindowsWindow*)g_engine->GetWindowByHandle(window_handle);
+            if (!window)
+            {
+                break;
+            }
+
+            {
+                ScopedBuffer title_buffer = ScopedBuffer(32);
+                Usize title_size = StringBuilder::FromUTF16Dynamic(title, title_buffer.RawBuffer(), false);
+                window->m_title = StringView(title_buffer.As<char>(), title_size);
+            }
+
+            if (window->m_event_callback)
+            {
+                WindowTitleChangedEvent ev(window->m_title.ToView());
+                window->m_event_callback(window->GetNativeHandle(), &ev);
+            }
+
+            break;
         }
 
         case WM_MOUSEMOVE:

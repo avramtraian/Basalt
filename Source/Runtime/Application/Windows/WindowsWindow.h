@@ -22,11 +22,28 @@ public:
 
     FORCEINLINE virtual WindowHandle GetNativeHandle() const override { return (void*)m_window_handle; }
 
-    FORCEINLINE virtual U32 GetWidth() const { return m_width; }
-    FORCEINLINE virtual U32 GetHeight() const { return m_height; }
+    FORCEINLINE virtual U32 GetWidth() const override { return m_width; }
+    FORCEINLINE virtual U32 GetHeight() const override { return m_height; }
 
-    FORCEINLINE virtual I32 GetPositionX() const { return m_position_x; }
-    FORCEINLINE virtual I32 GetPositionY() const { return m_position_y; }
+    FORCEINLINE virtual I32 GetPositionX() const override { return m_position_x; }
+    FORCEINLINE virtual I32 GetPositionY() const override { return m_position_y; }
+
+    FORCEINLINE virtual StringView GetTitle() const override { return m_title.ToView(); }
+
+    FORCEINLINE virtual EWindowMode GetMode() const override { return m_window_mode; }
+
+public:
+    virtual void SetWidth(U32 client_width) override;
+    virtual void SetHeight(U32 client_height) override;
+    virtual void SetSize(U32 client_width, U32 client_height) override;
+
+    virtual void SetPositionX(I32 client_x) override;
+    virtual void SetPositionY(I32 client_y) override;
+    virtual void SetPosition(I32 client_x, I32 client_y) override;
+
+    virtual void SetTitle(StringView title) override;
+
+    virtual void SetMode(EWindowMode mode) override;
 
 private:
     virtual void ProcessMessages() override;
@@ -50,6 +67,10 @@ private:
 
     I32 m_position_x = 0;
     I32 m_position_y = 0;
+
+    EWindowMode m_window_mode = EWindowMode::Windowed;
+
+    String m_title;
 
     PFN_WindowEventCallback m_event_callback = nullptr;
 };

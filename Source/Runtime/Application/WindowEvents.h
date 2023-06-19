@@ -64,15 +64,15 @@ public:
     FORCEINLINE static EEventType GetStaticType() { return EEventType::WindowTitleChanged; }
 
 public:
-    FORCEINLINE WindowTitleChangedEvent(const String& title)
+    FORCEINLINE WindowTitleChangedEvent(StringView title)
         : Event(GetStaticType())
         , m_title(title)
     {}
 
-    FORCEINLINE const String& GetTitle() const { return m_title; }
+    FORCEINLINE StringView GetTitle() const { return m_title; }
 
 private:
-    String m_title;
+    StringView m_title;
 };
 
 } // namespace Basalt
