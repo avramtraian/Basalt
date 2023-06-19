@@ -72,6 +72,8 @@ function BuildDefaultConfiguration()
 
     objdir "%{wks.location}Intermediate"
     targetdir "%{wks.location}Binaries/%{cfg.platform}/%{cfg.buildcfg}"
+
+    flags { "MultiProcessorCompile" }
 end
 
 include "Basalt-Runtime"
