@@ -3,6 +3,7 @@
 #include "Engine.h"
 
 #include "Application/Window.h"
+#include "Renderer/Renderer.h"
 
 namespace Basalt
 {
@@ -37,6 +38,15 @@ bool Engine::Initialize(const EngineDescription& description)
         return false;
     }
 
+    RendererDescription renderer_description = {};
+    renderer_description.renderer_api = ERendererAPI::D3D11;
+
+    if (!Renderer::Initialize(renderer_description))
+    {
+        BT_LOG_ERROR(Engine, "Failed to initialize the renderer! Aborting.");
+        return false;
+    }
+
     g_engine->m_is_running = true;
 
     BT_LOG_INFO(Engine, "Engine initialization was successful!");
@@ -45,6 +55,8 @@ bool Engine::Initialize(const EngineDescription& description)
 
 void Engine::Shutdown()
 {
+    Renderer::Shutdown();
+
     btdelete g_engine;
     g_engine = nullptr;
 }
