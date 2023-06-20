@@ -9,10 +9,10 @@
 
 #define INVALID_D3D11_CALL false
 
-#define BT_D3D11_CHECK(EXPRESSION)  \
-    if (!SUCCEEDED(EXPRESSION))     \
-    {                               \
-        Checkf(INVALID_D3D11_CALL, #EXPRESSION); \
+#define BT_D3D11_CHECK(EXPRESSION)                  \
+    if (!SUCCEEDED(EXPRESSION))                     \
+    {                                               \
+        Checkf(INVALID_D3D11_CALL, #EXPRESSION);    \
     }
 
 namespace Basalt
@@ -26,6 +26,7 @@ public:
 
 public:
     static ID3D11Device* GetDevice();
+    static ID3D11DeviceContext* GetDeviceContext();
 
     static IDXGIFactory* GetDXGIFactory();
 

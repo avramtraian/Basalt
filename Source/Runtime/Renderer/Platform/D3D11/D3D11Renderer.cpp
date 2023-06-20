@@ -82,6 +82,11 @@ ID3D11Device* D3D11Renderer::GetDevice()
     return s_d3d11_data->device;
 }
 
+ID3D11DeviceContext* D3D11Renderer::GetDeviceContext()
+{
+    return s_d3d11_data->device_context;
+}
+
 IDXGIFactory* D3D11Renderer::GetDXGIFactory()
 {
     return s_d3d11_data->dxgi_factory;
