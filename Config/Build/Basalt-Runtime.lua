@@ -32,4 +32,5 @@ project "Basalt-Runtime"
 
     filter "platforms:Win64"
         links "DXGI"
+        links "d3d11"
     filter {}
