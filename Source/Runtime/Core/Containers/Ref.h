@@ -16,19 +16,22 @@ namespace Basalt
  */
 class BASALT_API RefCounted
 {
+public:
+    virtual ~RefCounted() = default;
+
 private:
     /** Increments the object's reference count. */
-    void IncrementReferenceCount__() const { ++m_reference_count__; }
+    void IncrementReferenceCount__() { ++m_reference_count__; }
     
     /**
      * Decrements the object's reference count.
      * @return True if the object's reference count after the decrement operations hits 0; False otherwise.
      */
-    bool DecrementReferenceCount__() const { return (m_reference_count__--) <= 1; }
+    bool DecrementReferenceCount__() { return (m_reference_count__--) <= 1; }
 
 private:
     /** The object's reference count. */
-    mutable U64 m_reference_count__ = 0;
+    U64 m_reference_count__ = 0;
 
     // The ref pointer is the single system that can mutate the object ref counter.
     template<typename T>
@@ -93,13 +96,13 @@ public:
 
     FORCEINLINE Ref& operator=(const Ref& other)
     {
-        if (other.m_instance)
-        {
-            other.IncrementRefCount();
-        }
-
         Release();
         m_instance = other.m_instance;
+
+        if (m_instance)
+        {
+            IncrementRefCount();
+        }
 
         return *this;
     }
@@ -186,7 +189,7 @@ public:
         {
             if (DecrementRefCount())
             {
-                btdelete m_instance;
+                btdelete (RefCounted*)m_instance;
             }
 
             m_instance = nullptr;
