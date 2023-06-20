@@ -29,3 +29,7 @@ project "Basalt-Runtime"
     {
         IncludeDirectories["Runtime"]
     }
+
+    filter "platforms:Win64"
+        links "DXGI"
+    filter {}
