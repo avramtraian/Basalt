@@ -78,3 +78,4 @@ end
 
 include "Basalt-Runtime"
 include "Basalt-Editor"
+include "Basalt-Content"
