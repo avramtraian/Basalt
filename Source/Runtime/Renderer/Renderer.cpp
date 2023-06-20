@@ -3,9 +3,6 @@
 #include "Renderer.h"
 
 #include "Platform/D3D11/D3D11Renderer.h"
-// #include "Platform/D3D12/D3D12Renderer.h"
-// #include "Platform/Vulkan/VulkanRenderer.h"
-// #include "Platform/Metal/MetalRenderer.h"
 
 namespace Basalt
 {
@@ -17,7 +14,7 @@ struct RendererData
     ERendererAPI renderer_api;
 };
 
-static RendererData* s_data = nullptr;
+static RendererData* s_renderer_data = nullptr;
 
 bool Renderer::Initialize(const RendererDescription& description)
 {
@@ -27,21 +24,18 @@ bool Renderer::Initialize(const RendererDescription& description)
         return false;
     }
 
-    s_data = btnew RendererData();
-    if (!s_data)
+    s_renderer_data = btnew RendererData();
+    if (!s_renderer_data)
     {
         BT_LOG_ERROR(Renderer, "Failed to allocate memory for the renderer data! Aborting.");
         return false;
     }
 
-    s_data->renderer_api = description.renderer_api;
+    s_renderer_data->renderer_api = description.renderer_api;
     
-    switch (s_data->renderer_api)
+    switch (s_renderer_data->renderer_api)
     {
-        case ERendererAPI::D3D11:   s_interface = btnew D3D11Renderer();
-        // case ERendererAPI::D3D12:   s_interface = btnew D3D12Renderer();
-        // case ERendererAPI::Vulkan:  s_interface = btnew VulkanRenderer();
-        // case ERendererAPI::Metal:   s_interface = btnew MetalRenderer();
+        case ERendererAPI::D3D11: s_interface = btnew D3D11Renderer();
     }
 
     if (!s_interface)
@@ -75,13 +69,13 @@ void Renderer::Shutdown()
     btdelete s_interface;
     s_interface = nullptr;
 
-    btdelete s_data;
-    s_data = nullptr;
+    btdelete s_renderer_data;
+    s_renderer_data = nullptr;
 }
 
 bool Renderer::IsInitialized()
 {
-    return s_data && s_interface;
+    return s_renderer_data && s_interface;
 }
 
 } // namespace Basalt
