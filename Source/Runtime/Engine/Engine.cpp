@@ -4,6 +4,7 @@
 
 #include "Application/Window.h"
 #include "Renderer/Renderer.h"
+#include "Renderer/RenderingContext.h"
 
 namespace Basalt
 {
@@ -40,6 +41,7 @@ bool Engine::Initialize(const EngineDescription& description)
 
     RendererDescription renderer_description = {};
     renderer_description.renderer_api = ERendererAPI::D3D11;
+    renderer_description.primary_window = g_engine->m_primary_window.Get();
 
     if (!Renderer::Initialize(renderer_description))
     {

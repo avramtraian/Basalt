@@ -7,6 +7,12 @@
 namespace Basalt
 {
 
+/**
+ * Abstract interface that all API renderers must provide.
+ * This is also the base class for all native renderers.
+ * 
+ * All documentation for these functions can be found in the `Renderer` class.
+ */
 class RendererInterface
 {
 public:
