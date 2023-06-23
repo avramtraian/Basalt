@@ -7,6 +7,8 @@
 namespace Basalt
 {
 
+using RendererID = void*;
+
 enum class ERendererAPI : U8
 {
     None = 0,
