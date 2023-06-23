@@ -16,6 +16,9 @@ public:
     virtual ~D3D11RenderingContext() override;
 
 private:
+    void CreateSwapchain(Window* window);
+
+private:
     IDXGISwapChain* m_swapchain = nullptr;
 };
 
