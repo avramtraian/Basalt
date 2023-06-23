@@ -212,20 +212,21 @@ public:
 private:
     FORCEINLINE void IncrementRefCount()
     {
+        // All types used with the ref pointer system must derive from `RefCounted`.
+        static_assert(std::is_base_of_v<RefCounted, T>, "T must be derived from `RefCounted`!");
         ((RefCounted*)m_instance)->IncrementReferenceCount__();
     }
 
     FORCEINLINE bool DecrementRefCount()
     {
+        // All types used with the ref pointer system must derive from `RefCounted`.
+        static_assert(std::is_base_of_v<RefCounted, T>, "T must be derived from `RefCounted`!");
         return ((RefCounted*)m_instance)->DecrementReferenceCount__();
     }
 
 private:
     /** The pointer to the object instance that this ref pointer manages. */
     T* m_instance;
-
-    // All types used with the ref pointer system must derive from `RefCounted`.
-    static_assert(std::is_base_of_v<RefCounted, T>, "T must be derived from `RefCounted`!");
 };
 
 } // namespace Basalt
