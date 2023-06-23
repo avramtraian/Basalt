@@ -4,9 +4,7 @@
 
 #include "Renderer/RenderingContext.h"
 
-#include "D3D11Swapchain.h"
-
-#include <d3d11.h>
+#include "D3D11.h"
 
 namespace Basalt
 {
@@ -18,7 +16,7 @@ public:
     virtual ~D3D11RenderingContext() override;
 
 private:
-    Unique<D3D11Swapchain> m_swapchain;
+    IDXGISwapChain* m_swapchain = nullptr;
 };
 
 } // namespace Basalt
