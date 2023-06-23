@@ -115,4 +115,14 @@ void Renderer::SetActiveContext(RenderingContext* new_context)
     }
 }
 
+void Renderer::BeginRenderPass(Ref<RenderPass> render_pass)
+{
+    s_interface->BeginRenderPass(render_pass);
+}
+
+void Renderer::EndRenderPass(Ref<RenderPass> render_pass)
+{
+    s_interface->EndRenderPass(render_pass);
+}
+
 } // namespace Basalt

@@ -5,15 +5,7 @@
 #include "Core/Core.h"
 #include "Renderer/Renderer.h"
 
-#include <d3d11.h>
-
-#define INVALID_D3D11_CALL false
-
-#define BT_D3D11_CHECK(EXPRESSION)                  \
-    if (!SUCCEEDED(EXPRESSION))                     \
-    {                                               \
-        Checkf(INVALID_D3D11_CALL, #EXPRESSION);    \
-    }
+#include "D3D11.h"
 
 namespace Basalt
 {
@@ -24,6 +16,9 @@ public:
     virtual bool Initialize() override;
     virtual void Shutdown() override;
 
+public:
+    virtual void BeginRenderPass(Ref<RenderPass> render_pass) override;
+    virtual void EndRenderPass(Ref<RenderPass> render_pass) override;
 public:
     static ID3D11Device* GetDevice();
     static ID3D11DeviceContext* GetDeviceContext();

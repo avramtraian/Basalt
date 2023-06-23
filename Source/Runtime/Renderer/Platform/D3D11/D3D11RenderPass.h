@@ -13,8 +13,8 @@ public:
     D3D11RenderPass(const RenderPassDescription& description);
     virtual ~D3D11RenderPass() override;
 
-    virtual void Begin() override;
-    virtual void End() override;
+    FORCEINLINE RenderPassDescription& GetDescription() { return m_description; }
+    FORCEINLINE const RenderPassDescription& GetDescription() const { return m_description; }
 
 private:
     RenderPassDescription m_description;

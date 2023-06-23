@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Core/Core.h"
+#include "RenderPass.h"
 
 namespace Basalt
 {
@@ -18,6 +19,10 @@ class RendererInterface
 public:
     virtual bool Initialize() = 0;
     virtual void Shutdown() = 0;
+
+public:
+    virtual void BeginRenderPass(Ref<RenderPass> render_pass) = 0;
+    virtual void EndRenderPass(Ref<RenderPass> render_pass) = 0;
 };
 
 } // namespace Basalt

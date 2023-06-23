@@ -54,6 +54,11 @@ public:
      */
     static void SetActiveContext(RenderingContext* new_context);
 
+public:
+    static void BeginRenderPass(Ref<RenderPass> render_pass);
+
+    static void EndRenderPass(Ref<RenderPass> render_pass);
+
 private:
     /** The pointer to the native API renderer. */
     static RendererInterface* s_interface;

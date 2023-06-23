@@ -2,6 +2,8 @@
 
 #include "D3D11Renderer.h"
 
+#include "D3D11Framebuffer.h"
+#include "D3D11RenderPass.h"
 namespace Basalt
 {
 
@@ -77,6 +79,54 @@ void D3D11Renderer::Shutdown()
     s_d3d11_data = nullptr;
 }
 
+void D3D11Renderer::BeginRenderPass(Ref<RenderPass> render_pass)
+{
+    auto d3d11_render_pass = render_pass.As<D3D11RenderPass>();
+    RenderPassDescription& render_pass_description = d3d11_render_pass->GetDescription();
+
+    U32 framebuffer_attachments_count = render_pass_description.output_framebuffer->GetAttachmentsCount();
+
+    Array<ID3D11RenderTargetView*> color_render_target_views;
+    color_render_target_views.SetCapacity(framebuffer_attachments_count);
+    ID3D11DepthStencilView* depth_stencil_view = nullptr;
+
+    for (U32 attachment_index = 0; attachment_index < framebuffer_attachments_count; ++attachment_index)
+    {
+        EFramebufferAttachmentFormat attachment_format = render_pass_description.output_framebuffer->GetAttachmentFormat(attachment_index);
+        RendererID attachment_view = render_pass_description.output_framebuffer->GetAttachmentView(attachment_index);
+        RenderPassAttachmentDescription attachment_description = render_pass_description.attachment_descriptions[attachment_index];
+
+        if (!Utils::IsDepthFormat(attachment_format))
+        {
+            color_render_target_views.Add((ID3D11RenderTargetView*)attachment_view);
+
+            if (attachment_description.load_operation == ERenderPassLoadOperation::Clear)
+            {
+                s_d3d11_data->device_context->ClearRenderTargetView((ID3D11RenderTargetView*)attachment_view, attachment_description.clear_value);
+            }
+        }
+        else
+        {
+            Checkf(!depth_stencil_view, "The output framebuffer has two depth attachments!");
+            depth_stencil_view = (ID3D11DepthStencilView*)attachment_view;
+
+            if (attachment_description.load_operation == ERenderPassLoadOperation::Clear)
+            {
+                UINT clear_flags = D3D11_CLEAR_DEPTH | (Utils::IsStencilFormat(attachment_format) ? D3D11_CLEAR_STENCIL : 0);
+                s_d3d11_data->device_context->ClearDepthStencilView(depth_stencil_view, clear_flags, attachment_description.depth_value, attachment_description.stencil_value);
+            }
+        }
+    }
+
+    // Bind the output framebuffer attachments.
+    s_d3d11_data->device_context->OMSetRenderTargets((UINT)color_render_target_views.Count(), color_render_target_views.Data(), depth_stencil_view);
+}
+
+void D3D11Renderer::EndRenderPass(Ref<RenderPass> render_pass)
+{
+    // Unbind the output framebuffer attachments.
+    s_d3d11_data->device_context->OMSetRenderTargets(0, nullptr, nullptr);
+}
 ID3D11Device* D3D11Renderer::GetDevice()
 {
     return s_d3d11_data->device;
