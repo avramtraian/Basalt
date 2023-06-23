@@ -19,6 +19,7 @@ public:
 public:
     virtual void BeginRenderPass(Ref<RenderPass> render_pass) override;
     virtual void EndRenderPass(Ref<RenderPass> render_pass) override;
+
 public:
     static ID3D11Device* GetDevice();
     static ID3D11DeviceContext* GetDeviceContext();

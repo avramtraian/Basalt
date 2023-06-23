@@ -4,6 +4,7 @@
 
 #include "D3D11Framebuffer.h"
 #include "D3D11RenderPass.h"
+
 namespace Basalt
 {
 
@@ -127,6 +128,7 @@ void D3D11Renderer::EndRenderPass(Ref<RenderPass> render_pass)
     // Unbind the output framebuffer attachments.
     s_d3d11_data->device_context->OMSetRenderTargets(0, nullptr, nullptr);
 }
+
 ID3D11Device* D3D11Renderer::GetDevice()
 {
     return s_d3d11_data->device;
