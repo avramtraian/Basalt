@@ -21,17 +21,17 @@ public:
 
 private:
     /** Increments the object's reference count. */
-    void IncrementReferenceCount__() { ++m_reference_count__; }
+    void IncrementReferenceCount__() const { ++m_reference_count__; }
     
     /**
      * Decrements the object's reference count.
      * @return True if the object's reference count after the decrement operations hits 0; False otherwise.
      */
-    bool DecrementReferenceCount__() { return (m_reference_count__--) <= 1; }
+    bool DecrementReferenceCount__() const { return (m_reference_count__--) <= 1; }
 
 private:
     /** The object's reference count. */
-    U64 m_reference_count__ = 0;
+    mutable U64 m_reference_count__ = 0;
 
     // The ref pointer is the single system that can mutate the object ref counter.
     template<typename T>
@@ -214,14 +214,14 @@ private:
     {
         // All types used with the ref pointer system must derive from `RefCounted`.
         static_assert(std::is_base_of_v<RefCounted, T>, "T must be derived from `RefCounted`!");
-        ((RefCounted*)m_instance)->IncrementReferenceCount__();
+        ((const RefCounted*)m_instance)->IncrementReferenceCount__();
     }
 
     FORCEINLINE bool DecrementRefCount()
     {
         // All types used with the ref pointer system must derive from `RefCounted`.
         static_assert(std::is_base_of_v<RefCounted, T>, "T must be derived from `RefCounted`!");
-        return ((RefCounted*)m_instance)->DecrementReferenceCount__();
+        return ((const RefCounted*)m_instance)->DecrementReferenceCount__();
     }
 
 private:
