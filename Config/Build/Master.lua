@@ -30,8 +30,20 @@ workspace "Basalt"
         architecture "ARM64"
 
 IncludeDirectories = {}
-IncludeDirectories["Runtime"] = "%{wks.location}Source/Runtime"
-IncludeDirectories["Editor"] = "%{wks.location}Source/Editor"
+Libaries = {}
+
+IncludeDirectories["Runtime"]       = "%{wks.location}Source/Runtime"
+IncludeDirectories["Editor"]        = "%{wks.location}Source/Editor"
+
+vulkan_sdk_path = os.getenv("VULKAN_SDK")
+IncludeDirectories["VulkanSDK"]     = (vulkan_sdk_path .. "/Include")
+
+Libaries["ShaderC"]                 = (vulkan_sdk_path .. "/Lib/shaderc_shared")
+Libaries["ShaderC_Debug"]           = (vulkan_sdk_path .. "/Lib/shaderc_sharedd")
+Libaries["SPIRV_Cross"]             = (vulkan_sdk_path .. "/Lib/spirv-cross-core")
+Libaries["SPIRV_Cross_Debug"]       = (vulkan_sdk_path .. "/Lib/spirv-cross-cored")
+Libaries["SPIRV_Cross_HLSL"]        = (vulkan_sdk_path .. "/Lib/spirv-cross-hlsl")
+Libaries["SPIRV_Cross_HLSL_Debug"]  = (vulkan_sdk_path .. "/Lib/spirv-cross-hlsld")
 
 function BuildDefaultConfiguration()
     filter "platforms:Win64"

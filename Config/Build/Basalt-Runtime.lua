@@ -27,10 +27,28 @@ project "Basalt-Runtime"
 
     includedirs
     {
-        IncludeDirectories["Runtime"]
+        IncludeDirectories["Runtime"],
+        IncludeDirectories["VulkanSDK"]
     }
 
     filter "platforms:Win64"
-        links "DXGI"
-        links "d3d11"
+        links { "d3d11", "dxgi" }
+    filter {}
+
+    filter "configurations:Game_Debug or Editor_Debug"
+         links
+         {
+             Libaries["ShaderC_Debug"],
+             Libaries["SPIRV_Cross_Debug"],
+             Libaries["SPIRV_Cross_HLSL_Debug"]
+         }
+
+    filter "configurations:Game_Release or Editor_Release or Game_Shipping"
+        links
+        {
+            Libaries["ShaderC"],
+            Libaries["SPIRV_Cross"],
+             Libaries["SPIRV_Cross_HLSL"]
+        }
+
     filter {}
