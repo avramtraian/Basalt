@@ -4,8 +4,11 @@
 
 #if BASALT_PLATFORM_WINDOWS
 
+#include "Core/Containers/Strings/String.h"
+#include "Core/Containers/Strings/StringBuilder.h"
 #include "Core/Platform/Platform.h"
 #include "Core/Math/MathUtilities.h"
+#include "Core/Memory/Buffer.h"
 
 #include <Windows.h>
 #include <Windowsx.h>
@@ -88,6 +91,26 @@ void Platform::WriteToConsole(StringView message, LinearColor text_color, Linear
 
     SetConsoleTextAttribute(s_platform_data.console_handle, attributes);
     WriteConsoleA(s_platform_data.console_handle, *message, (DWORD)message.BytesCount(), NULL, NULL);
+}
+
+String Platform::GetExecutablePath()
+{
+    ScopedBuffer win32_buffer = ScopedBuffer(256 * sizeof(wchar_t));
+
+    while (true)
+    {
+        Usize length = ::GetModuleFileNameW(NULL, win32_buffer.As<wchar_t>(), (DWORD)win32_buffer.CountOf<wchar_t>());
+        if (length < win32_buffer.CountOf<wchar_t>())
+        {
+            break;
+        }
+
+        win32_buffer.Resize(win32_buffer.Size() * 2);
+    }
+
+    ScopedBuffer string_buffer;
+    Usize bytes_count = StringBuilder::FromUTF16Dynamic(win32_buffer.As<const wchar_t>(), string_buffer.RawBuffer(), false);
+    return StringView(string_buffer.As<char>(), bytes_count);
 }
 
 } // namespace Basalt

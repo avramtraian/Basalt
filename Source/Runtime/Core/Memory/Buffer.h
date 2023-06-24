@@ -124,6 +124,11 @@ public:
     template<typename T>
     FORCEINLINE Usize CountOf() const { return m_buffer.CountOf<T>(); }
 
+    FORCEINLINE void Resize(Usize new_size)
+    {
+        m_buffer.Resize(new_size);
+    }
+
 private:
     Buffer m_buffer;
 };

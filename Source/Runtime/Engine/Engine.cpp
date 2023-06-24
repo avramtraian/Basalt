@@ -26,6 +26,12 @@ bool Engine::Initialize(const EngineDescription& description)
         return false;
     }
 
+    if (!g_engine->m_config.Initialize())
+    {
+        BT_LOG_ERROR(Engine, "Failed to initialize the engine configuration!");
+        return false;
+    }
+
     WindowDescription window_description = {};
     window_description.event_callback = Engine::OnWindowEventCallback;
     window_description.mode = EWindowMode::Windowed;

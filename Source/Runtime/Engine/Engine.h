@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Application/Window.h"
-#include "Core/Core.h"
+#include "Config.h"
 
 namespace Basalt
 {
@@ -67,6 +67,9 @@ protected:
 protected:
     /** Whether or not the engine is running. While this is true, the engine will keep ticking. */
     bool m_is_running = false;
+
+    /** The global engine configuration. */
+    Config m_config;
 
     /** The window where the game/viewport will be displayed. Has control over the lifetime of the application. */
     Unique<Window> m_primary_window;
