@@ -74,7 +74,7 @@ Usize StringBuilder::ToUTF16Dynamic(StringView utf8_view, Buffer& utf16_buffer, 
 
         if (buffer_offset + written > utf16_buffer.size)
         {
-            utf16_buffer.Resize(utf16_buffer.size + utf16_buffer.size / 2);
+            utf16_buffer.Resize(utf16_buffer.size + utf16_buffer.size / 2 + written);
         }
 
         Memory::Copy(utf16_buffer.data + buffer_offset, buffer, written);
@@ -150,7 +150,7 @@ Usize StringBuilder::FromUTF16Dynamic(const wchar_t* utf16_string, Buffer& utf8_
 
         if (buffer_offset + written > utf8_buffer.size)
         {
-            utf8_buffer.Resize(2 * utf8_buffer.size);
+            utf8_buffer.Resize(2 * utf8_buffer.size + written);
         }
 
         Memory::Copy(utf8_buffer.data + buffer_offset, buffer, written);
@@ -211,7 +211,7 @@ Usize StringBuilder::FormatDynamicList(Buffer& buffer, StringView format, va_lis
             return written + 1;
         }
 
-        buffer.Resize(2 * buffer.size);
+        buffer.Resize(2 * buffer.size + 1);
         arg_list = original_arg_list;
     }
 }
