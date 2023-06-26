@@ -84,7 +84,17 @@ public:
 struct BASALT_API ScopedBuffer
 {
 public:
+    BT_NON_COPYABLE(ScopedBuffer);
+
+public:
     ScopedBuffer() = default;
+
+    FORCEINLINE ScopedBuffer(ScopedBuffer&& other) noexcept
+        : m_buffer(other.m_buffer)
+    {
+        other.m_buffer.data = nullptr;
+        other.m_buffer.size = 0;
+    }
 
     FORCEINLINE explicit ScopedBuffer(Usize initial_size)
         : m_buffer(initial_size)
@@ -97,6 +107,17 @@ public:
     FORCEINLINE ~ScopedBuffer()
     {
         Release();
+    }
+
+    FORCEINLINE ScopedBuffer& operator=(ScopedBuffer&& other) noexcept
+    {
+        Release();
+        m_buffer = other.m_buffer;
+        
+        other.m_buffer.data = nullptr;
+        other.m_buffer.size = 0;
+
+        return *this;
     }
 
 public:
