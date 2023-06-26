@@ -69,6 +69,25 @@ public:
      * @return The width if the codepoint or zero if the byte sequence is not valid UTF-16.
      */
     static U32 BytesToCodepointWidth(const void* buffer);
+
+    /**
+     * Validates that the provided byte sequence is valid UTF-16.
+     *
+     * @param string        Pointer to the buffer where the string is stored.
+     * @param bytes_count   The number of bytes the string occupies.
+     *
+     * @return True if the provided sequence is valid UTF-16; False otherwise.
+     */
+    static bool Validate(const wchar_t* string, Usize bytes_count);
+
+    /**
+     * Validates that the provided byte sequence is valid UTF-16.
+     * The functions checks characters from the string until a null-termination character is encountered.
+     *
+     * @param null_terminated_string Pointer to the buffer where the null-terminated string is stored.
+     * @return True if the provided sequence is valid UTF-16; False otherwise.
+     */
+    static bool Validate(const wchar_t* null_terminated_string);
 };
 
 } // namespace Basalt

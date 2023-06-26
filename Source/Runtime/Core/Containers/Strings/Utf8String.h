@@ -66,9 +66,28 @@ public:
      * If the byte sequence is not valid UTF-8, zero will be returned.
      * 
      * @param buffer The UTF-8 encoded byte sequence.
-     * @return The width if the codepoint or zero if the byte sequence is not valid UTF-8.
+     * @return The width of the codepoint or zero if the byte sequence is not valid UTF-8.
      */
     static U32 BytesToCodepointWidth(const void* buffer);
+
+    /**
+     * Validates that the provided byte sequence is valid UTF-8.
+     * 
+     * @param string        Pointer to the buffer where the string is stored.
+     * @param bytes_count   The number of bytes the string occupies.
+     * 
+     * @return True if the provided sequence is valid UTF-8; False otherwise.
+     */
+    static bool Validate(const char* string, Usize bytes_count);
+
+    /**
+     * Validates that the provided byte sequence is valid UTF-8.
+     * The functions checks characters from the string until a null-termination character is encountered.
+     *
+     * @param null_terminated_string Pointer to the buffer where the null-terminated string is stored.
+     * @return True if the provided sequence is valid UTF-8; False otherwise.
+     */
+    static bool Validate(const char* null_terminated_string);
 };
 
 } // namespace Basalt

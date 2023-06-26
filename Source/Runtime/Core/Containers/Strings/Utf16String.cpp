@@ -132,4 +132,37 @@ U32 UTF16Calls::BytesToCodepointWidth(const void* buffer)
     return 0;
 }
 
+bool UTF16Calls::Validate(const wchar_t* string, Usize bytes_count)
+{
+    Usize offset = 0;
+    while (offset < bytes_count)
+    {
+        U32 codepoint_width = UTF16Calls::BytesToCodepointWidth(string + (bytes_count / 2));
+        if (codepoint_width == 0)
+        {
+            return false;
+        }
+
+        offset += bytes_count;
+    }
+
+    return (offset == bytes_count);
+}
+
+bool UTF16Calls::Validate(const wchar_t* null_terminated_string)
+{
+    while (*null_terminated_string)
+    {
+        U32 codepoint_width = UTF16Calls::BytesToCodepointWidth(null_terminated_string);
+        if (codepoint_width == 0)
+        {
+            return false;
+        }
+
+        null_terminated_string += (codepoint_width / 2);
+    }
+
+    return true;
+}
+
 } // namespace Basalt
