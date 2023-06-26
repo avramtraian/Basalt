@@ -40,7 +40,13 @@ project "Basalt-Runtime"
         links
         {
             "d3d11",
+            "d3d12", 
             "dxgi"
+        }
+
+        prebuildcommands
+        {
+            "copy \"%{wks.location}\\Binaries\\ThirdParty\\DirectX\\Win64\\dxil.dll\" \"%{wks.location}Binaries\\Win64\\\""
         }
 
     filter {}
