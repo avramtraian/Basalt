@@ -44,14 +44,16 @@ LibraryDirectories["VulkanSDK"]     = (vulkan_sdk_path.."/Lib")
 Libraries["Vulkan"]                 = "vulkan-1"
 
 -- SPIRV-Cross release libraries.
-Libraries["SPIRV_Cross"]            = "spirv-cross-core"
-Libraries["SPIRV_Cross_MSL"]        = "spirv-cross-msl"
-Libraries["SPIRV_Cross_GLSL"]       = "spirv-cross-glsl"
+Libraries["SPIRV_Cross"]                = "spirv-cross-core"
+Libraries["SPIRV_Cross_Reflect"]        = "spirv-cross-reflect"
+Libraries["SPIRV_Cross_MSL"]            = "spirv-cross-msl"
+Libraries["SPIRV_Cross_GLSL"]           = "spirv-cross-glsl"
 
 -- SPIRV-Cross debug libraries.
-Libraries["SPIRV_Cross_Debug"]      = "spirv-cross-cored"
-Libraries["SPIRV_Cross_MSL_Debug"]  = "spirv-cross-msld"
-Libraries["SPIRV_Cross_GLSL_Debug"] = "spirv-cross-glsld"
+Libraries["SPIRV_Cross_Debug"]          = "spirv-cross-cored"
+Libraries["SPIRV_Cross_Reflect_Debug"]  = "spirv-cross-reflectd"
+Libraries["SPIRV_Cross_MSL_Debug"]      = "spirv-cross-msld"
+Libraries["SPIRV_Cross_GLSL_Debug"]     = "spirv-cross-glsld"
 
 -- Microsoft DirecX compiler library.
 Libraries["DXC"]                    = (LibraryDirectories["VulkanSDK"].."/dxcompiler")
