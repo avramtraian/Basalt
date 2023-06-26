@@ -29,21 +29,30 @@ workspace "Basalt"
         system "macosx"
         architecture "ARM64"
 
-IncludeDirectories = {}
-Libaries = {}
+IncludeDirectories  = {}
+LibraryDirectories  = {}
+Libraries           = {}
 
 IncludeDirectories["Runtime"]       = "%{wks.location}Source/Runtime"
 IncludeDirectories["Editor"]        = "%{wks.location}Source/Editor"
 
 vulkan_sdk_path = os.getenv("VULKAN_SDK")
-IncludeDirectories["VulkanSDK"]     = (vulkan_sdk_path .. "/Include")
+IncludeDirectories["VulkanSDK"]     = (vulkan_sdk_path.."/Include")
+LibraryDirectories["VulkanSDK"]     = (vulkan_sdk_path.."/Lib")
 
-Libaries["ShaderC"]                 = (vulkan_sdk_path .. "/Lib/shaderc_shared")
-Libaries["ShaderC_Debug"]           = (vulkan_sdk_path .. "/Lib/shaderc_sharedd")
-Libaries["SPIRV_Cross"]             = (vulkan_sdk_path .. "/Lib/spirv-cross-core")
-Libaries["SPIRV_Cross_Debug"]       = (vulkan_sdk_path .. "/Lib/spirv-cross-cored")
-Libaries["SPIRV_Cross_HLSL"]        = (vulkan_sdk_path .. "/Lib/spirv-cross-hlsl")
-Libaries["SPIRV_Cross_HLSL_Debug"]  = (vulkan_sdk_path .. "/Lib/spirv-cross-hlsld")
+-- Vulkan SDK library.
+Libraries["Vulkan"]                 = "vulkan-1"
+
+-- SPIRV-Cross release libraries.
+Libraries["SPIRV_Cross"]            = "spirv-cross-core"
+Libraries["SPIRV_Cross_MSL"]        = "spirv-cross-msl"
+
+-- SPIRV-Cross debug libraries.
+Libraries["SPIRV_Cross_Debug"]      = "spirv-cross-cored"
+Libraries["SPIRV_Cross_MSL_Debug"]  = "spirv-cross-msld"
+
+-- Microsoft DirecX compiler library.
+Libraries["DXC"]                    = (LibraryDirectories["VulkanSDK"].."/dxcompiler")
 
 function BuildDefaultConfiguration()
     filter "platforms:Win64"
