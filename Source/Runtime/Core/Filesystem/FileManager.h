@@ -75,13 +75,36 @@ public:
     template<typename T>
     FORCEINLINE EFileError Read(T* destination_object_instance)
     {
-        return ReadBytes(Buffer(destination_object_instance, sizeof(T)));
+        return ReadBytes(destination_object_instance, sizeof(T), nullptr);
     }
 
     template<typename T>
     FORCEINLINE EFileError ReadArray(T* destination_array, Usize count)
     {
-        return ReadBytes(Buffer(destination_array, count * sizeof(T)));
+        return ReadBytes(destination_array, count * sizeof(T), nullptr);
+    }
+
+    FORCEINLINE EFileError ReadAll(Buffer& buffer)
+    {
+        buffer.Resize(m_file_handle.file_size);
+        return ReadBytes(buffer.data, m_file_handle.file_size, nullptr);
+    }
+
+    FORCEINLINE EFileError ReadAllAsString(Buffer& buffer)
+    {
+        // Resize the buffer to accommodate the file data and the null-termination character.
+        buffer.Resize(m_file_handle.file_size + sizeof(char));
+
+        // Read the file as a string.
+        EFileError result = ReadBytes(buffer.data, m_file_handle.file_size, nullptr);
+        if (result != EFileError::Success)
+        {
+            return result;
+        }
+
+        // Set the null-termination character.
+        buffer.data[buffer.size - 1] = 0;
+        return result;
     }
 
     void Close();
