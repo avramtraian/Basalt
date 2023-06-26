@@ -7,6 +7,8 @@
 #include "Core/Misc/AssertionMacros.h"
 #include "Core/Memory/Memory.h"
 
+#include <initializer_list>
+
 namespace Basalt
 {
 
@@ -48,15 +50,14 @@ public:
      */
     FORCEINLINE Array(const Array& other)
         : m_count(other.m_count)
+        , m_capacity(other.m_count)
     {
         if (m_count == 0)
         {
             m_elements = nullptr;
-            m_capacity = 0;
             return;
         }
 
-        m_capacity = m_count;
         m_elements = AllocateMemory(m_capacity);
         CopyElements(m_elements, other.m_elements, m_count);
     }
@@ -76,6 +77,14 @@ public:
         other.m_elements = nullptr;
         other.m_capacity = 0;
         other.m_count = 0;
+    }
+
+    FORCEINLINE Array(std::initializer_list<ElementType> init_list)
+        : m_capacity(init_list.size())
+        , m_count(init_list.size())
+    {
+        m_elements = AllocateMemory(m_capacity);
+        CopyElements(m_elements, init_list.begin(), m_count);
     }
 
     /** Destructor. Clears the array and releases the memory. */

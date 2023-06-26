@@ -6,6 +6,8 @@
 #include "Core/CoreTypes.h"
 #include "Core/Misc/AssertionMacros.h"
 
+#include <initializer_list>
+
 namespace Basalt
 {
 
@@ -96,6 +98,21 @@ public:
         }
 
         other.m_count = 0;
+    }
+
+    FORCEINLINE InlineArray(std::initializer_list<ElementType> init_list)
+        : m_count(init_list.size())
+    {
+        ElementType* destinationBuffer = m_inlineElements;
+
+        if (m_count > InlineCapacity)
+        {
+            m_heapCapacity = m_count;
+            m_heapElements = AllocateMemory(m_heapCapacity);
+            destinationBuffer = m_heapElements;
+        }
+
+        CopyElements(destinationBuffer, init_list.begin(), m_count);
     }
 
     /**
