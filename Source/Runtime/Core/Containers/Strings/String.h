@@ -73,7 +73,7 @@ public:
     FORCEINLINE const char* c_str() const { return Data(); }
     
     /** @return True if the string is empty (there are no characters except the null-terminating one); False otherwise. */
-    FORCEINLINE bool IsEmpty() const { return (m_bytes_count == 0); }
+    FORCEINLINE bool IsEmpty() const { return (m_bytes_count == 1); }
 
     /** @return The number of bytes, including the null-terminating byte, the string occupies. */
     FORCEINLINE Usize BytesCount() const { return m_bytes_count; }
