@@ -392,7 +392,7 @@ public:
      */
     FORCEINLINE void SetCapacity(Usize new_capacity)
     {
-        Check(new_capacity > m_count);
+        Check(new_capacity >= m_count);
         
         if (new_capacity == m_capacity)
         {
