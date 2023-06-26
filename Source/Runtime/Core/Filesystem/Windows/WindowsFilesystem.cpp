@@ -141,7 +141,7 @@ U64 WindowsFilesystem::ReadFromFile(FileHandle file_handle, void* buffer, U64 by
         return -1;
     }
 
-    if (file_handle.file_size >= file_offset)
+    if (file_offset >= file_handle.file_size)
     {
         m_last_error_code = EFilesystemError::Success;
         return 0;
