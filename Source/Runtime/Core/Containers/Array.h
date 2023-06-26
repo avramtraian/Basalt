@@ -311,6 +311,14 @@ public:
         return slot;
     }
 
+    template<typename... Args>
+    FORCEINLINE ElementType& Emplace(Args&&... args)
+    {
+        ElementType& slot = AddUninitialized();
+        new (&slot) ElementType(Forward<Args>(args)...);
+        return slot;
+    }
+
 public:
     /**
      * Removes the last element from the array.
