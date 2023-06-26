@@ -41,6 +41,21 @@ public:
     {}
 
 public:
+    template<typename T>
+    FORCEINLINE T* As() const { return (T*)data; }
+
+    template<typename T>
+    FORCEINLINE Usize CountOf() const { return (size / sizeof(T)); }
+
+    /** @return Pointer to the buffer memory, expressed as an UTF-8 encoded string. */
+    FORCEINLINE char* AsUTF8() { return As<char>(); }
+    FORCEINLINE const char* AsUTF8() const { return As<const char>(); }
+
+    /** @return Pointer to the buffer memory, expressed as an UTF-16 encoded string. */
+    FORCEINLINE wchar_t* AsUTF16() { return As<wchar_t>(); }
+    FORCEINLINE const wchar_t* AsUTF16() const { return As<const wchar_t>(); }
+
+public:
     FORCEINLINE void Invalidate(Usize in_size)
     {
         Release();
@@ -55,12 +70,6 @@ public:
         data = nullptr;
         size = 0;
     }
-
-    template<typename T>
-    FORCEINLINE T* As() const { return (T*)data; }
-
-    template<typename T>
-    FORCEINLINE Usize CountOf() const { return (size / sizeof(T)); }
 
     FORCEINLINE void Resize(Usize new_size)
     {
@@ -129,6 +138,21 @@ public:
     FORCEINLINE const Buffer& RawBuffer() const { return m_buffer; }
 
 public:
+    template<typename T>
+    FORCEINLINE T* As() const { return m_buffer.As<T>(); }
+
+    template<typename T>
+    FORCEINLINE Usize CountOf() const { return m_buffer.CountOf<T>(); }
+
+    /** @return Pointer to the buffer memory, expressed as an UTF-8 encoded string. */
+    FORCEINLINE char* AsUTF8() { return As<char>(); }
+    FORCEINLINE const char* AsUTF8() const { return As<const char>(); }
+
+    /** @return Pointer to the buffer memory, expressed as an UTF-16 encoded string. */
+    FORCEINLINE wchar_t* AsUTF16() { return As<wchar_t>(); }
+    FORCEINLINE const wchar_t* AsUTF16() const { return As<const wchar_t>(); }
+
+public:
     FORCEINLINE void Invalidate(Usize in_size)
     {
         m_buffer.Invalidate(in_size);
@@ -138,12 +162,6 @@ public:
     {
         m_buffer.Release();
     }
-
-    template<typename T>
-    FORCEINLINE T* As() const { return m_buffer.As<T>(); }
-
-    template<typename T>
-    FORCEINLINE Usize CountOf() const { return m_buffer.CountOf<T>(); }
 
     FORCEINLINE void Resize(Usize new_size)
     {
