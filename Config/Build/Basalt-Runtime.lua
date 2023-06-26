@@ -36,17 +36,17 @@ project "Basalt-Runtime"
         LibraryDirectories["VulkanSDK"]
     }
 
+    prebuildcommands
+        {
+            "copy \"%{wks.location}\\Binaries\\ThirdParty\\DirectX\\%{cfg.platform}\\dxil.dll\" \"%{wks.location}Binaries\\%{cfg.platform}\\%{cfg.buildcfg}\""
+        }
+
     filter "platforms:Win64"
         links
         {
             "d3d11",
             "d3d12", 
             "dxgi"
-        }
-
-        prebuildcommands
-        {
-            "copy \"%{wks.location}\\Binaries\\ThirdParty\\DirectX\\Win64\\dxil.dll\" \"%{wks.location}Binaries\\Win64\\\""
         }
 
     filter {}
