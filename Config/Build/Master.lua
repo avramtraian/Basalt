@@ -46,10 +46,12 @@ Libraries["Vulkan"]                 = "vulkan-1"
 -- SPIRV-Cross release libraries.
 Libraries["SPIRV_Cross"]            = "spirv-cross-core"
 Libraries["SPIRV_Cross_MSL"]        = "spirv-cross-msl"
+Libraries["SPIRV_Cross_GLSL"]       = "spirv-cross-glsl"
 
 -- SPIRV-Cross debug libraries.
 Libraries["SPIRV_Cross_Debug"]      = "spirv-cross-cored"
 Libraries["SPIRV_Cross_MSL_Debug"]  = "spirv-cross-msld"
+Libraries["SPIRV_Cross_GLSL_Debug"] = "spirv-cross-glsld"
 
 -- Microsoft DirecX compiler library.
 Libraries["DXC"]                    = (LibraryDirectories["VulkanSDK"].."/dxcompiler")

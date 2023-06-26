@@ -50,7 +50,8 @@ project "Basalt-Runtime"
         {
             Libraries["DXC"],
             Libraries["SPIRV_Cross_Debug"],
-            Libraries["SPIRV_Cross_MSL_Debug"]
+            Libraries["SPIRV_Cross_MSL_Debug"],
+            Libraries["SPIRV_Cross_GLSL_Debug"]
         }
 
     filter "configurations:Editor_Release"
@@ -58,7 +59,8 @@ project "Basalt-Runtime"
         {
             Libraries["DXC"],
             Libraries["SPIRV_Cross"],
-            Libraries["SPIRV_Cross_MSL"]
+            Libraries["SPIRV_Cross_MSL"],
+            Libraries["SPIRV_Cross_GLSL"]
         }
 
     filter {}
