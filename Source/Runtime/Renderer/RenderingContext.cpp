@@ -3,6 +3,7 @@
 #include "RenderingContext.h"
 
 #include "Platform/D3D11/D3D11RenderingContext.h"
+#include "Platform/Vulkan/VulkanContext.h"
 
 #include "Renderer.h"
 
@@ -13,10 +14,11 @@ Unique<RenderingContext> RenderingContext::Create(const RenderingContextDescript
 {
     switch (Renderer::GetRendererAPI())
     {
-        case ERendererAPI::D3D11: return Unique<D3D11RenderingContext>::Create(description).As<RenderingContext>();
+        case ERendererAPI::D3D11:   return Unique<D3D11RenderingContext>::Create(description).As<RenderingContext>();
+        case ERendererAPI::Vulkan:  return Unique<VulkanContext>::Create(description).As<RenderingContext>();
     }
 
-    Check(false); // Invalid ERendererAPI.
+    Checkf(false, "Invalid ERendererAPI!");
     return nullptr;
 }
 

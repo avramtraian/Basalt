@@ -3,6 +3,7 @@
 #include "Renderer.h"
 
 #include "Platform/D3D11/D3D11Renderer.h"
+#include "Platform/Vulkan/VulkanRenderer.h"
 
 #include "RenderingContext.h"
 
@@ -43,7 +44,8 @@ bool Renderer::Initialize(const RendererDescription& description)
     
     switch (s_renderer_data->renderer_api)
     {
-        case ERendererAPI::D3D11: s_interface = btnew D3D11Renderer();
+        case ERendererAPI::D3D11:   { s_interface = btnew D3D11Renderer();  break; }
+        case ERendererAPI::Vulkan:  { s_interface = btnew VulkanRenderer(); break; }
     }
 
     if (!s_interface)
