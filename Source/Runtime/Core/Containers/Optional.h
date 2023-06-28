@@ -152,6 +152,9 @@ public:
     FORCEINLINE T& operator*() { return Get(); }
     FORCEINLINE const T& operator*() const { return Get(); }
 
+    FORCEINLINE operator T() { return Get(); }
+    FORCEINLINE operator const T() const { return Get(); }
+
     /**
      * Releases the value stored in this optional.
      * If the optional doesn't contain a value, nothing will be executed.
