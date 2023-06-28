@@ -52,9 +52,13 @@
                 #EXPRESSION, __FILE__, BT_FUNCTION, __LINE__, __VA_ARGS__); \
             BASALT_DEBUGBREAK;                                              \
         }
+
+    #define CheckCodeDebug(...) __VA_ARGS__
+
 #else
     #define CheckDebug(...) // Excluded from build.
     #define CheckDebugf(...) // Excluded from build.
+    #define CheckCodeDebugf(...) // Excluded from build.
 #endif // Debug checks enabled.
 
 #if BASALT_BUILD_DEBUG || BASALT_BUILD_RELEASE || (BASALT_BUILD_SHIPPING && USE_CHECKS_IN_SHIPPING)
@@ -89,9 +93,13 @@
                 #EXPRESSION, __FILE__, BT_FUNCTION, __LINE__, __VA_ARGS__); \
             BASALT_DEBUGBREAK;                                              \
         }
+
+    #define CheckCode(...) __VA_ARGS__
+
 #else
     #define Check(...) // Excluded from build.
     #define Checkf(...) // Excluded from build.
+    #define CheckCode(...) // Excluded from build.
 #endif // Checks enabled.
 
 namespace Basalt

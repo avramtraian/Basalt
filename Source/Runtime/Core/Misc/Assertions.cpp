@@ -57,7 +57,7 @@ void Debug::ReportAssertFailed(const char* expression, const char* filepath, con
 
     // TODO(traian): Don't use the Win32 API directly. Implement a platform-agnostic interface for opening message pop-up's.
 #if BASALT_PLATFORM_WINDOWS
-    ::MessageBox(NULL, utf16_content_buffer.As<wchar_t>(), utf16_title_buffer.As<wchar_t>(), MB_OK);
+    ::MessageBox(NULL, utf16_content_buffer.As<wchar_t>(), utf16_title_buffer.As<wchar_t>(), MB_ICONERROR | MB_OK);
 #endif // BASALT_PLATFORM_WINDOWS
 }
 
