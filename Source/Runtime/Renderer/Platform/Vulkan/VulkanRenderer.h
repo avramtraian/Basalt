@@ -21,11 +21,18 @@ public:
 public:
 	static VkAllocationCallbacks* GetAllocator();
 	static VkInstance GetInstance();
+	static VkPhysicalDevice GetPhysicalDevice();
 	static VkDevice GetDevice();
-
+	
 	static VkQueue GetGraphicsQueue();
+	static VkQueue GetPresentQueue();
 	static VkQueue GetComputeQueue();
 	static VkQueue GetTransferQueue();
+
+	static U32 GetGraphicsQueueFamilyIndex();
+	static U32 GetPresentQueueFamilyIndex();
+	static U32 GetComputeQueueFamilyIndex();
+	static U32 GetTransferQueueFamilyIndex();
 
 private:
 	static bool GetInstanceLayers(Array<const char*>& out_layers);
@@ -53,9 +60,12 @@ private:
 
 		struct QueueFamilyIndices
 		{
-			Optional<U32> graphics_index;
-			Optional<U32> compute_index;
-			Optional<U32> transfer_index;
+			static constexpr U32 InvalidQueueFamilyIndex = -1;
+
+			U32 graphics_index	= InvalidQueueFamilyIndex;
+			U32 present_index	= InvalidQueueFamilyIndex;
+			U32 compute_index	= InvalidQueueFamilyIndex;
+			U32 transfer_index	= InvalidQueueFamilyIndex;
 		};
 
 		QueueFamilyIndices queue_family_indices;
@@ -72,6 +82,7 @@ private:
 
 private:
 	friend struct VulkanRendererData;
+	friend class VulkanContext;
 };
 
 } // namespace Basalt

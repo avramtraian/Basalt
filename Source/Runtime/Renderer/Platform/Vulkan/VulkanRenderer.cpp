@@ -23,7 +23,8 @@ struct VulkanRendererData
     VkDevice device = VK_NULL_HANDLE;
 
     VkQueue graphics_queue = VK_NULL_HANDLE;
-    VkQueue compute_queue = VK_NULL_HANDLE;
+    VkQueue present_queue  = VK_NULL_HANDLE;
+    VkQueue compute_queue  = VK_NULL_HANDLE;
     VkQueue transfer_queue = VK_NULL_HANDLE;
 };
 
@@ -127,6 +128,11 @@ VkInstance VulkanRenderer::GetInstance()
     return s_vulkan_data->instance;
 }
 
+VkPhysicalDevice VulkanRenderer::GetPhysicalDevice()
+{
+    return s_vulkan_data->physical_device.handle;
+}
+
 VkDevice VulkanRenderer::GetDevice()
 {
     return s_vulkan_data->device;
@@ -137,6 +143,11 @@ VkQueue VulkanRenderer::GetGraphicsQueue()
     return s_vulkan_data->graphics_queue;
 }
 
+VkQueue VulkanRenderer::GetPresentQueue()
+{
+    return s_vulkan_data->present_queue;
+}
+
 VkQueue VulkanRenderer::GetComputeQueue()
 {
     return s_vulkan_data->compute_queue;
@@ -145,6 +156,26 @@ VkQueue VulkanRenderer::GetComputeQueue()
 VkQueue VulkanRenderer::GetTransferQueue()
 {
     return s_vulkan_data->transfer_queue;
+}
+
+U32 VulkanRenderer::GetGraphicsQueueFamilyIndex()
+{
+    return s_vulkan_data->physical_device.queue_family_indices.graphics_index;
+}
+
+U32 VulkanRenderer::GetPresentQueueFamilyIndex()
+{
+    return s_vulkan_data->physical_device.queue_family_indices.present_index;
+}
+
+U32 VulkanRenderer::GetComputeQueueFamilyIndex()
+{
+    return s_vulkan_data->physical_device.queue_family_indices.compute_index;
+}
+
+U32 VulkanRenderer::GetTransferQueueFamilyIndex()
+{
+    return s_vulkan_data->physical_device.queue_family_indices.transfer_index;
 }
 
 bool VulkanRenderer::GetInstanceLayers(Array<const char*>& out_layers)
@@ -310,6 +341,9 @@ void VulkanRenderer::FindQueueFamilies(PhysicalDevice& physical_device)
         if (properties.queueFlags & VK_QUEUE_GRAPHICS_BIT)
         {
             physical_device.queue_family_indices.graphics_index = queue_family_index;
+            // NOTE(traian): The official documentation doesn't state that queues that support graphics operation also support
+            //               presenting, but that's almost always the case on "normal" hardware.
+            physical_device.queue_family_indices.present_index = queue_family_index;
         }
         if (properties.queueFlags & VK_QUEUE_COMPUTE_BIT)
         {
@@ -329,17 +363,22 @@ bool VulkanRenderer::ValidatePhysicalDevice(PhysicalDevice& physical_device)
     // filled during this function execution.
     FindQueueFamilies(physical_device);
     
-    if (!physical_device.queue_family_indices.graphics_index.HasValue())
+    if (physical_device.queue_family_indices.graphics_index == PhysicalDevice::QueueFamilyIndices::InvalidQueueFamilyIndex)
     {
         // If the physical device doesn't have a graphics queue family, the GPU is not usable.
         return false;
     }
-    if (!physical_device.queue_family_indices.compute_index.HasValue())
+    if (physical_device.queue_family_indices.present_index == PhysicalDevice::QueueFamilyIndices::InvalidQueueFamilyIndex)
+    {
+        // If the physical device doesn't have a present queue family, the GPU is not usable.
+        return false;
+    }
+    if (physical_device.queue_family_indices.compute_index == PhysicalDevice::QueueFamilyIndices::InvalidQueueFamilyIndex)
     {
         // If the physical device doesn't have a compute queue family, the GPU is not usable.
         return false;
     }
-    if (!physical_device.queue_family_indices.transfer_index.HasValue())
+    if (physical_device.queue_family_indices.transfer_index == PhysicalDevice::QueueFamilyIndices::InvalidQueueFamilyIndex)
     {
         // If the physical device doesn't have a transfer queue family, the GPU is not usable.
         return false;
@@ -429,6 +468,43 @@ bool VulkanRenderer::GetDeviceExtensions(Array<const char*>& out_extensions)
 
 VkDevice VulkanRenderer::CreateLogicalDevice()
 {
+    // NOTE(traian): The physical device selection process guarantees that all queue families are valid.
+    U32 queue_family_indices[] =
+    {
+        s_vulkan_data->physical_device.queue_family_indices.graphics_index,
+        s_vulkan_data->physical_device.queue_family_indices.present_index,
+        s_vulkan_data->physical_device.queue_family_indices.compute_index,
+        s_vulkan_data->physical_device.queue_family_indices.transfer_index,
+    };
+
+    VkDeviceQueueCreateInfo queue_create_infos[3] = {};
+    U32 queue_create_infos_count = 0;
+    
+    for (U32 index = 0; index < BT_ARRAY_COUNT(queue_family_indices); ++index)
+    {
+        U32 queue_family_index = queue_family_indices[index];
+
+        bool already_exists = false;
+        for (U32 jndex = 0; jndex < queue_create_infos_count; ++jndex)
+        {
+            if (queue_create_infos[jndex].queueFamilyIndex == queue_family_index)
+            {
+                already_exists = true;
+                break;
+            }
+        }
+
+        if (!already_exists)
+        {
+            VkDeviceQueueCreateInfo& queue_create_info = queue_create_infos[queue_create_infos_count++];
+            queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+            queue_create_info.queueFamilyIndex = queue_family_index;
+            queue_create_info.queueCount = 1;
+            float queue_priority = 1.0F;
+            queue_create_info.pQueuePriorities = &queue_priority;
+        }
+    }
+
     VkDeviceCreateInfo device_create_info = {};
     device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 
@@ -438,34 +514,8 @@ VkDevice VulkanRenderer::CreateLogicalDevice()
     device_create_info.enabledExtensionCount = (U32)device_extensions.Count();
     device_create_info.ppEnabledExtensionNames = *device_extensions;
 
-    FixedArray<VkDeviceQueueCreateInfo, 3> queue_create_infos = {};
-    U32 queue_create_infos_count = 0;
-
-    for (auto& queue_create_info : queue_create_infos)
-    {
-        queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queue_create_info.queueCount = 1;
-        float queue_priority = 1.0F;
-        queue_create_info.pQueuePriorities = &queue_priority;
-    }
-
-    // NOTE(traian): The physical device selection process guarantees that all queue families are present.
-    auto& queue_family_indices = s_vulkan_data->physical_device.queue_family_indices;
-    queue_create_infos[queue_create_infos_count++].queueFamilyIndex = queue_family_indices.graphics_index;
-
-    if (queue_family_indices.compute_index != queue_family_indices.graphics_index)
-    {
-        queue_create_infos[queue_create_infos_count++].queueFamilyIndex = queue_family_indices.compute_index;
-    }
-
-    if (queue_family_indices.transfer_index != queue_family_indices.compute_index && queue_family_indices.transfer_index != queue_family_indices.graphics_index
-    )
-    {
-        queue_create_infos[queue_create_infos_count++].queueFamilyIndex = queue_family_indices.transfer_index;
-    }
-
     device_create_info.queueCreateInfoCount = (U32)queue_create_infos_count;
-    device_create_info.pQueueCreateInfos = *queue_create_infos;
+    device_create_info.pQueueCreateInfos = queue_create_infos;
 
     VkPhysicalDeviceFeatures device_features = {};
     device_create_info.pEnabledFeatures = &device_features;
@@ -479,6 +529,7 @@ void VulkanRenderer::GetDeviceQueues()
 {
     auto& queue_family_indices = s_vulkan_data->physical_device.queue_family_indices;
     vkGetDeviceQueue(s_vulkan_data->device, queue_family_indices.graphics_index, 0, &s_vulkan_data->graphics_queue);
+    vkGetDeviceQueue(s_vulkan_data->device, queue_family_indices.graphics_index, 0, &s_vulkan_data->present_queue);
     vkGetDeviceQueue(s_vulkan_data->device, queue_family_indices.compute_index, 0, &s_vulkan_data->compute_queue);
     vkGetDeviceQueue(s_vulkan_data->device, queue_family_indices.transfer_index, 0, &s_vulkan_data->transfer_queue);
 }
