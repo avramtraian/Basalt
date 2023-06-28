@@ -15,27 +15,58 @@ namespace Basalt
 {
 
 VulkanContext::VulkanContext(const RenderingContextDescription& description)
+    : m_window_context(description.window)
 {
     // Create the platform-specific window surface.
-    CreateSurface(description.window);
+    CreateSurface();
 
-    // Create the swapchain.
-    CreateSwapchain(description.window);
+    // Create the actual swapchain.
+    Invalidate();
 }
 
 VulkanContext::~VulkanContext()
 {
+    // Destroy swapchain image views.
+    for (VkImageView image_view : m_swapchain_images_views)
+    {
+        vkDestroyImageView(VulkanRenderer::GetDevice(), image_view, VulkanRenderer::GetAllocator());
+    }
+
     vkDestroySwapchainKHR(VulkanRenderer::GetDevice(), m_swapchain, VulkanRenderer::GetAllocator());
     vkDestroySurfaceKHR(VulkanRenderer::GetInstance(), m_surface, VulkanRenderer::GetAllocator());
 }
 
-void VulkanContext::CreateSurface(Window* window)
+void VulkanContext::Invalidate()
+{
+    // Destroy swapchain image views.
+    for (VkImageView image_view : m_swapchain_images_views)
+    {
+        vkDestroyImageView(VulkanRenderer::GetDevice(), image_view, VulkanRenderer::GetAllocator());
+    }
+
+    // Clear existing swapchain resources.
+    m_swapchain_images_views.Clear();
+    // NOTE(traian): The swapchain images themselves are destroyed by the swapchain.
+    m_swapchain_images.Clear();
+
+    VkSwapchainKHR old_swapchain = m_swapchain;
+    // Create the new swapchain.
+    CreateSwapchain();
+
+    if (old_swapchain != VK_NULL_HANDLE)
+    {
+        // Destroy the old swapchain, if any.
+        vkDestroySwapchainKHR(VulkanRenderer::GetDevice(), old_swapchain, VulkanRenderer::GetAllocator());
+    }
+}
+
+void VulkanContext::CreateSurface()
 {
 #if BASALT_PLATFORM_WINDOWS
     VkWin32SurfaceCreateInfoKHR surface_create_info = {};
     surface_create_info.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
     surface_create_info.hinstance = GetModuleHandle(NULL);
-    surface_create_info.hwnd = (HWND)window->GetNativeHandle();
+    surface_create_info.hwnd = (HWND)m_window_context->GetNativeHandle();
 
     BT_VULKAN_CHECK(vkCreateWin32SurfaceKHR(VulkanRenderer::GetInstance(), &surface_create_info, VulkanRenderer::GetAllocator(), &m_surface));
 #endif // BASALT_PLATFORM_WINDOWS
@@ -49,7 +80,7 @@ void VulkanContext::CreateSurface(Window* window)
     Checkf(present_support, "The Vulkan queue family selected for presenting doesn't actually have present capabilities!");
 }
 
-void VulkanContext::CreateSwapchain(Window* window)
+void VulkanContext::CreateSwapchain()
 {
     VkDevice device = VulkanRenderer::GetDevice();
     VkPhysicalDevice physical_device = VulkanRenderer::GetPhysicalDevice();
@@ -59,13 +90,13 @@ void VulkanContext::CreateSwapchain(Window* window)
 
     // The first format in the list is usually good enough.
     // This format is selected only if the ideal surface format is not found.
-    VkSurfaceFormatKHR surface_format = swapchain_support.surface_formats[0];
+    m_swapchain_format = swapchain_support.surface_formats[0];
     for (VkSurfaceFormatKHR format : swapchain_support.surface_formats)
     {
         if (format.format == VK_FORMAT_B8G8R8A8_SRGB && format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
         {
             // The ideal surface format was found.
-            surface_format = format;
+            m_swapchain_format = format;
             break;
         }
     }
@@ -87,13 +118,13 @@ void VulkanContext::CreateSwapchain(Window* window)
     if (extent.width == 0xFFFFFFFF && extent.height == 0xFFFFFFFF)
     {
         extent.width = Math::Clamp(
-            window->GetWidth(),
+            m_window_context->GetWidth(),
             (U32)swapchain_support.surface_capabilities.minImageExtent.width,
             (U32)swapchain_support.surface_capabilities.maxImageExtent.width
         );
 
         extent.height = Math::Clamp(
-            window->GetHeight(),
+            m_window_context->GetHeight(),
             (U32)swapchain_support.surface_capabilities.minImageExtent.height,
             (U32)swapchain_support.surface_capabilities.maxImageExtent.height
         );
@@ -123,8 +154,8 @@ void VulkanContext::CreateSwapchain(Window* window)
     swapchain_create_info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     swapchain_create_info.surface = m_surface;
     swapchain_create_info.minImageCount = image_count;
-    swapchain_create_info.imageFormat = surface_format.format;
-    swapchain_create_info.imageColorSpace = surface_format.colorSpace;
+    swapchain_create_info.imageFormat = m_swapchain_format.format;
+    swapchain_create_info.imageColorSpace = m_swapchain_format.colorSpace;
     swapchain_create_info.imageExtent = extent;
     swapchain_create_info.imageArrayLayers = 1;
     swapchain_create_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
@@ -138,6 +169,36 @@ void VulkanContext::CreateSwapchain(Window* window)
     swapchain_create_info.oldSwapchain = VK_NULL_HANDLE;
 
     BT_VULKAN_CHECK(vkCreateSwapchainKHR(VulkanRenderer::GetDevice(), &swapchain_create_info, VulkanRenderer::GetAllocator(), &m_swapchain));
+    GetSwapchainImagesViews();
+}
+
+void VulkanContext::GetSwapchainImagesViews()
+{
+    U32 swapchain_images_count = 0;
+    BT_VULKAN_CHECK(vkGetSwapchainImagesKHR(VulkanRenderer::GetDevice(), m_swapchain, &swapchain_images_count, nullptr));
+    m_swapchain_images.SetCountUninitialized(swapchain_images_count);
+    BT_VULKAN_CHECK(vkGetSwapchainImagesKHR(VulkanRenderer::GetDevice(), m_swapchain, &swapchain_images_count, *m_swapchain_images));
+
+    for (VkImage image : m_swapchain_images)
+    {
+        VkImageViewCreateInfo view_create_info = {};
+        view_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        view_create_info.image = image;
+        view_create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        view_create_info.format = m_swapchain_format.format;
+        view_create_info.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+        view_create_info.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+        view_create_info.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+        view_create_info.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+        view_create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        view_create_info.subresourceRange.baseMipLevel = 0;
+        view_create_info.subresourceRange.levelCount = 1;
+        view_create_info.subresourceRange.baseArrayLayer = 0;
+        view_create_info.subresourceRange.layerCount = 1;
+
+        VkImageView& image_view = m_swapchain_images_views.AddDefaulted();
+        BT_VULKAN_CHECK(vkCreateImageView(VulkanRenderer::GetDevice(), &view_create_info, VulkanRenderer::GetAllocator(), &image_view));
+    }
 }
 
 void VulkanContext::QuerySwapchainSupport(SwapchainSupport& out_support)

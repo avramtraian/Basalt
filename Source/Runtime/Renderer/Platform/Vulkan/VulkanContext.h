@@ -14,9 +14,12 @@ public:
     VulkanContext(const RenderingContextDescription& description);
     virtual ~VulkanContext() override;
 
+    void Invalidate();
+
 private:
-    void CreateSurface(Window* window);
-    void CreateSwapchain(Window* window);
+    void CreateSurface();
+    void CreateSwapchain();
+    void GetSwapchainImagesViews();
 
 private:
     struct SwapchainSupport
@@ -29,8 +32,15 @@ private:
     void QuerySwapchainSupport(SwapchainSupport& out_support);
 
 private:
+    // The window who is associated with this rendering context.
+    Window* m_window_context;
+
     VkSurfaceKHR m_surface = VK_NULL_HANDLE;
     VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
+    VkSurfaceFormatKHR m_swapchain_format;
+
+    Array<VkImage> m_swapchain_images;
+    Array<VkImageView> m_swapchain_images_views;
 };
 
 } // namespace Basalt
