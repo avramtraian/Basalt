@@ -44,6 +44,10 @@ public:
     FORCEINLINE ElementType* Data() { return &m_elements[0]; }
     FORCEINLINE const ElementType* Data() const { return &m_elements[0]; }
 
+    /** @return A pointer to the buffer where the elements are stored. */
+    FORCEINLINE ElementType* operator*() { return Data(); }
+    FORCEINLINE const ElementType* operator*() const { return Data(); }
+
     /** @return The number of elements that are stored in the array. */
     FORCEINLINE static constexpr Usize Count() { return ElementsCount; }
 
