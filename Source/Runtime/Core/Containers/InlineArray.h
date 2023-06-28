@@ -567,7 +567,7 @@ private:
     FORCEINLINE void ReleaseMemory(ElementType* elements, Usize capacity)
     {
         (void)capacity;
-        Memory::Free(elements);
+        Memory::Free((void*)elements);
     }
 
     /**
