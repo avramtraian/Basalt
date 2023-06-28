@@ -93,7 +93,7 @@ public:
     FORCEINLINE ConstIterator begin() const { return ConstIterator(Data()); }
 
     /** @return A forward iterator that points to the slot after the last element in the array. */
-    FORCEINLINE Iterator end() { return Iterator(Data() + m_count); }
+    FORCEINLINE Iterator end() { return Iterator(Data() + Count()); }
     FORCEINLINE ConstIterator end() const { return ConstIterator(Data() + Count()); }
 
     /** @return A reverse iterator that points to the last element in the array. */
