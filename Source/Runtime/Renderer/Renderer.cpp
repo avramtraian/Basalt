@@ -81,6 +81,7 @@ void Renderer::Shutdown()
         return;
     }
 
+    s_renderer_data->primary_context.Release();
     s_interface->Shutdown();
 
     btdelete s_interface;
