@@ -7,29 +7,6 @@
 namespace Basalt
 {
 
-namespace Utils
-{
-
-FORCEINLINE static DXGI_FORMAT FramebufferAttachmentTypeToDXGIFormat(EFramebufferAttachmentFormat format)
-{
-    switch (format)
-    {
-        // Color attachments.
-        case EFramebufferAttachmentFormat::R8G8B8A8:        return DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-        case EFramebufferAttachmentFormat::B8G8R8A8:        return DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
-
-        // Depth-stencil attachments.
-        case EFramebufferAttachmentFormat::DEPTH16:         return DXGI_FORMAT_D16_UNORM;
-        case EFramebufferAttachmentFormat::DEPTH32:         return DXGI_FORMAT_D32_FLOAT;
-        case EFramebufferAttachmentFormat::DEPTH24STENCIL8: return DXGI_FORMAT_D24_UNORM_S8_UINT;
-    }
-
-    Checkf(false, "Invalid EFramebufferAttachmentType!");
-    return DXGI_FORMAT_UNKNOWN;
-}
-
-} // namespace Basalt::Utils
-
 D3D11Framebuffer::D3D11Framebuffer(const FramebufferDescription& description)
     : m_width(description.width)
     , m_height(description.height)
@@ -53,7 +30,7 @@ D3D11Framebuffer::D3D11Framebuffer(const FramebufferDescription& description)
 
     for (auto& attachment : description.attachments)
     {
-        attachment_description.Format = Utils::FramebufferAttachmentTypeToDXGIFormat(attachment.format);
+        attachment_description.Format = Utils::ImageFormatToDirectX(attachment.format);
 
         Attachment d3d11_attachment;
         d3d11_attachment.format = attachment.format;
@@ -117,7 +94,7 @@ RendererID D3D11Framebuffer::GetAttachmentView(U32 attachment_index) const
     return m_attachments[attachment_index].attachment_view;
 }
 
-EFramebufferAttachmentFormat D3D11Framebuffer::GetAttachmentFormat(U32 attachment_index) const
+EImageFormat D3D11Framebuffer::GetAttachmentFormat(U32 attachment_index) const
 {
     Checkf(attachment_index < m_attachments.Count(), "Framebuffer attachment index is out of range: %d out of %d.", attachment_index, GetAttachmentsCount());
     return m_attachments[attachment_index].format;

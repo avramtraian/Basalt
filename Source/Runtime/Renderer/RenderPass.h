@@ -14,7 +14,6 @@ enum class ERenderPassLoadOperation
     Discard,
     Preserve,
     Clear,
-    DontCare,
     MaxEnumValue
 };
 
@@ -23,11 +22,10 @@ enum class ERenderPassStoreOperation
     None = 0,
     Discard,
     Preserve,
-    DontCare,
     MaxEnumValue
 };
 
-struct BASALT_S_API RenderPassAttachmentDescription
+struct BASALT_S_API RenderPassAttachment
 {
     ERenderPassLoadOperation load_operation = ERenderPassLoadOperation::Clear;
     ERenderPassStoreOperation store_operation = ERenderPassStoreOperation::Preserve;
@@ -48,8 +46,8 @@ struct BASALT_S_API RenderPassAttachmentDescription
 
 struct BASALT_S_API RenderPassDescription
 {
-    Ref<Framebuffer> output_framebuffer;
-    Array<RenderPassAttachmentDescription> attachment_descriptions;
+    Ref<Framebuffer> target_framebuffer;
+    Array<RenderPassAttachment> attachment_descriptions;
 };
 
 class BASALT_API RenderPass : public RefCounted

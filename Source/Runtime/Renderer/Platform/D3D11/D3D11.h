@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Renderer/Texture.h"
+#include "Renderer/Image.h"
 
 #include <d3d11.h>
 
@@ -19,14 +19,20 @@ namespace Basalt
 namespace Utils
 {
 
-FORCEINLINE DXGI_FORMAT TextureFormatToDXGIFormat(ETextureFormat format)
+FORCEINLINE DXGI_FORMAT ImageFormatToDirectX(EImageFormat format)
 {
 	switch (format)
 	{
-		case ETextureFormat::R8G8B8A8: return DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+        // Color formats.
+		case EImageFormat::R32G32B32A32:    return DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+        // Depth-stencil formats.
+        case EImageFormat::DEPTH16:         return DXGI_FORMAT_D16_UNORM;
+        case EImageFormat::DEPTH32:         return DXGI_FORMAT_D32_FLOAT;
+        case EImageFormat::DEPTH24STENCIL8: return DXGI_FORMAT_D24_UNORM_S8_UINT;
 	}
 
-	Checkf(false, "Invalid ETextureFormat!");
+	Checkf(false, "Invalid EImageFormat!");
 	return DXGI_FORMAT_UNKNOWN;
 }
 

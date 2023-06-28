@@ -3,17 +3,11 @@
 #pragma once
 
 #include "Core/Core.h"
+#include "Image.h"
 #include "RendererAPI.h"
 
 namespace Basalt
 {
-
-enum class ETextureFormat
-{
-    None = 0,
-    R8G8B8A8,
-    MaxEnumValue
-};
 
 enum class ETextureFiltering
 {
@@ -42,7 +36,7 @@ struct BASALT_S_API Texture2DDescription
     const void* texture_data = nullptr;
 
     // The format of the texture.
-    ETextureFormat format = ETextureFormat::None;
+    EImageFormat format = EImageFormat::None;
 
     // The texture mag/mig filtering mode.
     ETextureFiltering mag_filter = ETextureFiltering::Linear;

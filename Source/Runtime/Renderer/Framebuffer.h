@@ -3,35 +3,25 @@
 #pragma once
 
 #include "Core/Core.h"
+#include "Image.h"
 #include "RendererAPI.h"
 
 namespace Basalt
 {
 
-/**
- * Enumeration of all framebuffer attachment types.
- */
-enum class EFramebufferAttachmentFormat
-{
-    None = 0,
-
-    // Color formats.
-    R8G8B8A8,
-    B8G8R8A8,
-
-    // Depth-stencil formats.
-    DEPTH16, DEPTH32, DEPTH24STENCIL8,
-
-    MaxEnumValue
-};
 
 /**
  * Structure that describes a framebuffer attachment.
  */
 struct BASALT_S_API FramebufferAttachment
 {
+    FramebufferAttachment() = default;
+    FramebufferAttachment(EImageFormat attachment_format)
+        : format(attachment_format)
+    {}
+
     /** The type of the framebuffer attachment. */
-    EFramebufferAttachmentFormat format = EFramebufferAttachmentFormat::None;
+    EImageFormat format = EImageFormat::None;
 };
 
 /**
@@ -60,33 +50,11 @@ public:
     virtual U32 GetAttachmentsCount() const = 0;
     virtual RendererID GetAttachment(U32 attachment_index) const = 0;
     virtual RendererID GetAttachmentView(U32 attachment_index) const = 0;
-    virtual EFramebufferAttachmentFormat GetAttachmentFormat(U32 attachment_index) const = 0;
+    virtual EImageFormat GetAttachmentFormat(U32 attachment_index) const = 0;
 };
 
 namespace Utils
 {
-
-FORCEINLINE bool IsDepthFormat(EFramebufferAttachmentFormat format)
-{
-    switch (format)
-    {
-        case EFramebufferAttachmentFormat::DEPTH16:         return true;
-        case EFramebufferAttachmentFormat::DEPTH32:         return true;
-        case EFramebufferAttachmentFormat::DEPTH24STENCIL8: return true;
-    }
-
-    return false;
-}
-
-FORCEINLINE bool IsStencilFormat(EFramebufferAttachmentFormat format)
-{
-    switch (format)
-    {
-        case EFramebufferAttachmentFormat::DEPTH24STENCIL8: return true;
-    }
-
-    return false;
-}
 
 } // namespace Basalt::Utils
 

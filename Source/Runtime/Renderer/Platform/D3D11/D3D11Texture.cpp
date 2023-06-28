@@ -10,11 +10,14 @@ namespace Basalt
 namespace Utils
 {
 
-FORCEINLINE UINT TextureFormatBitsPerPixel(ETextureFormat format)
+FORCEINLINE UINT TextureFormatBitsPerPixel(EImageFormat format)
 {
     switch (format)
     {
-        case ETextureFormat::R8G8B8A8: return 32;
+        case EImageFormat::R32G32B32A32:    return 32 + 32 + 32 + 32;
+        case EImageFormat::DEPTH16:         return 16;
+        case EImageFormat::DEPTH32:         return 32;
+        case EImageFormat::DEPTH24STENCIL8: return 24 + 8;
     }
 
     Checkf(false, "Invalid ETextureFormat!");
@@ -76,7 +79,7 @@ D3D11Texture2D::D3D11Texture2D(const Texture2DDescription& description)
     texture_description.Height = m_description.height;
     texture_description.MipLevels = 1;
     texture_description.ArraySize = 1;
-    texture_description.Format = Utils::TextureFormatToDXGIFormat(m_description.format);
+    texture_description.Format = Utils::ImageFormatToDirectX(m_description.format);
     texture_description.SampleDesc.Count = 1;
     texture_description.SampleDesc.Quality = 0;
     texture_description.Usage = D3D11_USAGE_DEFAULT;

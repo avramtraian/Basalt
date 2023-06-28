@@ -19,12 +19,12 @@ public:
 
     virtual RendererID GetAttachment(U32 attachment_index) const override;
     virtual RendererID GetAttachmentView(U32 attachment_index) const override;
-    virtual EFramebufferAttachmentFormat GetAttachmentFormat(U32 attachment_index) const override;
+    virtual EImageFormat GetAttachmentFormat(U32 attachment_index) const override;
 
 private:
     struct Attachment
     {
-        EFramebufferAttachmentFormat format = EFramebufferAttachmentFormat::None;
+        EImageFormat format = EImageFormat::None;
         ID3D11Texture2D* attachment = nullptr;
         // Depending on the attachment format, might be a render target view or a depth-stencil view.
         RendererID attachment_view = nullptr;

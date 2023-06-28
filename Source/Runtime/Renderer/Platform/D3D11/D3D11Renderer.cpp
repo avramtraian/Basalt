@@ -85,7 +85,7 @@ void D3D11Renderer::BeginRenderPass(Ref<RenderPass> render_pass)
     auto d3d11_render_pass = render_pass.As<D3D11RenderPass>();
     RenderPassDescription& render_pass_description = d3d11_render_pass->GetDescription();
 
-    U32 framebuffer_attachments_count = render_pass_description.output_framebuffer->GetAttachmentsCount();
+    U32 framebuffer_attachments_count = render_pass_description.target_framebuffer->GetAttachmentsCount();
 
     Array<ID3D11RenderTargetView*> color_render_target_views;
     color_render_target_views.SetCapacity(framebuffer_attachments_count);
@@ -93,9 +93,9 @@ void D3D11Renderer::BeginRenderPass(Ref<RenderPass> render_pass)
 
     for (U32 attachment_index = 0; attachment_index < framebuffer_attachments_count; ++attachment_index)
     {
-        EFramebufferAttachmentFormat attachment_format = render_pass_description.output_framebuffer->GetAttachmentFormat(attachment_index);
-        RendererID attachment_view = render_pass_description.output_framebuffer->GetAttachmentView(attachment_index);
-        RenderPassAttachmentDescription attachment_description = render_pass_description.attachment_descriptions[attachment_index];
+        EImageFormat attachment_format = render_pass_description.target_framebuffer->GetAttachmentFormat(attachment_index);
+        RendererID attachment_view = render_pass_description.target_framebuffer->GetAttachmentView(attachment_index);
+        RenderPassAttachment attachment_description = render_pass_description.attachment_descriptions[attachment_index];
 
         if (!Utils::IsDepthFormat(attachment_format))
         {

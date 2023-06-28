@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include "Core/CoreDefines.h"
+#include "Renderer/Image.h"
+
 #include <vulkan/vulkan.h>
 
 #if BASALT_BUILD_DEBUG
@@ -28,3 +29,22 @@
 #else
     #define BT_VULKAN_CHECK(EXPRESSION) EXPRESSION
 #endif // BT_VULKAN_VALIDATION
+
+namespace Basalt
+{
+namespace Utils
+{
+
+FORCEINLINE VkFormat ImageFormatToVulkan(EImageFormat format)
+{
+    switch (format)
+    {
+        case EImageFormat::R32G32B32A32: return VK_FORMAT_R32G32B32A32_SFLOAT;
+    }
+
+    Checkf(false, "Invalid EImageFormat!");
+    return VK_FORMAT_UNDEFINED;
+}
+
+} // namespace Basalt::Utils
+} // namespace Basalt
