@@ -200,4 +200,20 @@ bool UTF8Calls::Validate(const char* null_terminated_string)
     return true;
 }
 
+bool UTF8Calls::Equals(const char* null_terminated_string_a, const char* null_terminated_string_b)
+{
+    while (true)
+    {
+        if (*null_terminated_string_a == 0 || *null_terminated_string_b == 0)
+        {
+            break;
+        }
+
+        ++null_terminated_string_a;
+        ++null_terminated_string_b;
+    }
+
+    return (*null_terminated_string_a == *null_terminated_string_b);
+}
+
 } // namespace Basalt

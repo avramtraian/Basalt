@@ -88,6 +88,8 @@ public:
      * @return True if the provided sequence is valid UTF-8; False otherwise.
      */
     static bool Validate(const char* null_terminated_string);
+
+    static bool Equals(const char* null_terminated_string_a, const char* null_terminated_string_b);
 };
 
 } // namespace Basalt
