@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Core/CoreDefines.h"
+#include "Core/Containers/Strings/StringView.h"
 #include "Core/CoreTypes.h"
 #include "Core/Memory/StackBuffer.h"
 #include "Core/Misc/DateTime.h"
@@ -248,7 +249,7 @@ public:
      * 
      * @return Whether or not the directory iteration should continue.
      */
-    virtual IterationDecision Visit(StringView filepath, bool is_directory) = 0;
+    virtual IterationDecision Visit(NullStringView filepath, bool is_directory) = 0;
 };
 
 /**
@@ -264,7 +265,7 @@ struct FileManagerDescription
 class BASALT_API FileManager
 {
 public:
-    using PFN_DirectoryVisit = IterationDecision(*)(StringView, bool is_directory);
+    using PFN_DirectoryVisit = IterationDecision(*)(NullStringView, bool is_directory);
 
 public:
     static bool Initialize(const FileManagerDescription& description);
@@ -283,7 +284,7 @@ public:
      *
      * @return The operation returned error code.
      */
-    static EFileError CreateReader(FileReader* out_reader, StringView filepath, U32 read_flags = EFileRead::None);
+    static EFileError CreateReader(FileReader* out_reader, NullStringView filepath, U32 read_flags = EFileRead::None);
 
     /**
      * Opens a file for writing and creates a file writer which can be used to write to it.
@@ -294,7 +295,7 @@ public:
      * 
      * @return The operation returned error code.
      */
-    static EFileError CreateWriter(FileWriter* out_writer, StringView filepath, U32 write_flags = EFileWrite::None);
+    static EFileError CreateWriter(FileWriter* out_writer, NullStringView filepath, U32 write_flags = EFileWrite::None);
 
 public:
     /**
@@ -307,7 +308,7 @@ public:
      * @return The operation error code. Can only be `FileNotFound` if the given directory path is not valid
      *         or it isn't a directory.
      */
-    static EFileError IterateDirectory(StringView directory_path, PFN_DirectoryVisit visitor);
+    static EFileError IterateDirectory(NullStringView directory_path, PFN_DirectoryVisit visitor);
 
     /**
      * Calls the provided directory visitor for every file or directory present in the provided directory. This function
@@ -319,7 +320,7 @@ public:
      * @return The operation error code. Can only be `FileNotFound` if the given directory path is not valid
      *         or it isn't a directory.
      */
-    static EFileError IterateDirectory(StringView directory_path, DirectoryVisitor& visitor);
+    static EFileError IterateDirectory(NullStringView directory_path, DirectoryVisitor& visitor);
 
     /**
      * Invokes the provided function for every file or directory present in the provided directory, recursively
@@ -331,7 +332,7 @@ public:
      * @return The operation error code. Can only be `FileNotFound` if the given directory path is not valid
      *         or it isn't a directory.
      */
-    static EFileError IterateDirectoryRecursively(StringView directory_path, PFN_DirectoryVisit visitor);
+    static EFileError IterateDirectoryRecursively(NullStringView directory_path, PFN_DirectoryVisit visitor);
 
     /**
      * Calls the provided directory visitor for every file or directory present in the provided directory, recursively
@@ -343,7 +344,7 @@ public:
      * @return The operation error code. Can only be `FileNotFound` if the given directory path is not valid
      *         or it isn't a directory.
      */
-    static EFileError IterateDirectoryRecursively(StringView directory_path, DirectoryVisitor& visitor);
+    static EFileError IterateDirectoryRecursively(NullStringView directory_path, DirectoryVisitor& visitor);
 };
 
 } // namespace Basalt

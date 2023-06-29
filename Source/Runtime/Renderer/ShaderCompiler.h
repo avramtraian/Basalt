@@ -26,8 +26,8 @@ struct ShaderCompilationOptions
 {
     Array<String> defines;
     EShaderStage shader_stage = EShaderStage::None;
-    String entry_point;
-    StringView filepath;
+    NullStringView entry_point;
+    NullStringView filepath;
     bool force_debug = false;
 };
 

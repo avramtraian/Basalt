@@ -42,7 +42,7 @@ bool WindowsFilesystem::IsFileHandleValid(FileHandle file_handle) const
     return (*file_handle != INVALID_HANDLE_VALUE);
 }
 
-U64 WindowsFilesystem::FileSize(StringView filepath) const
+U64 WindowsFilesystem::FileSize(NullStringView filepath) const
 {
     const wchar_t* win32_filepath = AllocatePath(filepath);
 
@@ -66,7 +66,7 @@ U64 WindowsFilesystem::FileSize(StringView filepath) const
     return (U64)attributes.nFileSizeLow | ((U64)attributes.nFileSizeHigh << 32);
 }
 
-FileHandle WindowsFilesystem::OpenForReading(StringView filepath, bool allow_writing_while_open)
+FileHandle WindowsFilesystem::OpenForReading(NullStringView filepath, bool allow_writing_while_open)
 {
     FileHandle file_handle;
 
@@ -93,7 +93,7 @@ FileHandle WindowsFilesystem::OpenForReading(StringView filepath, bool allow_wri
     return file_handle;
 }
 
-FileHandle WindowsFilesystem::OpenForWriting(StringView filepath, bool allow_reading_while_open, bool append)
+FileHandle WindowsFilesystem::OpenForWriting(NullStringView filepath, bool allow_reading_while_open, bool append)
 {
     FileHandle file_handle;
 
@@ -226,17 +226,17 @@ U64 WindowsFilesystem::WriteToFile(FileHandle file_handle, const void* buffer, U
     return bytes_count;
 }
 
-const wchar_t* WindowsFilesystem::AllocatePath(StringView filepath) const
+const wchar_t* WindowsFilesystem::AllocatePath(NullStringView filepath) const
 {
     Buffer utf16_buffer = Buffer(m_filepath_buffer, sizeof(m_filepath_buffer));
-    Usize written_count = StringBuilder::ToUTF16(filepath, utf16_buffer, true);
+    Usize written_count = StringBuilder::ToUTF16(StringView(filepath.Data(), filepath.BytesCount()), utf16_buffer, false);
     wchar_t* win32_filepath = utf16_buffer.As<wchar_t>();
 
     if (written_count == InvalidSize)
     {
         // The stack buffer is not sufficient to store the filepath.
         Buffer heap_buffer;
-        written_count = StringBuilder::ToUTF16Dynamic(filepath, heap_buffer, true);
+        written_count = StringBuilder::ToUTF16Dynamic(StringView(filepath.Data(), filepath.BytesCount()), heap_buffer, true);
         win32_filepath = heap_buffer.As<wchar_t>();
     }
 

@@ -72,7 +72,7 @@ bool FileManager::IsInitialized()
            s_file_manager->filesystem->IsInitialized();
 }
 
-EFileError FileManager::CreateReader(FileReader* out_reader, StringView filepath, U32 read_flags /*= EFileRead::None*/)
+EFileError FileManager::CreateReader(FileReader* out_reader, NullStringView filepath, U32 read_flags /*= EFileRead::None*/)
 {
     if (!FileManager::IsInitialized())
     {
@@ -93,13 +93,13 @@ EFileError FileManager::CreateReader(FileReader* out_reader, StringView filepath
 
     out_reader->m_file_handle = handle;
     out_reader->m_is_valid = true;
-    out_reader->m_path = filepath;
+    out_reader->m_path = filepath.AsStringView();
 
     Check(out_reader->IsValid());
     return EFileError::Success;
 }
 
-EFileError FileManager::CreateWriter(FileWriter* out_writer, StringView filepath, U32 write_flags /*= EFileWrite::None*/)
+EFileError FileManager::CreateWriter(FileWriter* out_writer, NullStringView filepath, U32 write_flags /*= EFileWrite::None*/)
 {
     if (!FileManager::IsInitialized())
     {
@@ -120,7 +120,7 @@ EFileError FileManager::CreateWriter(FileWriter* out_writer, StringView filepath
 
     out_writer->m_file_handle = handle;
     out_writer->m_is_valid = true;
-    out_writer->m_path = filepath;
+    out_writer->m_path = filepath.AsStringView();
 
     out_writer->m_buffer.Invalidate(128);
     
@@ -128,12 +128,12 @@ EFileError FileManager::CreateWriter(FileWriter* out_writer, StringView filepath
     return EFileError::Success;
 }
 
-EFileError FileManager::IterateDirectory(StringView directory_path, DirectoryVisitor& visitor)
+EFileError FileManager::IterateDirectory(NullStringView directory_path, DirectoryVisitor& visitor)
 {
     return EFileError::Success;
 }
 
-EFileError FileManager::IterateDirectory(StringView directory_path, PFN_DirectoryVisit visitor)
+EFileError FileManager::IterateDirectory(NullStringView directory_path, PFN_DirectoryVisit visitor)
 {
     class WrapperDirectoryVisitor : public DirectoryVisitor
     {
@@ -144,7 +144,7 @@ EFileError FileManager::IterateDirectory(StringView directory_path, PFN_Director
 
         virtual ~WrapperDirectoryVisitor() override = default;
 
-        virtual IterationDecision Visit(StringView filepath, bool is_directory) override
+        virtual IterationDecision Visit(NullStringView filepath, bool is_directory) override
         {
             return m_visitor(filepath, is_directory);
         }
@@ -157,7 +157,7 @@ EFileError FileManager::IterateDirectory(StringView directory_path, PFN_Director
     return IterateDirectory(directory_path, wrapper_visitor);
 }
 
-EFileError FileManager::IterateDirectoryRecursively(StringView directory_path, DirectoryVisitor& visitor)
+EFileError FileManager::IterateDirectoryRecursively(NullStringView directory_path, DirectoryVisitor& visitor)
 {
     class RecursiveDirectoryVisitor : public DirectoryVisitor
     {
@@ -168,7 +168,7 @@ EFileError FileManager::IterateDirectoryRecursively(StringView directory_path, D
 
         virtual ~RecursiveDirectoryVisitor() override = default;
 
-        virtual IterationDecision Visit(StringView filepath, bool is_directory) override
+        virtual IterationDecision Visit(NullStringView filepath, bool is_directory) override
         {
             if (is_directory)
             {
@@ -187,7 +187,7 @@ EFileError FileManager::IterateDirectoryRecursively(StringView directory_path, D
     return IterateDirectory(directory_path, recursive_visitor);
 }
 
-EFileError FileManager::IterateDirectoryRecursively(StringView directory_path, PFN_DirectoryVisit visitor)
+EFileError FileManager::IterateDirectoryRecursively(NullStringView directory_path, PFN_DirectoryVisit visitor)
 {
     class WrapperDirectoryVisitor : public DirectoryVisitor
     {
@@ -198,7 +198,7 @@ EFileError FileManager::IterateDirectoryRecursively(StringView directory_path, P
 
         virtual ~WrapperDirectoryVisitor() override = default;
 
-        virtual IterationDecision Visit(StringView filepath, bool is_directory) override
+        virtual IterationDecision Visit(NullStringView filepath, bool is_directory) override
         {
             return m_visitor(filepath, is_directory);
         }

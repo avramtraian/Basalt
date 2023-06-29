@@ -176,7 +176,7 @@ static void BuildArguments(const ShaderCompilationOptions& options, EShaderBytec
     if (!options.entry_point.IsEmpty())
     {
         ScopedBuffer entry_point;
-        StringBuilder::ToUTF16Dynamic(options.entry_point.ToView(), entry_point.RawBuffer(), true);
+        StringBuilder::ToUTF16Dynamic(StringView(options.entry_point.Data(), options.entry_point.BytesCount()), entry_point.RawBuffer(), true);
         out_arguments.Add(entry_point.As<wchar_t>());
     }
     else
@@ -222,7 +222,7 @@ static void BuildArguments(const ShaderCompilationOptions& options, EShaderBytec
     }
 }
 
-static bool ReadFile(StringView filepath, Buffer& out_source_code)
+static bool ReadFile(NullStringView filepath, Buffer& out_source_code)
 {
     FileReader reader;
     EFileError error_code = FileManager::CreateReader(&reader, filepath);
