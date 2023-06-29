@@ -15,17 +15,17 @@ enum class EShaderBytecode
     MaxEnumValue
 };
 
-enum class EShaderStage
-{
-    None = 0,
-    Vertex, Pixel, Compute, Geometry,
-    MaxEnumValue
-};
-
 struct ShaderCompilationOptions
 {
+    enum class EStage
+    {
+        None = 0,
+        Vertex, Pixel, Compute, Geometry,
+        MaxEnumValue
+    };
+
     Array<String> defines;
-    EShaderStage shader_stage = EShaderStage::None;
+    EStage shader_stage = EStage::None;
     NullStringView entry_point;
     NullStringView filepath;
     bool force_debug = false;

@@ -139,28 +139,28 @@ bool ShaderCompiler::Compile(const ShaderCompilationOptions& options, ShaderComp
 namespace Utils
 {
 
-FORCEINLINE static LPCWSTR ShaderStageToDXC(EShaderStage stage)
+FORCEINLINE static LPCWSTR ShaderStageToDXC(ShaderCompilationOptions::EStage stage)
 {
     switch (stage)
     {
-        case EShaderStage::Vertex:      return L"vs_6_5";
-        case EShaderStage::Pixel:       return L"ps_6_5";
-        case EShaderStage::Compute:     return L"cs_6_5";
-        case EShaderStage::Geometry:    return L"gs_6_5";
+        case ShaderCompilationOptions::EStage::Vertex:      return L"vs_6_5";
+        case ShaderCompilationOptions::EStage::Pixel:       return L"ps_6_5";
+        case ShaderCompilationOptions::EStage::Compute:     return L"cs_6_5";
+        case ShaderCompilationOptions::EStage::Geometry:    return L"gs_6_5";
     }
 
     Checkf(false, "Invalid EShaderStage!");
     return nullptr;
 }
 
-FORCEINLINE static LPCWSTR ShaderStageToDefaultEntryPointName(EShaderStage stage)
+FORCEINLINE static LPCWSTR ShaderStageToDefaultEntryPointName(ShaderCompilationOptions::EStage stage)
 {
     switch (stage)
     {
-        case EShaderStage::Vertex:      return L"VSMain";
-        case EShaderStage::Pixel:       return L"PSMain";
-        case EShaderStage::Compute:     return L"CSMain";
-        case EShaderStage::Geometry:    return L"GSMain";
+        case ShaderCompilationOptions::EStage::Vertex:      return L"VSMain";
+        case ShaderCompilationOptions::EStage::Pixel:       return L"PSMain";
+        case ShaderCompilationOptions::EStage::Compute:     return L"CSMain";
+        case ShaderCompilationOptions::EStage::Geometry:    return L"GSMain";
     }
 
     Checkf(false, "Invalid EShaderStage!");
