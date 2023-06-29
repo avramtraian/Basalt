@@ -98,8 +98,11 @@ void ShaderCompiler::Shutdown()
 bool ShaderCompiler::Compile(const ShaderCompilationOptions& options, ShaderCompilationResult& out_result)
 {
     // Compile shader to SPIR-V bytecode. Required for reflection.
-    Buffer spirv_bytecode;
-    if (!CompileSPIRV(options, spirv_bytecode))
+    Buffer unoptimized_spirv_bytecode;
+    ShaderCompilationOptions reflection_options = options;
+    reflection_options.force_debug = true;
+
+    if (!CompileSPIRV(reflection_options, unoptimized_spirv_bytecode))
     {
         // Failed to compile to SPIR-V.
         return false;
@@ -107,17 +110,31 @@ bool ShaderCompiler::Compile(const ShaderCompilationOptions& options, ShaderComp
 
     // NOTE(traian): Shader reflection is only performed on unoptimized SPIR-V shaders, in order
     //               to ensure consistency among all shading languages and platforms.
-    if (!ReflectSPIRV(spirv_bytecode, out_result))
+    if (!ReflectSPIRV(unoptimized_spirv_bytecode, out_result))
     {
         // Failed to reflect shader information.
+        unoptimized_spirv_bytecode.Release();
         return false;
+    }
+
+#if BASALT_BUILD_DEBUG
+    const bool compile_debug_shaders = true;
+#else
+    const bool compile_debug_shaders = options.force_debug;
+#endif // BASALT_BUILD_DEBUG
+
+    if (!compile_debug_shaders)
+    {
+        // The SPIR-V unoptimized bytecode is no longer necessary.
+        unoptimized_spirv_bytecode.Release();
     }
 
     switch (m_data->bytecode_format)
     {
         case EShaderBytecode::DXIL:
         {
-            spirv_bytecode.Release();
+            // The SPIR-V bytecode is no longer necessary.
+            unoptimized_spirv_bytecode.Release();
 
             // Compile shader to DXIL bytecode, to directly feed to the D3D11/D3D12 API.
             if (!CompileDXIL(options, out_result.bytecode))
@@ -128,19 +145,50 @@ bool ShaderCompiler::Compile(const ShaderCompilationOptions& options, ShaderComp
 
             break;
         }
+
         case EShaderBytecode::SPIRV:
         {
-            out_result.bytecode = spirv_bytecode;
+            if (compile_debug_shaders)
+            {
+                // The final bytecode has the same optimization level as the SPIR-V bytecode used for reflection.
+                out_result.bytecode = unoptimized_spirv_bytecode;
+            }
+            else
+            {
+                if (!CompileSPIRV(options, out_result.bytecode))
+                {
+                    // Failed to compile to SPIR-V.
+                    return false;
+                }
+            }
+
             break;
         }
+
         case EShaderBytecode::Metal:
         {
+            Buffer spirv_bytecode;
+
+            if (compile_debug_shaders)
+            {
+                // The required bytecode has the same optimization level as the SPIR-V bytecode used for reflection.
+                spirv_bytecode = unoptimized_spirv_bytecode;
+            }
+            else
+            {
+                if (!CompileSPIRV(options, spirv_bytecode))
+                {
+                    // Failed to compile to SPIR-V.
+                    return false;
+                }
+            }
+
             if (!CrossCompileToMetal(spirv_bytecode, out_result.bytecode))
             {
                 // Failed to cross-compile to MSL bytecode format.
                 return false;
             }
-            spirv_bytecode.Release();
+
             break;
         }
     }
@@ -271,7 +319,7 @@ static bool CompileShader(ShaderCompilerData* compiler_data, Buffer source_code,
 
     // NOTE(traian): There is no documentation about the result value of the IDxcCompiler3::Compile.
     //               We assume that the compiler instance should always be able to be engaged, as
-    //               actual compile errors caused by the used are classified as success.
+    //               actual compile errors caused by the user are classified as success.
     Checkf(SUCCEEDED(hr_compile), "Failed to engage the shader compilation process!");
 
     IDxcBlobUtf8* compile_errors = nullptr;
@@ -330,6 +378,25 @@ bool ShaderCompiler::CompileSPIRV(const ShaderCompilationOptions& options, Buffe
 
 bool ShaderCompiler::CompileDXIL(const ShaderCompilationOptions& options, Buffer& out_bytecode)
 {
+    // Build the compiler argument list.
+    Array<LPCWSTR> arguments;
+    Utils::BuildArguments(options, EShaderBytecode::DXIL, arguments);
+
+    // Read the shader source code.
+    ScopedBuffer source_code;
+    if (!Utils::ReadFile(options.filepath, source_code.RawBuffer()))
+    {
+        // Failed to read the shade source code.
+        return false;
+    }
+
+    // Engage the HLSL compiler.
+    if (!Utils::CompileShader(m_data, source_code.RawBuffer(), arguments, out_bytecode))
+    {
+        // Failed to compile the shader.
+        return false;
+    }
+
     // The shader compilation was successful.
     return true;
 }
