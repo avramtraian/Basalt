@@ -8,6 +8,7 @@
 #include "CoreTypes.h"
 #include "Containers/Array.h"
 #include "Containers/FixedArray.h"
+#include "Containers/HashTable.h"
 #include "Containers/InlineArray.h"
 #include "Containers/Optional.h"
 #include "Containers/Pair.h"
