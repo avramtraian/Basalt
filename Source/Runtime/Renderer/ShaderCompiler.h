@@ -15,11 +15,6 @@ enum class EShaderBytecode
     MaxEnumValue
 };
 
-struct ShaderCompilerDescription
-{
-    EShaderBytecode bytecode_format = EShaderBytecode::DXIL;
-};
-
 enum class EShaderStage
 {
     None = 0,
@@ -46,9 +41,10 @@ class ShaderCompiler
 {
 public:
     ShaderCompiler() = default;
-    ~ShaderCompiler();
+    ~ShaderCompiler() = default;
 
-    bool Initialize(const ShaderCompilerDescription& description);
+    bool Initialize(EShaderBytecode bytecode_format);
+    void Shutdown();
     
     bool Compile(const ShaderCompilationOptions& options, ShaderCompilationResult& out_result);
 

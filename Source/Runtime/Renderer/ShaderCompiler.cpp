@@ -28,31 +28,13 @@ struct ShaderCompilerData
     IDxcCompiler3*              compiler        = nullptr;
     IDxcUtils*                  utils           = nullptr;
     IDxcIncludeHandler*         include_handler = nullptr;
-    ShaderCompilerDescription   description;
+    EShaderBytecode             bytecode_format = EShaderBytecode::None;
 
     ScopedBuffer                reflection_compiler_storage;
     ScopedBuffer                msl_cross_compiler_storage;
 };
 
-ShaderCompiler::~ShaderCompiler()
-{
-    if (m_data->compiler)
-    {
-        m_data->compiler->Release();
-    }
-    if (m_data->utils)
-    {
-        m_data->utils->Release();
-    }
-    if (m_data->include_handler)
-    {
-        m_data->include_handler->Release();
-    }
-
-    btdelete m_data;
-}
-
-bool ShaderCompiler::Initialize(const ShaderCompilerDescription& description)
+bool ShaderCompiler::Initialize(EShaderBytecode bytecode_format)
 {
     Checkf(m_data == nullptr, "Shader compiler was already initialized!");
     m_data = btnew ShaderCompilerData();
@@ -72,12 +54,32 @@ bool ShaderCompiler::Initialize(const ShaderCompilerDescription& description)
         return false;
     }
 
-    m_data->description = description;
-
+    m_data->bytecode_format = bytecode_format;
     m_data->reflection_compiler_storage.Invalidate(sizeof(spirv_cross::CompilerReflection));
     m_data->msl_cross_compiler_storage.Invalidate(sizeof(spirv_cross::CompilerMSL));
 
     return true;
+}
+
+void ShaderCompiler::Shutdown()
+{
+    Checkf(m_data != nullptr, "Shader compiler was already shut down!");
+
+    if (m_data->compiler)
+    {
+        m_data->compiler->Release();
+    }
+    if (m_data->utils)
+    {
+        m_data->utils->Release();
+    }
+    if (m_data->include_handler)
+    {
+        m_data->include_handler->Release();
+    }
+
+    btdelete m_data;
+    m_data = nullptr;
 }
 
 bool ShaderCompiler::Compile(const ShaderCompilationOptions& options, ShaderCompilationResult& out_result)
@@ -98,7 +100,7 @@ bool ShaderCompiler::Compile(const ShaderCompilationOptions& options, ShaderComp
         return false;
     }
 
-    switch (m_data->description.bytecode_format)
+    switch (m_data->bytecode_format)
     {
         case EShaderBytecode::DXIL:
         {
