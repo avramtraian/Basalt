@@ -184,6 +184,7 @@ static void BuildArguments(const ShaderCompilationOptions& options, EShaderBytec
 {
     // The DXC compiler can only directly produce DXIL or SPIR-V bytecode.
     Check(bytecode_format == EShaderBytecode::DXIL || bytecode_format == EShaderBytecode::SPIRV);
+    out_arguments.SetCapacity(12 + 2 * options.defines.Count());
 
     out_arguments.Add(L"-E");
     if (!options.entry_point.IsEmpty())
