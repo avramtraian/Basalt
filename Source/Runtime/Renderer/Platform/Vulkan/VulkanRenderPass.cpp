@@ -32,7 +32,7 @@ FORCEINLINE static VkAttachmentStoreOp StoreOperationToVulkan(ERenderPassStoreOp
         case ERenderPassStoreOperation::Preserve:    return VK_ATTACHMENT_STORE_OP_STORE;
     }
 
-    Checkf(false, "Invalid ERenderPassLoadOperation!");
+    Checkf(false, "Invalid ERenderPassStoreOperation!");
     return VK_ATTACHMENT_STORE_OP_DONT_CARE;
 }
 
