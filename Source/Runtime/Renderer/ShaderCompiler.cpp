@@ -23,15 +23,28 @@
 namespace Basalt
 {
 
+/**
+ * Structure that contains the data a shader compiler manages and uses.
+ */
 struct ShaderCompilerData
 {
-    IDxcCompiler3*              compiler        = nullptr;
-    IDxcUtils*                  utils           = nullptr;
-    IDxcIncludeHandler*         include_handler = nullptr;
-    EShaderBytecode             bytecode_format = EShaderBytecode::None;
+    /** The DXC compiler instance handle. */
+    IDxcCompiler3* compiler = nullptr;
 
-    ScopedBuffer                reflection_compiler_storage;
-    ScopedBuffer                msl_cross_compiler_storage;
+    /** The DXC utils instance handle. Required for creating various objects. */
+    IDxcUtils* utils = nullptr;
+
+    /** The default DXC include handler. */
+    IDxcIncludeHandler* include_handler = nullptr;
+
+    /** The bytecode format that the compiler generates. */
+    EShaderBytecode bytecode_format = EShaderBytecode::None;
+
+    /** The buffer where the reflection compiler is stored. */
+    ScopedBuffer reflection_compiler_storage;
+
+    /** The buffer where the Metal cross-compiler is stored. */
+    ScopedBuffer msl_cross_compiler_storage;
 };
 
 bool ShaderCompiler::Initialize(EShaderBytecode bytecode_format)
