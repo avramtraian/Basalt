@@ -238,7 +238,7 @@ static void BuildArguments(const ShaderCompilationOptions& options, EShaderBytec
     if (!options.entry_point.IsEmpty())
     {
         ScopedBuffer entry_point;
-        StringBuilder::ToUTF16Dynamic(StringView(options.entry_point.Data(), options.entry_point.BytesCount()), entry_point.RawBuffer(), true);
+        StringBuilder::ToUTF16Dynamic(options.entry_point.ToView(), entry_point.RawBuffer(), true);
         out_arguments.Add(entry_point.As<wchar_t>());
     }
     else
@@ -284,7 +284,7 @@ static void BuildArguments(const ShaderCompilationOptions& options, EShaderBytec
     }
 }
 
-static bool ReadFile(NullStringView filepath, Buffer& out_source_code)
+static bool ReadFile(StringView filepath, Buffer& out_source_code)
 {
     FileReader reader;
     EFileError error_code = FileManager::CreateReader(&reader, filepath);
@@ -359,7 +359,7 @@ bool ShaderCompiler::CompileSPIRV(const ShaderCompilationOptions& options, Buffe
 
     // Read the shader source code.
     ScopedBuffer source_code;
-    if (!Utils::ReadFile(options.filepath, source_code.RawBuffer()))
+    if (!Utils::ReadFile(options.filepath.ToView(), source_code.RawBuffer()))
     {
         // Failed to read the shade source code.
         return false;
@@ -384,7 +384,7 @@ bool ShaderCompiler::CompileDXIL(const ShaderCompilationOptions& options, Buffer
 
     // Read the shader source code.
     ScopedBuffer source_code;
-    if (!Utils::ReadFile(options.filepath, source_code.RawBuffer()))
+    if (!Utils::ReadFile(options.filepath.ToView(), source_code.RawBuffer()))
     {
         // Failed to read the shade source code.
         return false;

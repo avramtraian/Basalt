@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Core/Containers/Strings/NullStringView.h"
+#include "Core/Containers/Strings/StringView.h"
 #include "Core/Containers/Unique.h"
 #include "Core/CoreTypes.h"
 #include "Core/CoreTypes.h"
@@ -102,7 +102,7 @@ public:
      * @param filepath The path to the file.
      * @return The size (in bytes) of the file, or -1 if an error occurs.
      */
-    virtual U64 FileSize(NullStringView filepath) const = 0;
+    virtual U64 FileSize(StringView filepath) const = 0;
 
     /**
      * Opens a file for reading purposes.
@@ -119,7 +119,7 @@ public:
      * @return The file handle that represents the opened file. If the handle is invalid,
      *         an error occurred. Inspect `GetLastErrorCode()` for more details.
      */
-    virtual FileHandle OpenForReading(NullStringView filepath, bool allow_writing_while_open) = 0;
+    virtual FileHandle OpenForReading(StringView filepath, bool allow_writing_while_open) = 0;
 
     /**
      * Opens a file for writing purposes.
@@ -136,7 +136,7 @@ public:
      * @return The file handle that represents the opened file. If this handle is invalid, an
      *         error occured. Inspect `GetLastErrorCode()` for more details.
      */
-    virtual FileHandle OpenForWriting(NullStringView filepath, bool allow_reading_while_open, bool append) = 0;
+    virtual FileHandle OpenForWriting(StringView filepath, bool allow_reading_while_open, bool append) = 0;
 
     /**
      * Closes the given file handle.

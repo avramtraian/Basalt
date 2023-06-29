@@ -117,6 +117,17 @@ public:
     /** Wrapper around `FindFirstOf()`. */
     FORCEINLINE Usize Find(StringView substring) const { return FindFirstOf(substring); }
 
+public:
+    FORCEINLINE bool operator==(const String& other) const
+    {
+        return (ToView() == other.ToView());
+    }
+
+    FORCEINLINE bool operator!=(const String& other) const
+    {
+        return (ToView() != other.ToView());
+    }
+
 private:
     /**
      * Allocates a block of memory from the heap.

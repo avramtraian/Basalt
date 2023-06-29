@@ -25,11 +25,11 @@ public:
     virtual EFilesystemError GetLastErrorCode() const override { return m_last_error_code; }
 
 public:
-    virtual U64 FileSize(NullStringView filepath) const override;
+    virtual U64 FileSize(StringView filepath) const override;
 
-    virtual FileHandle OpenForReading(NullStringView filepath, bool allow_writing_while_open) override;
+    virtual FileHandle OpenForReading(StringView filepath, bool allow_writing_while_open) override;
 
-    virtual FileHandle OpenForWriting(NullStringView filepath, bool allow_reading_while_open, bool append) override;
+    virtual FileHandle OpenForWriting(StringView filepath, bool allow_reading_while_open, bool append) override;
 
     virtual void CloseFileHandle(FileHandle& file_handle) override;
 
@@ -38,7 +38,7 @@ public:
     virtual U64 WriteToFile(FileHandle file_handle, const void* buffer, U64 bytes_count) override;
 
 private:
-    const wchar_t* AllocatePath(NullStringView filepath) const;
+    const wchar_t* AllocatePath(StringView filepath) const;
     void ReleasePath(const wchar_t* filepath) const;
 
 private:
