@@ -11,6 +11,15 @@ namespace Basalt
 class BASALT_API Buffer
 {
 public:
+    FORCEINLINE static Buffer Copy(Buffer source_buffer)
+    {
+        Buffer result;
+        result.Invalidate(source_buffer.size);
+        Memory::Copy(result.data, source_buffer.data, source_buffer.size);
+        return result;
+    }
+
+public:
     FORCEINLINE Buffer()
         : data(nullptr)
         , size(0)
