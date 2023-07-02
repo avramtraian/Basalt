@@ -221,10 +221,10 @@ void VulkanRenderer::GetInstanceExtensions(Array<const char*>& out_extensions)
     // Platform-generic surface extensions.
     out_extensions.Add(VK_KHR_SURFACE_EXTENSION_NAME);
 
-#if BASALT_PLATFORM_WINDOWS
+#if BT_PLATFORM_WINDOWS
     // Creates a surface specific for Win32 applications.
     out_extensions.Add("VK_KHR_win32_surface");
-#endif // BASALT_PLATFORM_WINDOWS
+#endif // BT_PLATFORM_WINDOWS
 
 #if BT_VULKAN_VALIDATION
     // Enables the debug messenger.

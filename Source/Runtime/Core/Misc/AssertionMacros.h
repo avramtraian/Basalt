@@ -22,7 +22,7 @@
  */
 #define USE_DEBUG_CHECKS_IN_SHIPPING    0
 
-#if BASALT_BUILD_DEBUG || (BASALT_BUILD_RELEASE && USE_DEBUG_CHECKS_IN_RELEASE) || (BASALT_BUILD_SHIPPING && USE_DEBUG_CHECKS_IN_SHIPPING)
+#if BT_BUILD_DEBUG || (BT_BUILD_RELEASE && USE_DEBUG_CHECKS_IN_RELEASE) || (BT_BUILD_SHIPPING && USE_DEBUG_CHECKS_IN_SHIPPING)
     /**
      * Issues an assertion if the given expression is evaluated to false.
      * This macro is included only in debug builds. In other configurations, the
@@ -34,7 +34,7 @@
         {                                                                   \
             ::Basalt::Debug::ReportAssertFailed(                            \
                 #EXPRESSION, __FILE__, BT_FUNCTION, __LINE__);              \
-            BASALT_DEBUGBREAK;                                              \
+            BT_DEBUGBREAK;                                              \
         }
     
      /**
@@ -50,7 +50,7 @@
         {                                                                   \
             ::Basalt::Debug::ReportAssertFailed(                            \
                 #EXPRESSION, __FILE__, BT_FUNCTION, __LINE__, __VA_ARGS__); \
-            BASALT_DEBUGBREAK;                                              \
+            BT_DEBUGBREAK;                                              \
         }
 
     #define CheckCodeDebug(...) __VA_ARGS__
@@ -61,7 +61,7 @@
     #define CheckCodeDebugf(...) // Excluded from build.
 #endif // Debug checks enabled.
 
-#if BASALT_BUILD_DEBUG || BASALT_BUILD_RELEASE || (BASALT_BUILD_SHIPPING && USE_CHECKS_IN_SHIPPING)
+#if BT_BUILD_DEBUG || BT_BUILD_RELEASE || (BT_BUILD_SHIPPING && USE_CHECKS_IN_SHIPPING)
     /**
      * Issues an assertion if the given expression is evaluated to false.
      * This macro is included only in debug and release builds. In shipping
@@ -74,7 +74,7 @@
         {                                                                   \
             ::Basalt::Debug::ReportAssertFailed(                            \
                 #EXPRESSION, __FILE__, BT_FUNCTION, __LINE__);              \
-            BASALT_DEBUGBREAK;                                              \
+            BT_DEBUGBREAK;                                              \
         }
     
      /**
@@ -91,7 +91,7 @@
         {                                                                   \
             ::Basalt::Debug::ReportAssertFailed(                            \
                 #EXPRESSION, __FILE__, BT_FUNCTION, __LINE__, __VA_ARGS__); \
-            BASALT_DEBUGBREAK;                                              \
+            BT_DEBUGBREAK;                                              \
         }
 
     #define CheckCode(...) __VA_ARGS__

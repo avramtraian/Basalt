@@ -5,11 +5,11 @@
  * using the DirectXMath API. It is the default implementation on Windows.
  */
 
-#if BASALT_PLATFORM_WINDOWS
+#if BT_PLATFORM_WINDOWS
     #include <DirectXMath.h>
 #else
     #error Trying to include the DirectXMath header files!
-#endif // BASALT_PLATFORM_WINDOWS
+#endif // BT_PLATFORM_WINDOWS
 
 namespace Basalt
 {

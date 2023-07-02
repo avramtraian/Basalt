@@ -1,8 +1,8 @@
 // Copyright (c) 2023 Basalt Technology Group. All rights reserved.
 
-#if BASALT_PLATFORM_WINDOWS
+#if BT_PLATFORM_WINDOWS
     #include "MathDirectX.h"
-#endif // BASALT_PLATFORM_WINDOWS
+#endif // BT_PLATFORM_WINDOWS
 
 namespace Basalt
 {

@@ -9,9 +9,9 @@ namespace Basalt
 
 Unique<Window> Window::Create()
 {
-#if BASALT_PLATFORM_WINDOWS
+#if BT_PLATFORM_WINDOWS
     return Unique<WindowsWindow>::Create().As<Window>();
-#endif // BASALT_PLATFORM_WINDOWS
+#endif // BT_PLATFORM_WINDOWS
 }
 
 bool Window::Initialize(const WindowDescription& description)

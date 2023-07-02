@@ -499,13 +499,13 @@ private:
                 break;
             }
 
-#if BASALT_BUILD_DEBUG
+#if BT_BUILD_DEBUG
             if (m_bucket_states[index] == EBucketState::Occupied && m_buckets[index].a == key)
             {
                 // The key already exists in the hash table.
                 return InvalidSize;
             }
-#endif // BASALT_BUILD_DEBUG
+#endif // BT_BUILD_DEBUG
 
             // Advance to the next hash table slot index.
             index = (index + 1) % m_capacity;
@@ -621,11 +621,11 @@ private:
         const U64 key_hash = GetKeyHash(key);
         Usize index = key_hash % m_capacity;
 
-#if BASALT_BUILD_DEBUG
+#if BT_BUILD_DEBUG
         for (Usize counter = 0; counter < m_capacity; ++counter)
 #else
         while (true)
-#endif // BASALT_BUILD_DEBUG
+#endif // BT_BUILD_DEBUG
         {
             if (m_bucket_states[index] == EBucketState::Occupied)
             {
@@ -635,22 +635,22 @@ private:
                     return index;
                 }
             }
-#if BASALT_BUILD_DEBUG
+#if BT_BUILD_DEBUG
             else if (m_bucket_states[index] == EBucketState::Empty)
             {
                 // The key doesn't exist in the hash table.
                 return InvalidSize;
             }
-#endif // BASALT_BUILD_DEBUG
+#endif // BT_BUILD_DEBUG
 
             // Advance to the next hash table slot index.
             index = (index + 1) % m_capacity;
         }
 
-#if BASALT_BUILD_DEBUG
+#if BT_BUILD_DEBUG
         // The key doesn't exist in the hash table.
         return InvalidSize;
-#endif // BASALT_BUILD_DEBUG
+#endif // BT_BUILD_DEBUG
     }
 
 private:

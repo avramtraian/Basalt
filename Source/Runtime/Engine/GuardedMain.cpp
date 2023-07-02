@@ -47,9 +47,9 @@ BASALT_API I32 GuardedMain(const char* command_line, Engine*(*instantiate_engine
     // Engine initialization.
     
     EngineDescription engine_description;
-#if BASALT_BUILD_GAME
+#if BT_BUILD_GAME
     instantiate_engine = []() -> Engine* { return btnew GameEngine(); };
-#endif // BASALT_BUILD_GAME
+#endif // BT_BUILD_GAME
     engine_description.instantiate_engine = instantiate_engine;
 
     if (!Engine::Initialize(engine_description))

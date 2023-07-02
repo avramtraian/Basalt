@@ -5,11 +5,11 @@
 #include "Application/Window.h"
 #include "VulkanRenderer.h"
 
-#if BASALT_PLATFORM_WINDOWS
+#if BT_PLATFORM_WINDOWS
     #define WIN32_LEAN_AND_MEAN
     #include <Windows.h>
     #include <vulkan/vulkan_win32.h>
-#endif // BASALT_PLATFORM_WINDOWS
+#endif // BT_PLATFORM_WINDOWS
 
 namespace Basalt
 {
@@ -62,14 +62,14 @@ void VulkanContext::Invalidate()
 
 void VulkanContext::CreateSurface()
 {
-#if BASALT_PLATFORM_WINDOWS
+#if BT_PLATFORM_WINDOWS
     VkWin32SurfaceCreateInfoKHR surface_create_info = {};
     surface_create_info.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
     surface_create_info.hinstance = GetModuleHandle(NULL);
     surface_create_info.hwnd = (HWND)m_window_context->GetNativeHandle();
 
     BT_VULKAN_CHECK(vkCreateWin32SurfaceKHR(VulkanRenderer::GetInstance(), &surface_create_info, VulkanRenderer::GetAllocator(), &m_surface));
-#endif // BASALT_PLATFORM_WINDOWS
+#endif // BT_PLATFORM_WINDOWS
 
     // Ensure that the queue family has present capabilities.
     CheckCode(

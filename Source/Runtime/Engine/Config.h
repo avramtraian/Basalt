@@ -19,10 +19,10 @@ public:
     bool Initialize();
 
 public:
-#if BASALT_BUILD_EDITOR
+#if BT_BUILD_EDITOR
     /** @return The absolute path to the engine directory. */
     FORCEINLINE const String& GetEnginePath() const { return m_engine_path; }
-#endif // BASALT_BUILD_EDITOR
+#endif // BT_BUILD_EDITOR
 
     /** @return The absolute path to the current game directory. */
     FORCEINLINE const String& GetGamePath() const { return m_game_path; }
@@ -31,9 +31,9 @@ public:
     FORCEINLINE const String& GetGameName() const { return m_game_name; }
 
 private:
-#if BASALT_BUILD_EDITOR
+#if BT_BUILD_EDITOR
     String m_engine_path;
-#endif // BASALT_BUILD_EDITOR
+#endif // BT_BUILD_EDITOR
 
     String m_game_path;
     String m_game_name;

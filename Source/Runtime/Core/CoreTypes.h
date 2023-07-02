@@ -4,10 +4,10 @@
 
 #include "CoreDefines.h"
 
-#if BASALT_PLATFORM_WINDOWS
+#if BT_PLATFORM_WINDOWS
     #include "Platform/Windows/WindowsPlatformTypes.h"
     using PlatformTypes = Basalt::WindowsPlatformTypes;
-#endif // BASALT_PLATFORM_WINDOWS
+#endif // BT_PLATFORM_WINDOWS
 
 namespace Basalt
 {

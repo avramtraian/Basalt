@@ -44,9 +44,9 @@ bool D3D11Renderer::Initialize()
     BT_LOG_INFO(Renderer, "Selected GPU: '%ws'", adapter_desc.Description);
 
     UINT device_flags = 0;
-#if !BASALT_BUILD_SHIPPING
+#if !BT_BUILD_SHIPPING
     device_flags |= D3D11_CREATE_DEVICE_DEBUG;
-#endif // !BASALT_BUILD_SHIPPING
+#endif // !BT_BUILD_SHIPPING
     
     D3D_FEATURE_LEVEL feature_levels[] =
     {

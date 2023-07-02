@@ -6,17 +6,17 @@
 
 #include <vulkan/vulkan.h>
 
-#if BASALT_BUILD_DEBUG
+#if BT_BUILD_DEBUG
     #define BT_VULKAN_VALIDATION    1
-#endif // BASALT_BUILD_DEBUG
+#endif // BT_BUILD_DEBUG
 
-#if BASALT_BUILD_RELEASE
+#if BT_BUILD_RELEASE
     #define BT_VULKAN_VALIDATION    1
-#endif // BASALT_BUILD_DEBUG
+#endif // BT_BUILD_DEBUG
 
-#if BASALT_BUILD_SHIPPING
+#if BT_BUILD_SHIPPING
     #define BT_VULKAN_VALIDATION    0
-#endif // BASALT_BUILD_DEBUG
+#endif // BT_BUILD_DEBUG
 
 #define INVALID_VULKAN_CALL false
 

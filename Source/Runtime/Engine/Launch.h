@@ -7,7 +7,7 @@
 namespace Basalt
 {
 
-#if BASALT_BUILD_EDITOR
+#if BT_BUILD_EDITOR
     /**
      * This function instantiates the global engine and it defined by the client
      * in the editor builds.
@@ -15,7 +15,7 @@ namespace Basalt
      * @return The global engine instance.
      */
     Engine* InstantiateEngine();
-#endif // BASALT_BUILD_EDITOR
+#endif // BT_BUILD_EDITOR
 
 /**
  * The application entry point. This is the root of the engine call-stack.
@@ -32,38 +32,38 @@ BASALT_API I32 GuardedMain(const char* command_line, Engine*(*instantiate_engine
 
 } // namespace Basalt
 
-#if BASALT_PLATFORM_WINDOWS
+#if BT_PLATFORM_WINDOWS
     #include <Windows.h>
-#endif // BASALT_PLATFORM_WINDOWS
+#endif // BT_PLATFORM_WINDOWS
 
-#if BASALT_PLATFORM_WINDOWS && BASALT_BUILD_SHIPPING
+#if BT_PLATFORM_WINDOWS && BT_BUILD_SHIPPING
 
     INT WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR command_line, _In_ int)
     {
         // Invoke the engine platform-agnostic entry point.
-#if BASALT_BUILD_EDITOR
+#if BT_BUILD_EDITOR
         // NOTE: It is up to the client to ensure that `Basalt::InstantiateEngine()` is defined.
         return (INT)Basalt::GuardedMain(command_line, Basalt::InstantiateEngine);
-#endif // BASALT_BUILD_EDITOR
+#endif // BT_BUILD_EDITOR
 
-#if BASALT_BUILD_GAME
+#if BT_BUILD_GAME
         return (INT)Basalt::GuardedMain(command_line, nullptr);
-#endif // BASALT_BUILD_GAME
+#endif // BT_BUILD_GAME
     }
 #else
     int main(int arg_count, char** arg_values)
     {
-#if BASALT_PLATFORM_WINDOWS
+#if BT_PLATFORM_WINDOWS
         const char* command_line = GetCommandLineA();
-#endif // BASALT_PLATFORM_WINDOWS
+#endif // BT_PLATFORM_WINDOWS
 
-#if BASALT_BUILD_EDITOR
+#if BT_BUILD_EDITOR
         // NOTE: It is up to the client to ensure that `Basalt::InstantiateEngine()` is defined.
         return (INT)Basalt::GuardedMain(command_line, Basalt::InstantiateEngine);
-#endif // BASALT_BUILD_EDITOR
+#endif // BT_BUILD_EDITOR
 
-#if BASALT_BUILD_GAME
+#if BT_BUILD_GAME
         return (INT)Basalt::GuardedMain(command_line, nullptr);
-#endif // BASALT_BUILD_GAME
+#endif // BT_BUILD_GAME
     }
-#endif // BASALT_PLATFORM_WINDOWS && BASALT_BUILD_SHIPPING
+#endif // BT_PLATFORM_WINDOWS && BT_BUILD_SHIPPING

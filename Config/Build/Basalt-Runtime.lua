@@ -22,7 +22,7 @@ project "Basalt-Runtime"
 
     defines
     {
-        "BASALT_EXPORT_API"
+        "BT_EXPORT_API"
     }
 
     includedirs

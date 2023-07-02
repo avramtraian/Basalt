@@ -5,13 +5,13 @@
 #include "Core/Containers/Strings/Utf8String.h"
 #include "Core/Filesystem/FileManager.h"
 
-#if BASALT_PLATFORM_WINDOWS
+#if BT_PLATFORM_WINDOWS
     #define NOMINMAX
     #define WIN32_LEAN_AND_MEAN
     // Required by the HLSL compiler (DXC).
     #include <Windows.h>
     #include <d3d12shader.h>
-#endif // BASALT_PLATFORM_WINDOWS
+#endif // BT_PLATFORM_WINDOWS
 
 #include <dxc/dxcapi.h>
 
@@ -117,11 +117,11 @@ bool ShaderCompiler::Compile(const ShaderCompilationOptions& options, ShaderComp
         return false;
     }
 
-#if BASALT_BUILD_DEBUG
+#if BT_BUILD_DEBUG
     const bool compile_debug_shaders = true;
 #else
     const bool compile_debug_shaders = options.force_debug;
-#endif // BASALT_BUILD_DEBUG
+#endif // BT_BUILD_DEBUG
 
     if (!compile_debug_shaders)
     {
@@ -254,11 +254,11 @@ static void BuildArguments(const ShaderCompilationOptions& options, EShaderBytec
 
     if (!options.force_debug)
     {
-#if BASALT_BUILD_DEBUG
+#if BT_BUILD_DEBUG
         out_arguments.Add(DXC_ARG_DEBUG);
 #else
         out_arguments.Add(DXC_ARG_OPTIMIZATION_LEVEL3);
-#endif // BASALT_BUILD_DEBUG
+#endif // BT_BUILD_DEBUG
     }
     else
     {

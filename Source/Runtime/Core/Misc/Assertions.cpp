@@ -6,9 +6,9 @@
 #include "Core/Logging/LogMacros.h"
 #include "Core/Memory/Buffer.h"
 
-#if BASALT_PLATFORM_WINDOWS
+#if BT_PLATFORM_WINDOWS
     #include <Windows.h>
-#endif // BASALT_PLATFORM_WINDOWS
+#endif // BT_PLATFORM_WINDOWS
 
 namespace Basalt
 {
@@ -55,10 +55,10 @@ void Debug::ReportAssertFailed(const char* expression, const char* filepath, con
     ScopedBuffer utf16_title_buffer;
     StringBuilder::ToUTF16Dynamic(title, utf16_title_buffer.RawBuffer(), true);
 
+#if BT_PLATFORM_WINDOWS
     // TODO(traian): Don't use the Win32 API directly. Implement a platform-agnostic interface for opening message pop-up's.
-#if BASALT_PLATFORM_WINDOWS
     ::MessageBox(NULL, utf16_content_buffer.As<wchar_t>(), utf16_title_buffer.As<wchar_t>(), MB_ICONERROR | MB_OK);
-#endif // BASALT_PLATFORM_WINDOWS
+#endif // BT_PLATFORM_WINDOWS
 }
 
 } // namespace Basalt

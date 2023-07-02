@@ -8,9 +8,9 @@ namespace Basalt
 
 bool Config::Initialize()
 {
-#if BASALT_BUILD_EDITOR
+#if BT_BUILD_EDITOR
     m_engine_path = Platform::GetExecutablePath();
-#endif // BASALT_BUILD_EDITOR
+#endif // BT_BUILD_EDITOR
 
     return true;
 }

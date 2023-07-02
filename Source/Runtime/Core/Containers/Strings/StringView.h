@@ -163,10 +163,10 @@ private:
 };
 
 // Disable: literal suffix identifiers that do not start with an underscore are reserved.
-#if BASALT_COMPILER_MSVC
+#if BT_COMPILER_MSVC
     #pragma warning(push)
     #pragma warning(disable : 4455)
-#endif // BASALT_COMPILER_MSVC
+#endif // BT_COMPILER_MSVC
 
 /**
  * Literal operator that transforms an ASCII string literal to an UTF-8 encoded string view.
@@ -182,8 +182,8 @@ FORCEINLINE constexpr StringView operator""sv(const char* ascii_string, Usize st
     return StringView(ascii_string, string_length);
 }
 
-#if BASALT_COMPILER_MSVC
+#if BT_COMPILER_MSVC
     #pragma warning(pop)
-#endif // BASALT_COMPILER_MSVC
+#endif // BT_COMPILER_MSVC
 
 } // namespace Basalt

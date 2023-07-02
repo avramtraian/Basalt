@@ -9,32 +9,32 @@
  */
 #define WITHOUT_LOGGING         0
 
-#if BASALT_BUILD_DEBUG
+#if BT_BUILD_DEBUG
     #define ENABLE_LOGS_DEBUG   1
     #define ENABLE_LOGS_TRACE   1
     #define ENABLE_LOGS_INFO    1
     #define ENABLE_LOGS_WARN    1
     #define ENABLE_LOGS_ERROR   1
     #define ENABLE_LOGS_FATAL   1
-#endif // BASALT_BUILD_DEBUG
+#endif // BT_BUILD_DEBUG
 
-#if BASALT_BUILD_RELEASE
+#if BT_BUILD_RELEASE
     #define ENABLE_LOGS_DEBUG   0
     #define ENABLE_LOGS_TRACE   0
     #define ENABLE_LOGS_INFO    1
     #define ENABLE_LOGS_WARN    1
     #define ENABLE_LOGS_ERROR   1
     #define ENABLE_LOGS_FATAL   1
-#endif // BASALT_BUILD_RELEASE
+#endif // BT_BUILD_RELEASE
 
-#if BASALT_BUILD_SHIPPING
+#if BT_BUILD_SHIPPING
     #define ENABLE_LOGS_DEBUG   0
     #define ENABLE_LOGS_TRACE   0
     #define ENABLE_LOGS_INFO    0
     #define ENABLE_LOGS_WARN    0
     #define ENABLE_LOGS_ERROR   0
     #define ENABLE_LOGS_FATAL   1
-#endif // BASALT_BUILD_SHIPPING
+#endif // BT_BUILD_SHIPPING
 
 #if !WITHOUT_LOGGING && ENABLE_LOGS_DEBUG
     #define BT_LOG_DEBUG(CATEGORY, FORMAT, ...)     \

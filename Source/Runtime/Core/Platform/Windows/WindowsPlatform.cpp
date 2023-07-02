@@ -2,7 +2,7 @@
 
 #include "Core/CoreDefines.h"
 
-#if BASALT_PLATFORM_WINDOWS
+#if BT_PLATFORM_WINDOWS
 
 #include "Core/Containers/Strings/String.h"
 #include "Core/Containers/Strings/StringBuilder.h"
@@ -53,10 +53,10 @@ void Platform::CreateConsole()
         DestroyConsole();
     }
 
-#if BASALT_BUILD_SHIPPING
+#if BT_BUILD_SHIPPING
     AllocConsole();
     SetConsoleTitleA("Basalt Editor - Developer console");
-#endif // BASALT_BUILD_SHIPPING
+#endif // BT_BUILD_SHIPPING
 
     s_platform_data.console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
 }
@@ -115,4 +115,4 @@ String Platform::GetExecutablePath()
 
 } // namespace Basalt
 
-#endif // BASALT_PLATFORM_WINDOWS
+#endif // BT_PLATFORM_WINDOWS
