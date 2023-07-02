@@ -128,6 +128,9 @@ public:
         return (ToView() != other.ToView());
     }
 
+public:
+    void SetCount(Usize bytes_count);
+
 private:
     /**
      * Allocates a block of memory from the heap.

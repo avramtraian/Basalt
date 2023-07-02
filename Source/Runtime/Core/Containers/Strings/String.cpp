@@ -69,6 +69,46 @@ String::~String()
     }
 }
 
+void String::SetCount(Usize bytes_count)
+{
+    if (bytes_count == m_bytes_count)
+    {
+        return;
+    }
+
+    char* string_data;
+
+    if (m_bytes_count <= InlineCapacity)
+    {
+        if (bytes_count <= InlineCapacity)
+        {
+            string_data = m_inline_data;
+        }
+        else
+        {
+            m_heap_data = AllocateMemory(bytes_count);
+            string_data = m_heap_data;
+        }
+    }
+    else
+    {
+        if (bytes_count <= InlineCapacity)
+        {
+            ReleaseMemory(m_heap_data, m_bytes_count);
+            string_data = m_inline_data;
+        }
+        else
+        {
+            ReleaseMemory(m_heap_data, m_bytes_count);
+            m_heap_data = AllocateMemory(bytes_count);
+            string_data = m_heap_data;
+        }
+    }
+
+    m_bytes_count = bytes_count;
+    Memory::Set(string_data, 0, m_bytes_count);
+}
+
 String& String::operator=(const String& other)
 {
     StringView view;
