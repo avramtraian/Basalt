@@ -41,39 +41,12 @@ project "Basalt-Runtime"
         Libraries["Vulkan"]
     }
 
-    prebuildcommands
-    {
-        "copy \"%{wks.location}\\Binaries\\ThirdParty\\DirectX\\%{cfg.platform}\\dxil.dll\" \"%{wks.location}Binaries\\%{cfg.platform}\\%{cfg.buildcfg}\""
-    }
-
     filter "platforms:Win64"
         links
         {
             "d3d11",
             "d3d12", 
             "dxgi"
-        }
-
-    filter {}
-
-    filter "configurations:Editor_Debug"
-        links
-        {
-            Libraries["DXC"],
-            Libraries["SPIRV_Cross_Debug"],
-            Libraries["SPIRV_Cross_Reflect_Debug"],
-            Libraries["SPIRV_Cross_MSL_Debug"],
-            Libraries["SPIRV_Cross_GLSL_Debug"]
-        }
-
-    filter "configurations:Editor_Release"
-        links
-        {
-            Libraries["DXC"],
-            Libraries["SPIRV_Cross"],
-            Libraries["SPIRV_Cross_Reflect"],
-            Libraries["SPIRV_Cross_MSL"],
-            Libraries["SPIRV_Cross_GLSL"]
         }
 
     filter {}

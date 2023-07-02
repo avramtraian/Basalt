@@ -33,5 +33,33 @@ project "Basalt-Editor"
     includedirs
     {
         IncludeDirectories["Runtime"],
-        IncludeDirectories["Editor"]
+        IncludeDirectories["Editor"],
+        IncludeDirectories["VulkanSDK"]
     }
+
+    libdirs
+    {
+        LibraryDirectories["VulkanSDK"]
+    }
+
+    filter "configurations:Editor_Debug"
+        links
+        {
+            Libraries["DXC"],
+            Libraries["SPIRV_Cross_Debug"],
+            Libraries["SPIRV_Cross_Reflect_Debug"],
+            Libraries["SPIRV_Cross_MSL_Debug"],
+            Libraries["SPIRV_Cross_GLSL_Debug"]
+        }
+
+    filter "configurations:Editor_Release"
+        links
+        {
+            Libraries["DXC"],
+            Libraries["SPIRV_Cross"],
+            Libraries["SPIRV_Cross_Reflect"],
+            Libraries["SPIRV_Cross_MSL"],
+            Libraries["SPIRV_Cross_GLSL"]
+        }
+
+    filter {}

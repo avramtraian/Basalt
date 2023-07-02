@@ -10,7 +10,7 @@
     #define WIN32_LEAN_AND_MEAN
     // Required by the HLSL compiler (DXC).
     #include <Windows.h>
-    #include <d3d12shader.h>
+    #include <d3d12.h>
 #endif // BT_PLATFORM_WINDOWS
 
 #include <dxc/dxcapi.h>
