@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Renderer/Shader.h"
+#include "Renderer/Shaders/Shader.h"
 #include "Vulkan.h"
 
 namespace Basalt

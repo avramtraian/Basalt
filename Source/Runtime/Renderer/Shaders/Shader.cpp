@@ -2,8 +2,8 @@
 
 #include "Shader.h"
 
-#include "Platform/Vulkan/VulkanShader.h"
-#include "Renderer.h"
+#include "Renderer/Platform/Vulkan/VulkanShader.h"
+#include "Renderer/Renderer.h"
 
 namespace Basalt
 {

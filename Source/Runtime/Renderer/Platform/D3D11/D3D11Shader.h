@@ -3,7 +3,7 @@
 #pragma once
 
 #include "D3D11.h"
-#include "Renderer/Shader.h"
+#include "Renderer/Shaders/Shader.h"
 
 namespace Basalt
 {
