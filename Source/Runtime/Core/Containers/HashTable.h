@@ -471,7 +471,7 @@ private:
      * @param key The key to compute its hash.
      * @return The hash of the provided key.
      */
-    FORCEINLINE U64 GetKeyHash(const KeyType& key)
+    FORCEINLINE U64 GetKeyHash(const KeyType& key) const
     {
         const U64 hash = Hasher::Compute(key);
         return hash;
