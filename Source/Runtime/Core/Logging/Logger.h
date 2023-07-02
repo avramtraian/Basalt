@@ -6,7 +6,7 @@
 #include "Core/CoreTypes.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Containers/Array.h"
-#include "Core/Containers/Span.h"
+#include "Core/Containers/ArrayView.h"
 #include "Core/Memory/Buffer.h"
 #include "Core/Misc/IterationDecision.h"
 
@@ -254,7 +254,7 @@ private:
 
     StringView WriteToPage(ELogCategory category, ELogSeverity severity, const char* message, va_list arg_list);
 
-    U8* FormatLogMessage(Span<U8> buffer, Usize* out_written_bytes, const char* format, va_list arg_list);
+    U8* FormatLogMessage(ArrayView<U8> buffer, Usize* out_written_bytes, const char* format, va_list arg_list);
 
 private:
     /** The log filter that the logger uses. Only logs included in this filter are presented to the developer. */

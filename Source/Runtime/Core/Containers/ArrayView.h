@@ -12,7 +12,7 @@ namespace Basalt
  * Container that refers to a contiguous sequence of objects.
  */
 template<typename ElementType>
-class BASALT_S_API Span
+class BASALT_S_API ArrayView
 {
 public:
     /**
@@ -27,7 +27,7 @@ public:
 
 public:
     /** Default constructor. */
-    FORCEINLINE constexpr Span()
+    FORCEINLINE constexpr ArrayView()
         : m_elements(nullptr)
         , m_count(0)
     {}
@@ -35,19 +35,19 @@ public:
     /**
      * Copy constructor.
      * 
-     * @param other The span to copy.
+     * @param other The array view to copy.
      */
-    FORCEINLINE constexpr Span(const Span& other)
+    FORCEINLINE constexpr ArrayView(const ArrayView& other)
         : m_elements(other.m_elements)
         , m_count(other.m_count)
     {}
 
     /**
-     * Move constructor. The span to move will be left in an invalidated state.
+     * Move constructor. The array view to move will be left in an invalidated state.
      *
-     * @param other The span to move.
+     * @param other The array view to move.
      */
-    FORCEINLINE constexpr Span(Span&& other) noexcept
+    FORCEINLINE constexpr ArrayView(ArrayView&& other) noexcept
         : m_elements(other.m_elements)
         , m_count(other.m_count)
     {
@@ -61,7 +61,7 @@ public:
      * @param elements Pointer to the elements where the elements are stored.
      * @param count The number of elements stored in the raw array.
      */
-    FORCEINLINE constexpr Span(ElementType* elements, Usize count)
+    FORCEINLINE constexpr ArrayView(ElementType* elements, Usize count)
         : m_elements(elements)
         , m_count(count)
     {}
@@ -69,10 +69,10 @@ public:
     /**
      * Copy assignment operator.
      * 
-     * @param other The span to copy.
+     * @param other The array view to copy.
      * @return Reference to this, after the copy operation.
      */
-    FORCEINLINE Span& operator=(const Span& other)
+    FORCEINLINE ArrayView& operator=(const ArrayView& other)
     {
         m_elements = other.m_elements;
         m_count = other.m_count;
@@ -81,12 +81,12 @@ public:
     }
 
     /**
-     * Move assignment operator. The provided span will be left in an invalidated state.
+     * Move assignment operator. The provided array view will be left in an invalidated state.
      *
-     * @param other The span to move.
+     * @param other The array view to move.
      * @return Reference to this, after the move operation.
      */
-    FORCEINLINE Span& operator=(Span&& other) noexcept
+    FORCEINLINE ArrayView& operator=(ArrayView&& other) noexcept
     {
         m_elements = other.m_elements;
         m_count = other.m_count;
@@ -106,10 +106,10 @@ public:
     FORCEINLINE ElementType* operator*() { return Data(); }
     FORCEINLINE const ElementType* operator*() const { return Data(); }
 
-    /** @return The number of elements that are stored in the span. */
+    /** @return The number of elements that are stored in the array view. */
     FORCEINLINE Usize Count() const { return m_count; }
 
-    /** @return True if there are no elements stored in the span; False otherwise. */
+    /** @return True if there are no elements stored in the sparray view; False otherwise. */
     FORCEINLINE bool IsEmpty() const { return (m_count == 0); }
 
 public:
@@ -145,10 +145,10 @@ public:
     FORCEINLINE const ElementType& operator[](Usize index) const { return At(index); }
 
     /**
-    * Gets the first element stored in the span.
-    * If the span is empty, an assert will be issued.
+    * Gets the first element stored in the array view.
+    * If the array view is empty, an assert will be issued.
     *
-    * @return Reference to the first element in the span.
+    * @return Reference to the first element in the array view.
     */
     FORCEINLINE ElementType& Front(Usize index)
     {
@@ -157,10 +157,10 @@ public:
     }
 
     /**
-     * Gets the first element stored in the span.
-     * If the span is empty, an assert will be issued.
+     * Gets the first element stored in the array view.
+     * If the array view is empty, an assert will be issued.
      *
-     * @return Const reference to the first element in the span.
+     * @return Const reference to the first element in the array view.
      */
     FORCEINLINE const ElementType& Front(Usize index) const
     {
@@ -169,10 +169,10 @@ public:
     }
 
     /**
-     * Gets the last element stored in the span.
-     * If the span is empty, an assert will be issued.
+     * Gets the last element stored in the array view.
+     * If the array view is empty, an assert will be issued.
      *
-     * @return Reference to the last element in the span.
+     * @return Reference to the last element in the array view.
      */
     FORCEINLINE ElementType& Back(Usize index)
     {
@@ -181,10 +181,10 @@ public:
     }
 
     /**
-     * Gets the last element stored in the span.
-     * If the span is empty, an assert will be issued.
+     * Gets the last element stored in the array view.
+     * If the array view is empty, an assert will be issued.
      *
-     * @return Const reference to the last element in the span.
+     * @return Const reference to the last element in the array view.
      */
     FORCEINLINE const ElementType& Back(Usize index) const
     {
@@ -193,19 +193,19 @@ public:
     }
 
 public:
-    /** @return A forward iterator that points to the first element in the span. */
+    /** @return A forward iterator that points to the first element in the array view. */
     FORCEINLINE Iterator begin() { return Iterator(m_elements); }
     FORCEINLINE ConstIterator begin() const { return ConstIterator(m_elements); }
 
-    /** @return A forward iterator that points to the slot after the last element in the span. */
+    /** @return A forward iterator that points to the slot after the last element in the array view. */
     FORCEINLINE Iterator end() { return Iterator(m_elements + m_count); }
     FORCEINLINE ConstIterator end() const { return ConstIterator(m_elements + m_count); }
 
-    /** @return A reverse iterator that points to the last element in the span. */
+    /** @return A reverse iterator that points to the last element in the array view. */
     FORCEINLINE ReverseIterator rbegin() { return ReverseIterator(m_elements + m_count - 1); }
     FORCEINLINE ReverseConstIterator rbegin() const { return ReverseConstIterator(m_elements + m_count - 1); }
 
-    /** @return A reverse iterator that points to the slot before the first element in the span. */
+    /** @return A reverse iterator that points to the slot before the first element in the array view. */
     FORCEINLINE ReverseIterator rend() { return ReverseIterator(m_elements - 1); }
     FORCEINLINE ReverseConstIterator rend() const { return ReverseConstIterator(m_elements - 1); }
 
@@ -213,7 +213,7 @@ private:
     /** Pointer to the buffer where the elements are stored. */
     ElementType* m_elements;
 
-    /** The number of elements that are stored in the span. */
+    /** The number of elements that are stored in the array view. */
     Usize m_count;
 };
 

@@ -239,7 +239,7 @@ StringView Logger::WriteToPage(ELogCategory category, ELogSeverity severity, con
     U8 stack_buffer[512] = {};
 
     Usize message_bytes_count;
-    U8* heap_buffer = FormatLogMessage(Span<U8>(stack_buffer, BT_ARRAY_COUNT(stack_buffer)), &message_bytes_count, format, arg_list);
+    U8* heap_buffer = FormatLogMessage(ArrayView<U8>(stack_buffer, BT_ARRAY_COUNT(stack_buffer)), &message_bytes_count, format, arg_list);
     U8* buffer = heap_buffer ? heap_buffer : stack_buffer;
     
     LogPage* active_page = &m_pages[m_active_page_index];
@@ -275,7 +275,7 @@ StringView Logger::WriteToPage(ELogCategory category, ELogSeverity severity, con
     return StringView(message_data, message_bytes_count - 1);
 }
 
-U8* Logger::FormatLogMessage(Span<U8> stack_buffer, Usize* out_written_bytes, const char* format, va_list arg_list)
+U8* Logger::FormatLogMessage(ArrayView<U8> stack_buffer, Usize* out_written_bytes, const char* format, va_list arg_list)
 {
     Usize buffer_size = stack_buffer.Count();
     U8* heap_buffer = nullptr;
