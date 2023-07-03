@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "Core/CoreDefines.h"
-#include "Core/CoreTypes.h"
+#include "Core/Containers/Strings/String.h"
 #include "Core/Memory/StackBuffer.h"
 #include "Core/Misc/DateTime.h"
 #include "Core/Misc/IterationDecision.h"
@@ -70,7 +69,7 @@ public:
     FORCEINLINE operator bool() const { return m_is_valid; }
 
 public:
-    EFileError ReadBytes(void* buffer, Usize bytes_count_to_read, Usize* read_bytes_count);
+    EFileError ReadBytes(void* buffer, Usize bytes_count_to_read, Usize* read_bytes_count = nullptr);
 
     template<typename T>
     FORCEINLINE EFileError Read(T* destination_object_instance)
@@ -90,20 +89,20 @@ public:
         return ReadBytes(buffer.data, m_file_handle.file_size, nullptr);
     }
 
-    FORCEINLINE EFileError ReadAllAsString(Buffer& buffer)
+    FORCEINLINE EFileError ReadAllAsString(String& out_string)
     {
-        // Resize the buffer to accommodate the file data and the null-termination character.
-        buffer.Resize(m_file_handle.file_size + sizeof(char));
+        // Resize the string to accommodate the file data and the null-termination character.
+        out_string.SetCount(m_file_handle.file_size + sizeof(char));
 
         // Read the file as a string.
-        EFileError result = ReadBytes(buffer.data, m_file_handle.file_size, nullptr);
+        EFileError result = ReadBytes(out_string.Data(), m_file_handle.file_size, nullptr);
         if (result != EFileError::Success)
         {
             return result;
         }
 
         // Set the null-termination character.
-        buffer.data[buffer.size - 1] = 0;
+        out_string.Data()[m_file_handle.file_size] = 0;
         return result;
     }
 

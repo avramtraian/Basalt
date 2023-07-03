@@ -216,7 +216,7 @@ FileReader::~FileReader()
     Close();
 }
 
-EFileError FileReader::ReadBytes(void* buffer, Usize bytes_count_to_read, Usize* read_bytes_count)
+EFileError FileReader::ReadBytes(void* buffer, Usize bytes_count_to_read, Usize* read_bytes_count /*= nullptr*/)
 {
     if (!IsValid())
     {
