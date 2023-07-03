@@ -133,6 +133,7 @@ public:
      *         `InvalidPos` if the substring doesn't appear in the string view.
      */
     Usize FindFirstOf(StringView substring) const;
+    Usize FindFirstOf(char character) const;
     
     /**
      * Finds the index of the last, from left to right, appearance of the given substring.
@@ -143,12 +144,73 @@ public:
      *         `InvalidPos` if the substring doesn't appear in the string view.
      */
     Usize FindLastOf(StringView substring) const;
+    Usize FindLastOf(char character) const;
 
     /** Wrapper around `FindFirstOf()`. */
     FORCEINLINE Usize Find(StringView substring) const { return FindFirstOf(substring); }
+    FORCEINLINE Usize Find(char character) const { return FindFirstOf(character); }
+
+    /**
+     * Checks whether or not the string view begins with the given substring.
+     * 
+     * @param substring The substring to check against.
+     * @return True if the string view starts with the given substring; False otherwise.
+     */
+    bool BeginsWith(StringView substring) const;
+    bool BeginsWith(char character) const;
+
+    /**
+     * Checks whether or not the string view ends with the given substring.
+     *
+     * @param substring The substring to check against.
+     * @return True if the string view ends with the given substring; False otherwise.
+     */
+    bool EndsWith(StringView substring) const;
+    bool EndsWith(char character) const;
+
+    /**
+     * Interprets the string view as a filepath and returns a view towards the name of the file
+     * or directory the path leads to.
+     * 
+     * @return The name of the file or directory the path leads to.
+     */
+    StringView Filename() const;
+
+    /**
+     * Interprets the string view as a filepath and returns a view towards the extension of the file
+     * that the path leads to.
+     * If the filepath represents a directory or volume, an empty string view will be returned.
+     * 
+     * @return The extension of the file that the path leads to.
+     */
+    StringView Extension() const;
+
+    /**
+     * Interprets the string view as a filepath and returns a view towards the path, relative to the
+     * original path root, where the file or directory that the path leads to is located.
+     * If the path doesn't contain a parent directory, an empty string view will be returned.
+     * 
+     * @return The path to the parent directory, or an empty string if not existent.
+     */
+    StringView ParentDirectory() const;
 
 public:
+    /**
+     * Equality check operator.
+     * Two string views are equal if all characters are equal.
+     * 
+     * @param other The string view to compare against.
+     * @return True if the string views are equal; False otherwise.
+     */
     bool operator==(const StringView& other) const;
+    
+    /**
+     * Inequality check operator.
+     * Two string views are equal if all characters are equal.
+     *
+     * @param other The string view to compare against.
+     * @return True if the string views are not equal; False otherwise.
+     */
     bool operator!=(const StringView& other) const;
 
 private:

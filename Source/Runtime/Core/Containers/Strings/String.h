@@ -102,6 +102,7 @@ public:
      *         `InvalidPos` if the substring doesn't appear in the string view.
      */
     FORCEINLINE Usize FindFirstOf(StringView substring) const { return ToView().FindFirstOf(substring); }
+    FORCEINLINE Usize FindFirstOf(char character) const { return ToView().FindFirstOf(character); }
 
     /**
      * Finds the index of the last, from left to right, appearance of the given substring.
@@ -113,9 +114,21 @@ public:
      *         `InvalidPos` if the substring doesn't appear in the string view.
      */
     FORCEINLINE Usize FindLastOf(StringView substring) const { return ToView().FindLastOf(substring); }
+    FORCEINLINE Usize FindLastOf(char character) const { return ToView().FindLastOf(character); }
 
     /** Wrapper around `FindFirstOf()`. */
     FORCEINLINE Usize Find(StringView substring) const { return FindFirstOf(substring); }
+    FORCEINLINE Usize Find(char character) const { return FindFirstOf(character); }
+    
+    FORCEINLINE bool BeginsWith(StringView substring) const { return ToView().BeginsWith(substring); }
+    FORCEINLINE bool BeginsWith(char character) const { return ToView().BeginsWith(character); }
+
+    FORCEINLINE bool EndsWith(StringView substring) const { return ToView().EndsWith(substring); }
+    FORCEINLINE bool EndsWith(char character) const { return ToView().EndsWith(character); }
+
+    FORCEINLINE StringView Filename() const { return ToView().Filename(); }
+    FORCEINLINE StringView Extension() const { return ToView().Extension(); }
+    FORCEINLINE StringView ParentDirectory() const { return ToView().ParentDirectory(); }
 
 public:
     FORCEINLINE bool operator==(const String& other) const
