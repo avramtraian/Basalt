@@ -2,6 +2,8 @@
 
 #include "UUID.h"
 
+#include "Core/Containers/Hash.h"
+
 #include <random>
 
 namespace Basalt
@@ -14,6 +16,12 @@ static std::uniform_int_distribution<U64> s_uniform_distribution;
 UUID::UUID()
     : m_uuid(s_uniform_distribution(s_engine))
 {
+}
+
+template<>
+BASALT_API U64 Hasher::Compute<UUID>(const UUID& value)
+{
+    return Hasher::Compute<U64>((U64)value);
 }
 
 } // namespace Basalt
