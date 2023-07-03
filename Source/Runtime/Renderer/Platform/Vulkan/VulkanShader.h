@@ -15,10 +15,10 @@ public:
     virtual ~VulkanShader() override;
 
 private:
-    VkShaderModule CreateShaderModule(EShaderStage stage, Buffer bytecode);
+    VkShaderModule CreateShaderModule(ShaderStage stage, Buffer bytecode);
 
 private:
-    FixedArray<VkShaderModule, (U8)EShaderStage::MaxEnumValue> m_shader_modules = {};
+    FixedArray<VkShaderModule, (U8)ShaderStage::MaxEnumValue> m_shader_modules = {};
 };
 
 } // namespace Basalt

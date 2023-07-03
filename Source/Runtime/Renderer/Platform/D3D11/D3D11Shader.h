@@ -15,10 +15,10 @@ public:
     virtual ~D3D11Shader() override;
 
 private:
-    void* CreateShaderModule(EShaderStage stage, Buffer bytecode);
+    void* CreateShaderModule(ShaderStage stage, Buffer bytecode);
 
 private:
-    FixedArray<void*, (U8)EShaderStage::MaxEnumValue> m_shader_modules;
+    FixedArray<void*, (U8)ShaderStage::MaxEnumValue> m_shader_modules;
 };
 
 } // namespace Basalt

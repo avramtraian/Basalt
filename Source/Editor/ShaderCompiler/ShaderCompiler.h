@@ -4,6 +4,7 @@
 
 #include "Core/Core.h"
 #include "Renderer/RendererAPI.h"
+#include "Renderer/Shader.h"
 
 namespace Basalt
 {
@@ -17,17 +18,10 @@ enum class EShaderBytecode
 
 struct ShaderCompilationOptions
 {
-    enum class EStage
-    {
-        None = 0,
-        Vertex, Pixel, Compute, Geometry,
-        MaxEnumValue
-    };
-
     Array<String> defines;
-    EStage shader_stage = EStage::None;
+    ShaderStage shader_stage;
     String entry_point;
-    String filepath;
+    String source_code;
     bool force_debug = false;
 };
 

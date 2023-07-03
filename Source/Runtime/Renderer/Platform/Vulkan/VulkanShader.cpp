@@ -9,13 +9,13 @@ namespace Basalt
 
 VulkanShader::VulkanShader(const ShaderDescription& description)
 {
-    for (U8 shader_stage = 0; shader_stage < (U8)EShaderStage::MaxEnumValue; ++shader_stage)
+    for (U8 shader_stage = 0; shader_stage < (U8)ShaderStage::MaxEnumValue; ++shader_stage)
     {
         Buffer bytecode = description.bytecodes[shader_stage];
 
         if (bytecode.size > 0)
         {
-            m_shader_modules[shader_stage] = CreateShaderModule((EShaderStage)shader_stage, bytecode);
+            m_shader_modules[shader_stage] = CreateShaderModule((ShaderStage)shader_stage, bytecode);
         }
         else
         {
@@ -35,7 +35,7 @@ VulkanShader::~VulkanShader()
     }
 }
 
-VkShaderModule VulkanShader::CreateShaderModule(EShaderStage stage, Buffer bytecode)
+VkShaderModule VulkanShader::CreateShaderModule(ShaderStage stage, Buffer bytecode)
 {
     VkShaderModuleCreateInfo shader_module_create_info = {};
     shader_module_create_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;

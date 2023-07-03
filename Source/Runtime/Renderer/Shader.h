@@ -8,7 +8,7 @@
 namespace Basalt
 {
 
-enum class EShaderStage : U8
+enum class ShaderStage : U8
 {
     Vertex, Pixel, Compute, Geometry,
     MaxEnumValue
@@ -16,7 +16,7 @@ enum class EShaderStage : U8
 
 struct ShaderDescription
 {
-    FixedArray<Buffer, (U8)EShaderStage::MaxEnumValue> bytecodes;
+    FixedArray<Buffer, (U8)ShaderStage::MaxEnumValue> bytecodes;
 
     const char* debug_name = "Unnamed";
 };

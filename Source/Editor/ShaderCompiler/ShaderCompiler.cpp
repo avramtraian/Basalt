@@ -200,28 +200,28 @@ bool ShaderCompiler::Compile(const ShaderCompilationOptions& options, ShaderComp
 namespace Utils
 {
 
-FORCEINLINE static LPCWSTR ShaderStageToDXC(ShaderCompilationOptions::EStage stage)
+FORCEINLINE static LPCWSTR ShaderStageToDXC(ShaderStage stage)
 {
     switch (stage)
     {
-        case ShaderCompilationOptions::EStage::Vertex:      return L"vs_6_5";
-        case ShaderCompilationOptions::EStage::Pixel:       return L"ps_6_5";
-        case ShaderCompilationOptions::EStage::Compute:     return L"cs_6_5";
-        case ShaderCompilationOptions::EStage::Geometry:    return L"gs_6_5";
+        case ShaderStage::Vertex:   return L"vs_6_5";
+        case ShaderStage::Pixel:    return L"ps_6_5";
+        case ShaderStage::Compute:  return L"cs_6_5";
+        case ShaderStage::Geometry: return L"gs_6_5";
     }
 
     Checkf(false, "Invalid EShaderStage!");
     return nullptr;
 }
 
-FORCEINLINE static LPCWSTR ShaderStageToDefaultEntryPointName(ShaderCompilationOptions::EStage stage)
+FORCEINLINE static LPCWSTR ShaderStageToDefaultEntryPointName(ShaderStage stage)
 {
     switch (stage)
     {
-        case ShaderCompilationOptions::EStage::Vertex:      return L"VSMain";
-        case ShaderCompilationOptions::EStage::Pixel:       return L"PSMain";
-        case ShaderCompilationOptions::EStage::Compute:     return L"CSMain";
-        case ShaderCompilationOptions::EStage::Geometry:    return L"GSMain";
+        case ShaderStage::Vertex:   return L"VSMain";
+        case ShaderStage::Pixel:    return L"PSMain";
+        case ShaderStage::Compute:  return L"CSMain";
+        case ShaderStage::Geometry: return L"GSMain";
     }
 
     Checkf(false, "Invalid EShaderStage!");
@@ -284,26 +284,6 @@ static void BuildArguments(const ShaderCompilationOptions& options, EShaderBytec
     }
 }
 
-static bool ReadFile(StringView filepath, Buffer& out_source_code)
-{
-    FileReader reader;
-    EFileError error_code = FileManager::CreateReader(&reader, filepath);
-    if (error_code != EFileError::Success)
-    {
-        BT_LOG_ERROR(Renderer, "Invalid path to the shader! '%s'", filepath.c_str());
-        return false;
-    }
-
-    reader.ReadAllAsString(out_source_code);
-    if (!UTF8Calls::Validate(out_source_code.AsUTF8(), out_source_code.size))
-    {
-        BT_LOG_ERROR(Renderer, "The provided shader source code is not UTF-8 encoded!");
-        return false;
-    }
-
-    return true;
-}
-
 static bool CompileShader(ShaderCompilerData* compiler_data, Buffer source_code, Array<LPCWSTR>& arguments, Buffer& out_bytecode)
 {
     DxcBuffer source_buffer = {};
@@ -357,16 +337,12 @@ bool ShaderCompiler::CompileSPIRV(const ShaderCompilationOptions& options, Buffe
     Array<LPCWSTR> arguments;
     Utils::BuildArguments(options, EShaderBytecode::SPIRV, arguments);
 
-    // Read the shader source code.
-    ScopedBuffer source_code;
-    if (!Utils::ReadFile(options.filepath.ToView(), source_code.RawBuffer()))
-    {
-        // Failed to read the shade source code.
-        return false;
-    }
+    Buffer source_code_buffer;
+    source_code_buffer.data = (U8*)options.source_code.Data();
+    source_code_buffer.size = options.source_code.BytesCount();
 
     // Engage the HLSL compiler.
-    if (!Utils::CompileShader(m_data, source_code.RawBuffer(), arguments, out_bytecode))
+    if (!Utils::CompileShader(m_data, source_code_buffer, arguments, out_bytecode))
     {
         // Failed to compile the shader.
         return false;
@@ -382,16 +358,12 @@ bool ShaderCompiler::CompileDXIL(const ShaderCompilationOptions& options, Buffer
     Array<LPCWSTR> arguments;
     Utils::BuildArguments(options, EShaderBytecode::DXIL, arguments);
 
-    // Read the shader source code.
-    ScopedBuffer source_code;
-    if (!Utils::ReadFile(options.filepath.ToView(), source_code.RawBuffer()))
-    {
-        // Failed to read the shade source code.
-        return false;
-    }
+    Buffer source_code_buffer;
+    source_code_buffer.data = (U8*)options.source_code.Data();
+    source_code_buffer.size = options.source_code.BytesCount();
 
     // Engage the HLSL compiler.
-    if (!Utils::CompileShader(m_data, source_code.RawBuffer(), arguments, out_bytecode))
+    if (!Utils::CompileShader(m_data, source_code_buffer, arguments, out_bytecode))
     {
         // Failed to compile the shader.
         return false;
