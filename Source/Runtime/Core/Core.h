@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "Misc/AssertionMacros.h"
-#include "Misc/CommandLine.h"
 #include "CoreDefines.h"
 #include "CoreTypes.h"
 #include "Containers/Array.h"
@@ -28,6 +26,10 @@
 #include "Math/Vector4.h"
 #include "Math/VectorCommon.h"
 #include "Memory/Memory.h"
+#include "Misc/AssertionMacros.h"
+#include "Misc/CommandLine.h"
 #include "Misc/IterationDecision.h"
 #include "Misc/MatchDecision.h"
+#include "Misc/UUID.h"
+#include "Misc/Version.h"
 #include "Logging/LogMacros.h"
