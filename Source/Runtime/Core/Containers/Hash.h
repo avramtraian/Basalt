@@ -14,6 +14,8 @@ class BASALT_API Hasher
 public:
     template<typename T>
     static U64 Compute(const T& value);
+
+    static U64 ComputeByteSequence(const void* buffer, Usize bytes_count);
 };
 
 } // namespace Basalt
