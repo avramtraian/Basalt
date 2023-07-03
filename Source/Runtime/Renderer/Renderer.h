@@ -28,7 +28,7 @@ struct RendererDescription
 /**
  * The renderer class is responsible for managing the rendering process.
  */
-class Renderer
+class BASALT_API Renderer
 {
 public:
     static bool Initialize(const RendererDescription& description);
