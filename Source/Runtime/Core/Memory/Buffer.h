@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Core/Math/MathUtilities.h"
+#include "Core/Misc/AssertionMacros.h"
 #include "Memory.h"
 
 namespace Basalt

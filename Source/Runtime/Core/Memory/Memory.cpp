@@ -1,6 +1,8 @@
 // Copyright (c) 2023 Basalt Technology Group. All rights reserved.
 
 #include "Memory.h"
+
+#include "Core/Misc/CommandLine.h"
 #include "MemoryOperators.h"
 
 #include <cstring>

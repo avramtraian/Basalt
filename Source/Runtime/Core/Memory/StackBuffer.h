@@ -37,6 +37,12 @@ public:
         : m_offset(0)
     {}
 
+    FORCEINLINE explicit StackBuffer(Usize in_size)
+        : m_offset(0)
+    {
+        m_buffer.Invalidate(in_size);
+    }
+
     FORCEINLINE ~StackBuffer()
     {
         m_buffer.Release();

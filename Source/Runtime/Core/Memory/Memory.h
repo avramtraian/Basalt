@@ -4,7 +4,6 @@
 
 #include "Core/CoreDefines.h"
 #include "Core/CoreTypes.h"
-#include "Core/Misc/CommandLine.h"
 
 #include <new>
 
