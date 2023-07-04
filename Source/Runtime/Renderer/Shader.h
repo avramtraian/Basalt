@@ -14,6 +14,8 @@ enum class ShaderStage : U8
     MaxEnumValue
 };
 
+constexpr U8 ShaderStagesCount = (U8)ShaderStage::MaxEnumValue;
+
 struct ShaderDescription
 {
     FixedArray<Buffer, (U8)ShaderStage::MaxEnumValue> bytecodes;

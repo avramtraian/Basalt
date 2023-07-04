@@ -46,7 +46,7 @@ bool Engine::Initialize(const EngineDescription& description)
     }
 
     RendererDescription renderer_description = {};
-    renderer_description.renderer_api = ERendererAPI::Vulkan;
+    renderer_description.renderer_api = RendererAPI::Vulkan;
     renderer_description.primary_window = g_engine->m_primary_window.Get();
 
     if (!Renderer::Initialize(renderer_description))

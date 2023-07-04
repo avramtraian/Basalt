@@ -12,10 +12,10 @@ Ref<Texture2D> Texture2D::Create(const Texture2DDescription& description)
 {
 	switch (Renderer::GetRendererAPI())
 	{
-		case ERendererAPI::D3D11: return Ref<D3D11Texture2D>::Create(description).As<Texture2D>();
+		case RendererAPI::D3D11: return Ref<D3D11Texture2D>::Create(description).As<Texture2D>();
 	}
 
-	Checkf(false, "Invalid ERendererAPI!");
+	Checkf(false, "Invalid RendererAPI!");
     return nullptr;
 }
 

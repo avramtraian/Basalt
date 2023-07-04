@@ -12,10 +12,10 @@ Ref<Framebuffer> Framebuffer::Create(const FramebufferDescription& description)
 {
     switch (Renderer::GetRendererAPI())
     {
-        case ERendererAPI::D3D11: return Ref<D3D11Framebuffer>::Create(description).As<Framebuffer>();
+        case RendererAPI::D3D11: return Ref<D3D11Framebuffer>::Create(description).As<Framebuffer>();
     }
 
-    Checkf(false, "Invalid ERendererAPI!");
+    Checkf(false, "Invalid RendererAPI!");
     return nullptr;
 }
 

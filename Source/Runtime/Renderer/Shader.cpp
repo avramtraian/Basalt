@@ -12,11 +12,17 @@ Ref<Shader> Shader::Create(const ShaderDescription& description)
 {
 	switch (Renderer::GetRendererAPI())
 	{
-		case ERendererAPI::Vulkan: return Ref<VulkanShader>::Create(description).As<Shader>();
+		case RendererAPI::Vulkan: return Ref<VulkanShader>::Create(description).As<Shader>();
 	}
 
-	Checkf(false, "Invalid ERendererAPI!");
+	Checkf(false, "Invalid RendererAPI!");
 	return nullptr;
+}
+
+template<>
+BASALT_API U64 Hasher::Compute<ShaderStage>(const ShaderStage& value)
+{
+	return Hasher::Compute<U8>((U8)value);
 }
 
 } // namespace Basalt

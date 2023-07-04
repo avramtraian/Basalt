@@ -12,10 +12,10 @@ Ref<RenderPass> RenderPass::Create(const RenderPassDescription& description)
 {
 	switch (Renderer::GetRendererAPI())
 	{
-		case ERendererAPI::D3D11: return Ref<D3D11RenderPass>::Create(description).As<RenderPass>();
+		case RendererAPI::D3D11: return Ref<D3D11RenderPass>::Create(description).As<RenderPass>();
 	}
 
-	Checkf(false, "Invalid ERendererAPI!");
+	Checkf(false, "Invalid RendererAPI!");
 	return nullptr;
 }
 

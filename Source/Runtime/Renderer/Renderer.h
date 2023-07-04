@@ -19,7 +19,7 @@ class Window;
 struct RendererDescription
 {
     /** The native API to be used. `ERendererAPI::None` is only available on server builds. */
-    ERendererAPI renderer_api = ERendererAPI::None;
+    RendererAPI renderer_api = RendererAPI::None;
     
     /** Pointer to the game's primary window. Used when creating the primary rendering context. */
     Window* primary_window = nullptr;
@@ -39,7 +39,7 @@ public:
 
 public:
     /** @return The rendering API that is used for graphics. */
-    static ERendererAPI GetRendererAPI();
+    static RendererAPI GetRendererAPI();
 
     /** @return The currently active rendering context. Guaranteed to be a valid context. */
     static RenderingContext* GetActiveContext();

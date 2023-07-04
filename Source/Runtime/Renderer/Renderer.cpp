@@ -14,7 +14,7 @@ RendererInterface* Renderer::s_interface = nullptr;
 
 struct RendererData
 {
-    ERendererAPI renderer_api;
+    RendererAPI renderer_api;
 
     Unique<RenderingContext> primary_context;
 
@@ -44,8 +44,8 @@ bool Renderer::Initialize(const RendererDescription& description)
     
     switch (s_renderer_data->renderer_api)
     {
-        case ERendererAPI::D3D11:   { s_interface = btnew D3D11Renderer();  break; }
-        case ERendererAPI::Vulkan:  { s_interface = btnew VulkanRenderer(); break; }
+        case RendererAPI::D3D11:   { s_interface = btnew D3D11Renderer();  break; }
+        case RendererAPI::Vulkan:  { s_interface = btnew VulkanRenderer(); break; }
     }
 
     if (!s_interface)
@@ -96,7 +96,7 @@ bool Renderer::IsInitialized()
     return s_renderer_data && s_interface;
 }
 
-ERendererAPI Renderer::GetRendererAPI()
+RendererAPI Renderer::GetRendererAPI()
 {
     return s_renderer_data->renderer_api;
 }

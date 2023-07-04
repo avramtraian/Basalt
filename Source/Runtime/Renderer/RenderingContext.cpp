@@ -14,11 +14,11 @@ Unique<RenderingContext> RenderingContext::Create(const RenderingContextDescript
 {
     switch (Renderer::GetRendererAPI())
     {
-        case ERendererAPI::D3D11:   return Unique<D3D11RenderingContext>::Create(description).As<RenderingContext>();
-        case ERendererAPI::Vulkan:  return Unique<VulkanContext>::Create(description).As<RenderingContext>();
+        case RendererAPI::D3D11:   return Unique<D3D11RenderingContext>::Create(description).As<RenderingContext>();
+        case RendererAPI::Vulkan:  return Unique<VulkanContext>::Create(description).As<RenderingContext>();
     }
 
-    Checkf(false, "Invalid ERendererAPI!");
+    Checkf(false, "Invalid RendererAPI!");
     return nullptr;
 }
 

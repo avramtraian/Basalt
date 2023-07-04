@@ -9,7 +9,7 @@ namespace Basalt
 
 using RendererID = void*;
 
-enum class ERendererAPI : U8
+enum class RendererAPI : U8
 {
     None = 0,
     D3D11,
@@ -20,18 +20,18 @@ enum class ERendererAPI : U8
     MaxEnumValue
 };
 
-FORCEINLINE StringView RendererAPIToString(ERendererAPI renderer_api)
+FORCEINLINE StringView RendererAPIToString(RendererAPI renderer_api)
 {
     switch (renderer_api)
     {
-        case ERendererAPI::None:    return "None"sv;
-        case ERendererAPI::D3D11:   return "D3D11"sv;
-        case ERendererAPI::D3D12:   return "D3D12"sv;
-        case ERendererAPI::Vulkan:  return "Vulkan"sv;
-        case ERendererAPI::Metal:   return "Metal"sv;
+        case RendererAPI::None:    return "None"sv;
+        case RendererAPI::D3D11:   return "D3D11"sv;
+        case RendererAPI::D3D12:   return "D3D12"sv;
+        case RendererAPI::Vulkan:  return "Vulkan"sv;
+        case RendererAPI::Metal:   return "Metal"sv;
     }
 
-    Check(false); // Invalid ERendererAPI.
+    Check(false); // Invalid RendererAPI.
     return "Unknown"sv;
 }
 
