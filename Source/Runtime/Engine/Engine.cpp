@@ -74,10 +74,17 @@ bool Engine::IsRunning()
     return m_is_running;
 }
 
-void Engine::Tick()
+void Engine::PreTick()
 {
     m_primary_window->ProcessMessages();
+}
 
+void Engine::Tick()
+{
+}
+
+void Engine::PostTick()
+{
     if (m_primary_window->IsPendingClose())
     {
         // By releasing the instance, the window will be destroyed.

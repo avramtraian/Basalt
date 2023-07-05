@@ -66,7 +66,9 @@ BASALT_API I32 GuardedMain(const char* command_line, Engine*(*instantiate_engine
 
     while (g_engine->IsRunning())
     {
+        g_engine->PreTick();
         g_engine->Tick();
+        g_engine->PostTick();
     }
 
     // Engine shut down.

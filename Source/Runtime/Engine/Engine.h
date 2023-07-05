@@ -12,6 +12,19 @@ namespace Basalt
 class Engine;
 class Event;
 
+struct EngineCallbacks
+{
+    struct
+    {
+        /** Invoked when a shader is about to be loaded. */
+        void(*pre_shader_load)(StringView, StringView) = nullptr;
+
+        /** Invoked after a shader was successfully loaded. */
+        void(*post_shader_load)(StringView, StringView) = nullptr;
+    }
+    renderer;
+};
+
 /**
  * Structure that describes the behavior of the engine. It is
  * created in `GuardedMain()`, the root of application call-stack
@@ -48,15 +61,25 @@ public:
     static void Shutdown();
 
 public:
+    virtual void GenerateEngineCallbacks() = 0;
+
     virtual bool PostInitialize() { return true; }
     virtual void PreShutdown() {}
 
     /** @return Whether or not to keep ticking the engine. */
     bool IsRunning();
 
+    virtual void PreTick();
     virtual void Tick();
+    virtual void PostTick();
 
     virtual Window* GetWindowByHandle(WindowHandle window_handle);
+
+    /** @return The global engine configuration structure. */
+    const Config& GetConfig() const { return m_config; }
+
+    /** @return The global engine callbacks structure. */
+    const EngineCallbacks& GetCallbacks() const { return m_engine_callbacks; }
 
 protected:
     static void OnWindowEventCallback(WindowHandle window_handle, Event* event);
@@ -70,6 +93,9 @@ protected:
 
     /** The global engine configuration. */
     Config m_config;
+
+    /** The engine callbacks. */
+    EngineCallbacks m_engine_callbacks;
 
     /** The window where the game/viewport will be displayed. Has control over the lifetime of the application. */
     Unique<Window> m_primary_window;
