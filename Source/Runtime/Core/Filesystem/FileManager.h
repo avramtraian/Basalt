@@ -231,26 +231,6 @@ struct BASALT_S_API FileInformation
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Base class for all directory visitors.
- */
-class BASALT_API DirectoryVisitor
-{
-public:
-    DirectoryVisitor() = default;
-    virtual ~DirectoryVisitor() = default;
-
-    /**
-     * Callback that will be invoked for every file or directory in a directory iteration.
-     * 
-     * @param filepath The path of the file or directory that is iterated over.
-     * @param is_directory Whether or not the `filepath` represents a directory.
-     * 
-     * @return Whether or not the directory iteration should continue.
-     */
-    virtual IterationDecision Visit(StringView filepath, bool is_directory) = 0;
-};
-
-/**
  * Structure that describes the file manager.
  */
 struct FileManagerDescription
@@ -263,7 +243,7 @@ struct FileManagerDescription
 class BASALT_API FileManager
 {
 public:
-    using PFN_DirectoryVisit = IterationDecision(*)(StringView, bool is_directory);
+    using PFN_DirectoryVisit = IterationDecision(*)(const String&, bool is_directory);
 
 public:
     static bool Initialize(const FileManagerDescription& description);

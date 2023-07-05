@@ -7,6 +7,7 @@
 #include "Core/CoreTypes.h"
 #include "Core/CoreTypes.h"
 #include "Core/Memory/Buffer.h"
+#include "Core/Misc/IterationDecision.h"
 
 namespace Basalt
 {
@@ -53,6 +54,26 @@ enum class EFilesystemError : U32
 
     /** The provided handle represents a directory, but a file was expected. */
     FileIsDirectory,
+};
+
+/**
+ * Base class for all directory visitors.
+ */
+class BASALT_API DirectoryVisitor
+{
+public:
+    DirectoryVisitor() = default;
+    virtual ~DirectoryVisitor() = default;
+
+    /**
+     * Callback that will be invoked for every file or directory in a directory iteration.
+     *
+     * @param filepath The path of the file or directory that is iterated over.
+     * @param is_directory Whether or not the `filepath` represents a directory.
+     *
+     * @return Whether or not the directory iteration should continue.
+     */
+    virtual IterationDecision Visit(const String& filepath, bool is_directory) = 0;
 };
 
 /**
@@ -183,6 +204,9 @@ public:
      *         `bytes_count` an error occurred. Inspect `GetLastErrorCode()` for more details.
      */
     virtual U64 WriteToFile(FileHandle file_handle, const void* buffer, U64 bytes_count) = 0;
+
+public:
+    virtual void IterateDirectory(const String& directory_path, DirectoryVisitor& visitor) = 0;
 };
 
 } // namespace Basalt

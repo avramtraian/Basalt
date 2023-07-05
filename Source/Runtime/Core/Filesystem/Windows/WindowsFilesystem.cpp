@@ -2,6 +2,7 @@
 
 #include "WindowsFilesystem.h"
 
+#include "Core/Containers/Strings/String.h"
 #include "Core/Containers/Strings/StringBuilder.h"
 
 #include <Windows.h>
@@ -224,6 +225,43 @@ U64 WindowsFilesystem::WriteToFile(FileHandle file_handle, const void* buffer, U
 
     m_last_error_code = EFilesystemError::Success;
     return bytes_count;
+}
+
+void WindowsFilesystem::IterateDirectory(const String& directory_path, DirectoryVisitor& visitor)
+{
+    WIN32_FIND_DATA find_data;
+
+    String wildcard = directory_path + "\\*"sv;
+    const wchar_t* win32_path = AllocatePath(wildcard.ToView());
+    HANDLE find_handle = FindFirstFile(win32_path, &find_data);
+    ReleasePath(win32_path);
+
+    if (find_handle == INVALID_HANDLE_VALUE)
+    {
+        // Failed to open the find handle.
+        m_last_error_code = EFilesystemError::Unknown;
+        return;
+    }
+    
+    do
+    {
+        Buffer filepath_buffer;
+        Usize bytes_count = StringBuilder::FromUTF16Dynamic(find_data.cFileName, filepath_buffer, false);
+        String filepath = directory_path + "/"sv + StringView(filepath_buffer.As<const char>(), bytes_count);
+
+        if (!filepath.EndsWith("/."sv) && !filepath.EndsWith("/.."sv))
+        {
+            const bool is_directory = (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
+            if (visitor.Visit(filepath, is_directory) == IterationDecision::Break)
+            {
+                break;
+            }
+        }
+    }
+    while (FindNextFile(find_handle, &find_data) != 0);
+
+    FindClose(find_handle);
+    m_last_error_code = EFilesystemError::Success;
 }
 
 const wchar_t* WindowsFilesystem::AllocatePath(StringView filepath) const

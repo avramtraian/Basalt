@@ -37,6 +37,9 @@ public:
 
     virtual U64 WriteToFile(FileHandle file_handle, const void* buffer, U64 bytes_count) override;
 
+public:
+    virtual void IterateDirectory(const String& directory_path, DirectoryVisitor& visitor) override;
+
 private:
     const wchar_t* AllocatePath(StringView filepath) const;
     void ReleasePath(const wchar_t* filepath) const;

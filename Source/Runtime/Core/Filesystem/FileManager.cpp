@@ -130,6 +130,7 @@ EFileError FileManager::CreateWriter(FileWriter* out_writer, StringView filepath
 
 EFileError FileManager::IterateDirectory(StringView directory_path, DirectoryVisitor& visitor)
 {
+    s_file_manager->filesystem->IterateDirectory(directory_path, visitor);
     return EFileError::Success;
 }
 
@@ -144,7 +145,7 @@ EFileError FileManager::IterateDirectory(StringView directory_path, PFN_Director
 
         virtual ~WrapperDirectoryVisitor() override = default;
 
-        virtual IterationDecision Visit(StringView filepath, bool is_directory) override
+        virtual IterationDecision Visit(const String& filepath, bool is_directory) override
         {
             return m_visitor(filepath, is_directory);
         }
@@ -168,11 +169,11 @@ EFileError FileManager::IterateDirectoryRecursively(StringView directory_path, D
 
         virtual ~RecursiveDirectoryVisitor() override = default;
 
-        virtual IterationDecision Visit(StringView filepath, bool is_directory) override
+        virtual IterationDecision Visit(const String& filepath, bool is_directory) override
         {
             if (is_directory)
             {
-                EFileError error = IterateDirectory(filepath, *m_visitor);
+                EFileError error = IterateDirectoryRecursively(filepath.ToView(), *m_visitor);
                 Check(error == EFileError::Success); // What?
             }
 
@@ -198,7 +199,7 @@ EFileError FileManager::IterateDirectoryRecursively(StringView directory_path, P
 
         virtual ~WrapperDirectoryVisitor() override = default;
 
-        virtual IterationDecision Visit(StringView filepath, bool is_directory) override
+        virtual IterationDecision Visit(const String& filepath, bool is_directory) override
         {
             return m_visitor(filepath, is_directory);
         }
