@@ -9,7 +9,7 @@
 namespace Basalt
 {
 
-enum class EShaderBytecode
+enum class ShaderBytecodeFormat
 {
     None = 0,
     DXIL, SPIRV, Metal,
@@ -37,7 +37,7 @@ public:
     ShaderCompiler() = default;
     ~ShaderCompiler() = default;
 
-    bool Initialize(EShaderBytecode bytecode_format);
+    bool Initialize(ShaderBytecodeFormat bytecode_format);
     void Shutdown();
     
     bool Compile(const ShaderCompilationOptions& options, ShaderCompilationResult& out_result);

@@ -38,7 +38,7 @@ struct ShaderCompilerData
     IDxcIncludeHandler* include_handler = nullptr;
 
     /** The bytecode format that the compiler generates. */
-    EShaderBytecode bytecode_format = EShaderBytecode::None;
+    ShaderBytecodeFormat bytecode_format = ShaderBytecodeFormat::None;
 
     /** The buffer where the reflection compiler is stored. */
     ScopedBuffer reflection_compiler_storage;
@@ -47,7 +47,7 @@ struct ShaderCompilerData
     ScopedBuffer msl_cross_compiler_storage;
 };
 
-bool ShaderCompiler::Initialize(EShaderBytecode bytecode_format)
+bool ShaderCompiler::Initialize(ShaderBytecodeFormat bytecode_format)
 {
     Checkf(m_data == nullptr, "Shader compiler was already initialized!");
     m_data = btnew ShaderCompilerData();
@@ -131,7 +131,7 @@ bool ShaderCompiler::Compile(const ShaderCompilationOptions& options, ShaderComp
 
     switch (m_data->bytecode_format)
     {
-        case EShaderBytecode::DXIL:
+        case ShaderBytecodeFormat::DXIL:
         {
             // The SPIR-V bytecode is no longer necessary.
             unoptimized_spirv_bytecode.Release();
@@ -146,7 +146,7 @@ bool ShaderCompiler::Compile(const ShaderCompilationOptions& options, ShaderComp
             break;
         }
 
-        case EShaderBytecode::SPIRV:
+        case ShaderBytecodeFormat::SPIRV:
         {
             if (compile_debug_shaders)
             {
@@ -165,7 +165,7 @@ bool ShaderCompiler::Compile(const ShaderCompilationOptions& options, ShaderComp
             break;
         }
 
-        case EShaderBytecode::Metal:
+        case ShaderBytecodeFormat::Metal:
         {
             Buffer spirv_bytecode;
 
@@ -228,10 +228,10 @@ FORCEINLINE static LPCWSTR ShaderStageToDefaultEntryPointName(ShaderStage stage)
     return nullptr;
 }
 
-static void BuildArguments(const ShaderCompilationOptions& options, EShaderBytecode bytecode_format, Array<LPCWSTR>& out_arguments)
+static void BuildArguments(const ShaderCompilationOptions& options, ShaderBytecodeFormat bytecode_format, Array<LPCWSTR>& out_arguments)
 {
     // The DXC compiler can only directly produce DXIL or SPIR-V bytecode.
-    Check(bytecode_format == EShaderBytecode::DXIL || bytecode_format == EShaderBytecode::SPIRV);
+    Check(bytecode_format == ShaderBytecodeFormat::DXIL || bytecode_format == ShaderBytecodeFormat::SPIRV);
     out_arguments.SetCapacity(12 + 2 * options.defines.Count());
 
     out_arguments.Add(L"-E");
@@ -265,7 +265,7 @@ static void BuildArguments(const ShaderCompilationOptions& options, EShaderBytec
         out_arguments.Add(DXC_ARG_DEBUG);
     }
 
-    if (bytecode_format == EShaderBytecode::SPIRV)
+    if (bytecode_format == ShaderBytecodeFormat::SPIRV)
     {
         out_arguments.Add(L"-spirv");
         out_arguments.Add(L"-fspv-target-env=vulkan1.3");
@@ -335,7 +335,7 @@ bool ShaderCompiler::CompileSPIRV(const ShaderCompilationOptions& options, Buffe
 {
     // Build the compiler argument list.
     Array<LPCWSTR> arguments;
-    Utils::BuildArguments(options, EShaderBytecode::SPIRV, arguments);
+    Utils::BuildArguments(options, ShaderBytecodeFormat::SPIRV, arguments);
 
     Buffer source_code_buffer;
     source_code_buffer.data = (U8*)options.source_code.Data();
@@ -356,7 +356,7 @@ bool ShaderCompiler::CompileDXIL(const ShaderCompilationOptions& options, Buffer
 {
     // Build the compiler argument list.
     Array<LPCWSTR> arguments;
-    Utils::BuildArguments(options, EShaderBytecode::DXIL, arguments);
+    Utils::BuildArguments(options, ShaderBytecodeFormat::DXIL, arguments);
 
     Buffer source_code_buffer;
     source_code_buffer.data = (U8*)options.source_code.Data();
