@@ -30,4 +30,23 @@ public:
     virtual ~Shader() override = default;
 };
 
+namespace Utils
+{
+
+FORCEINLINE const char* ShaderStageToString(ShaderStage stage)
+{
+    switch (stage)
+    {
+        case ShaderStage::Vertex:   return "Vertex";
+        case ShaderStage::Pixel:    return "Pixel";
+        case ShaderStage::Compute:  return "Compute";
+        case ShaderStage::Geometry: return "Geometry";
+    }
+
+    Checkf(false, "Invalid ShaderStage!");
+    return "Unknown";
+}
+
+} // namespace Utils
+
 } // namespace Basalt
