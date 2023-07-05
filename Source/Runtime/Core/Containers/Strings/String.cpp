@@ -69,6 +69,25 @@ String::~String()
     }
 }
 
+String String::Append(StringView view) const
+{
+    String result;
+    result.m_bytes_count = m_bytes_count + view.BytesCount();
+    char* destination = result.m_inline_data;
+
+    if (result.m_bytes_count > InlineCapacity)
+    {
+        result.m_heap_data = AllocateMemory(result.m_bytes_count);
+        destination = result.m_heap_data;
+    }
+
+    Memory::Copy(destination, Data(), m_bytes_count - 1);
+    Memory::Copy(destination + m_bytes_count - 1, view.Data(), view.BytesCount());
+    destination[result.m_bytes_count - 1] = 0;
+
+    return result;
+}
+
 void String::SetCount(Usize bytes_count)
 {
     if (bytes_count == m_bytes_count)

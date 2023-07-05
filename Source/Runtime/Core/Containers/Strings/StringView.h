@@ -134,6 +134,28 @@ public:
      */
     Usize FindFirstOf(StringView substring) const;
     Usize FindFirstOf(char character) const;
+
+    FORCEINLINE Usize FindFirstOf(StringView substring, Usize offset, Usize count = 0) const
+    {
+        Usize position = Substring(offset, count).FindFirstOf(substring);
+        if (position == InvalidPos)
+        {
+            return InvalidPos;
+        }
+
+        return offset + position;
+    }
+
+    FORCEINLINE Usize FindFirstOf(char character, Usize offset, Usize count = 0) const
+    {
+        Usize position = Substring(offset, count).FindFirstOf(character);
+        if (position == InvalidPos)
+        {
+            return InvalidPos;
+        }
+
+        return offset + position;
+    }
     
     /**
      * Finds the index of the last, from left to right, appearance of the given substring.
@@ -146,9 +168,33 @@ public:
     Usize FindLastOf(StringView substring) const;
     Usize FindLastOf(char character) const;
 
+    FORCEINLINE Usize FindLastOf(StringView substring, Usize offset, Usize count = 0) const
+    {
+        Usize position = Substring(offset, count).FindLastOf(substring);
+        if (position == InvalidPos)
+        {
+            return InvalidPos;
+        }
+
+        return offset + position;
+    }
+
+    FORCEINLINE Usize FindLastOf(char character, Usize offset, Usize count = 0) const
+    {
+        Usize position = Substring(offset, count).FindLastOf(character);
+        if (position == InvalidPos)
+        {
+            return InvalidPos;
+        }
+
+        return offset + position;
+    }
+
     /** Wrapper around `FindFirstOf()`. */
     FORCEINLINE Usize Find(StringView substring) const { return FindFirstOf(substring); }
+    FORCEINLINE Usize Find(StringView substring, Usize offset, Usize count = 0) const { return FindFirstOf(substring, offset, count); }
     FORCEINLINE Usize Find(char character) const { return FindFirstOf(character); }
+    FORCEINLINE Usize Find(char character, Usize offset, Usize count = 0) const { return FindFirstOf(character, offset, count); }
 
     /**
      * Checks whether or not the string view begins with the given substring.
@@ -170,11 +216,11 @@ public:
 
     /**
      * Interprets the string view as a filepath and returns a view towards the name of the file
-     * or directory the path leads to.
+     * or directory the path leads to, without the file extension.
      * 
      * @return The name of the file or directory the path leads to.
      */
-    StringView Filename() const;
+    StringView Stem() const;
 
     /**
      * Interprets the string view as a filepath and returns a view towards the extension of the file
@@ -184,6 +230,14 @@ public:
      * @return The extension of the file that the path leads to.
      */
     StringView Extension() const;
+
+    /**
+     * Interprets the string view as a filepath and returns a view towards the name of the file
+     * or directory the path leads to, including the file extension.
+     *
+     * @return The name of the file or directory the path leads to.
+     */
+    StringView Filename() const;
 
     /**
      * Interprets the string view as a filepath and returns a view towards the path, relative to the

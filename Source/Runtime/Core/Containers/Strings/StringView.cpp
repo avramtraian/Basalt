@@ -33,12 +33,27 @@ StringView StringView::Substring(Usize offset, Usize count /*= 0*/) const
         substring.m_view_data += codepoint_width;
     }
 
-    for (Usize index = 0; index < count; ++index)
+    if (count > 0)
     {
-        U32 codepoint_width;
-        UTF8Calls::BytesToCodepoint(substring.m_view_data + substring.m_bytes_count, &codepoint_width);
-        Check(codepoint_width > 0); // The view contains invalid UTF-8.
-        substring.m_bytes_count += codepoint_width;
+        for (Usize index = 0; index < count; ++index)
+        {
+            U32 codepoint_width;
+            UTF8Calls::BytesToCodepoint(substring.m_view_data + substring.m_bytes_count, &codepoint_width);
+            Check(codepoint_width > 0); // The view contains invalid UTF-8.
+            substring.m_bytes_count += codepoint_width;
+        }
+    }
+    else
+    {
+        Usize offset = substring.m_view_data - m_view_data;
+        while (offset < m_bytes_count)
+        {
+            U32 codepoint_width;
+            UTF8Calls::BytesToCodepoint(substring.m_view_data + substring.m_bytes_count, &codepoint_width);
+            Check(codepoint_width > 0); // The view contains invalid UTF-8.
+            substring.m_bytes_count += codepoint_width;
+            offset += codepoint_width;
+        }
     }
 
     return substring;
@@ -190,7 +205,7 @@ bool StringView::EndsWith(char character) const
     return (m_view_data[m_bytes_count - 1] == character);
 }
 
-StringView StringView::Filename() const
+StringView StringView::Stem() const
 {
     Usize slash_position = FindLastOf('/');
     if (slash_position == InvalidPos)
@@ -228,6 +243,23 @@ StringView StringView::Extension() const
 
     // Construct a view towards the extension of the file using the dot offset.
     return StringView(m_view_data + dot_position, m_bytes_count - dot_position);
+}
+
+StringView StringView::Filename() const
+{
+    Usize slash_position = FindLastOf('/');
+    if (slash_position == InvalidPos)
+    {
+        // The path doesn't contain a slash.
+        slash_position = 0;
+    }
+    else
+    {
+        ++slash_position;
+    }
+
+    // Construct a view towards the name of the file using the slash offset.
+    return StringView(m_view_data + slash_position, m_bytes_count - slash_position);
 }
 
 StringView StringView::ParentDirectory() const

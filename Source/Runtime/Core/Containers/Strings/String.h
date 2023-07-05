@@ -102,7 +102,9 @@ public:
      *         `InvalidPos` if the substring doesn't appear in the string view.
      */
     FORCEINLINE Usize FindFirstOf(StringView substring) const { return ToView().FindFirstOf(substring); }
+    FORCEINLINE Usize FindFirstOf(StringView substring, Usize offset, Usize count = 0) const { return ToView().FindFirstOf(substring, offset, count); }
     FORCEINLINE Usize FindFirstOf(char character) const { return ToView().FindFirstOf(character); }
+    FORCEINLINE Usize FindFirstOf(char character, Usize offset, Usize count = 0) const { return ToView().FindFirstOf(character, offset, count); }
 
     /**
      * Finds the index of the last, from left to right, appearance of the given substring.
@@ -114,11 +116,15 @@ public:
      *         `InvalidPos` if the substring doesn't appear in the string view.
      */
     FORCEINLINE Usize FindLastOf(StringView substring) const { return ToView().FindLastOf(substring); }
+    FORCEINLINE Usize FindLastOf(StringView substring, Usize offset, Usize count = 0) const { return ToView().FindLastOf(substring, offset, count); }
     FORCEINLINE Usize FindLastOf(char character) const { return ToView().FindLastOf(character); }
+    FORCEINLINE Usize FindLastOf(char character, Usize offset, Usize count = 0) const { return ToView().FindLastOf(character, offset, count); }
 
     /** Wrapper around `FindFirstOf()`. */
     FORCEINLINE Usize Find(StringView substring) const { return FindFirstOf(substring); }
+    FORCEINLINE Usize Find(StringView substring, Usize offset, Usize count = 0) const { return FindFirstOf(substring, offset, count); }
     FORCEINLINE Usize Find(char character) const { return FindFirstOf(character); }
+    FORCEINLINE Usize Find(char character, Usize offset, Usize count = 0) const { return FindFirstOf(character, offset, count); }
     
     FORCEINLINE bool BeginsWith(StringView substring) const { return ToView().BeginsWith(substring); }
     FORCEINLINE bool BeginsWith(char character) const { return ToView().BeginsWith(character); }
@@ -126,11 +132,27 @@ public:
     FORCEINLINE bool EndsWith(StringView substring) const { return ToView().EndsWith(substring); }
     FORCEINLINE bool EndsWith(char character) const { return ToView().EndsWith(character); }
 
-    FORCEINLINE StringView Filename() const { return ToView().Filename(); }
+    FORCEINLINE StringView Stem() const { return ToView().Stem(); }
     FORCEINLINE StringView Extension() const { return ToView().Extension(); }
+    FORCEINLINE StringView Filename() const { return ToView().Filename(); }
     FORCEINLINE StringView ParentDirectory() const { return ToView().ParentDirectory(); }
 
+    String Append(StringView view) const;
+    FORCEINLINE String Append(const String& other) const { return Append(other.ToView()); }
+
 public:
+    FORCEINLINE char operator[](Usize index) const { return Data()[index]; }
+
+    FORCEINLINE String operator+(const String& other) const
+    {
+        return Append(other.ToView());
+    }
+
+    FORCEINLINE String operator+(StringView view) const
+    {
+        return Append(view);
+    }
+
     FORCEINLINE bool operator==(const String& other) const
     {
         return (ToView() == other.ToView());
@@ -152,7 +174,7 @@ private:
      * @param capacity The capacity (in bytes) of the memory block.
      * @return Pointer to the newly allocated memory buffer.
      */
-    char* AllocateMemory(Usize bytes_count);
+    static char* AllocateMemory(Usize bytes_count);
 
     /**
      * Releases a memory block.
@@ -161,7 +183,7 @@ private:
      * @param elements Pointer to the memory buffer to release.
      * @param capacity The capacity (in bytes) of the memory block.
      */
-    void ReleaseMemory(char* data, Usize bytes_count);
+    static void ReleaseMemory(char* data, Usize bytes_count);
 
     /**
      * Assigns a view to this string.
