@@ -65,6 +65,9 @@ void Platform::DestroyConsole()
 {
     if (Platform::IsConsoleAttached())
     {
+        // Reset the console text color to default.
+        SetConsoleTextAttribute(s_platform_data.console_handle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+
         FreeConsole();
         s_platform_data.console_handle = INVALID_HANDLE_VALUE;
     }
