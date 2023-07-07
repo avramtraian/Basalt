@@ -4,6 +4,7 @@
 
 #include "Core/Containers/Strings/String.h"
 #include "Core/Containers/Strings/StringBuilder.h"
+#include "Core/Containers/Strings/Utf16String.h"
 
 #include <Windows.h>
 
@@ -103,7 +104,34 @@ FileHandle WindowsFilesystem::OpenForWriting(StringView filepath, bool allow_rea
     DWORD create_mode = append ? OPEN_ALWAYS : CREATE_ALWAYS;
     DWORD attributes = FILE_ATTRIBUTE_NORMAL;
 
-    const wchar_t* win32_filepath = AllocatePath(filepath);
+    Usize bytes_count;
+    wchar_t* win32_filepath = AllocatePath(filepath, &bytes_count);
+
+    Usize offset = 0;
+    while (offset < bytes_count)
+    {
+        U32 codepoint_width;
+        UnicodeCodepoint codepoint = UTF16Calls::BytesToCodepoint(win32_filepath + (offset / 2), &codepoint_width);
+        Check(codepoint_width > 0); // Invalid UTF-16.
+
+        if (codepoint == '/')
+        {
+            Check(codepoint_width == 2);
+            char character = win32_filepath[offset / 2];
+
+            win32_filepath[offset / 2] = 0;
+            CreateDirectory(win32_filepath, NULL);
+            win32_filepath[offset / 2] = character;
+        }
+        else if (codepoint == '.')
+        {
+            // The path is now a file, not a directory.
+            break;
+        }
+
+        offset += codepoint_width;
+    }
+
     file_handle.native_handle = CreateFileW(win32_filepath, access_flags, share_mode, NULL, create_mode, attributes, NULL);
     ReleasePath(win32_filepath);
 
@@ -264,7 +292,7 @@ void WindowsFilesystem::IterateDirectory(const String& directory_path, Directory
     m_last_error_code = EFilesystemError::Success;
 }
 
-const wchar_t* WindowsFilesystem::AllocatePath(StringView filepath) const
+wchar_t* WindowsFilesystem::AllocatePath(StringView filepath, Usize* out_bytes_count /*= nullptr*/) const
 {
     Buffer utf16_buffer = Buffer(m_filepath_buffer, sizeof(m_filepath_buffer));
     Usize written_count = StringBuilder::ToUTF16(filepath, utf16_buffer, true);
@@ -278,6 +306,10 @@ const wchar_t* WindowsFilesystem::AllocatePath(StringView filepath) const
         win32_filepath = heap_buffer.As<wchar_t>();
     }
 
+    if (out_bytes_count)
+    {
+        *out_bytes_count = written_count;
+    }
     return win32_filepath;
 }
 

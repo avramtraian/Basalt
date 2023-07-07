@@ -136,12 +136,10 @@ struct EFileWrite
         /** No flags specified. */
         None = 0,
 
-        /** If the file doesn't exist, it will be created */
-        AlwaysOpen              = BIT(0),
+        /** Append the data to the previously existing data. */
+        Append                  = BIT(0),
         /** Allows other processes to read this file while it is opened for writing by this process. */
         AllowReadingWhileOpen   = BIT(1),
-        /** Append the data to the previously existing data. */
-        Append                  = BIT(2),
     };
 };
 

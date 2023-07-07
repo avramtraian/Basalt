@@ -41,7 +41,7 @@ public:
     virtual void IterateDirectory(const String& directory_path, DirectoryVisitor& visitor) override;
 
 private:
-    const wchar_t* AllocatePath(StringView filepath) const;
+    wchar_t* AllocatePath(StringView filepath, Usize* out_bytes_count = nullptr) const;
     void ReleasePath(const wchar_t* filepath) const;
 
 private:
