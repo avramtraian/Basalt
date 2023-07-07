@@ -6,6 +6,7 @@
 
 #include "Core/Containers/Strings/String.h"
 #include "Core/Containers/Strings/StringBuilder.h"
+#include "Core/Containers/Strings/Utf8String.h"
 #include "Core/Platform/Platform.h"
 #include "Core/Math/MathUtilities.h"
 #include "Core/Memory/Buffer.h"
@@ -113,7 +114,25 @@ String Platform::GetExecutablePath()
 
     ScopedBuffer string_buffer;
     Usize bytes_count = StringBuilder::FromUTF16Dynamic(win32_buffer.As<const wchar_t>(), string_buffer.RawBuffer(), false);
-    return StringView(string_buffer.As<char>(), bytes_count);
+    
+    Usize offset = 0;
+    while (offset < bytes_count)
+    {
+        U32 codepoint_width = 0;
+        UnicodeCodepoint codepoint = UTF8Calls::BytesToCodepoint(string_buffer.Data() + offset, &codepoint_width);
+        Check(codepoint_width > 0); // Invalid UTF-8!
+
+        if (codepoint == '\\')
+        {
+            Check(codepoint_width == 1);
+            // Convert back-slashes with forward slashes.
+            string_buffer.As<char>()[offset] = '/';
+        }
+
+        offset += codepoint_width;
+    }
+
+    return StringView(string_buffer.As<const char>(), bytes_count);
 }
 
 } // namespace Basalt
