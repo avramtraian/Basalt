@@ -136,6 +136,7 @@ public:
     FORCEINLINE StringView Extension() const { return ToView().Extension(); }
     FORCEINLINE StringView Filename() const { return ToView().Filename(); }
     FORCEINLINE StringView ParentDirectory() const { return ToView().ParentDirectory(); }
+    FORCEINLINE StringView ParentDirectory(U32 depth) const { return ToView().ParentDirectory(depth); }
 
     String Append(StringView view) const;
     FORCEINLINE String Append(const String& other) const { return Append(other.ToView()); }

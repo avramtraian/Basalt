@@ -239,8 +239,6 @@ StringView StringView::Extension() const
         return StringView();
     }
 
-    ++dot_position;
-
     // Construct a view towards the extension of the file using the dot offset.
     return StringView(m_view_data + dot_position, m_bytes_count - dot_position);
 }
@@ -270,11 +268,21 @@ StringView StringView::ParentDirectory() const
         // The directory path doesn't exist in the filepath.
         return StringView();
     }
-    
-    ++slash_position;
 
     // Construct a view towards the parent directory using the slash offset.
-    return StringView(m_view_data + slash_position, m_bytes_count - slash_position);
+    return StringView(m_view_data, slash_position);
+}
+
+StringView StringView::ParentDirectory(U32 depth) const
+{
+    StringView result = *this;
+
+    for (U32 index = 0; index < depth; ++index)
+    {
+        result = result.ParentDirectory();
+    }
+
+    return result;
 }
 
 bool StringView::operator==(const StringView& other) const

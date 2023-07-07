@@ -224,7 +224,7 @@ public:
 
     /**
      * Interprets the string view as a filepath and returns a view towards the extension of the file
-     * that the path leads to.
+     * that the path leads to, including the '.'.
      * If the filepath represents a directory or volume, an empty string view will be returned.
      * 
      * @return The extension of the file that the path leads to.
@@ -247,6 +247,8 @@ public:
      * @return The path to the parent directory, or an empty string if not existent.
      */
     StringView ParentDirectory() const;
+
+    StringView ParentDirectory(U32 depth) const;
 
 public:
     /**
