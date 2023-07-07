@@ -18,7 +18,7 @@ private:
     VkShaderModule CreateShaderModule(ShaderStage stage, Buffer bytecode);
 
 private:
-    FixedArray<VkShaderModule, (U8)ShaderStage::MaxEnumValue> m_shader_modules = {};
+    FixedArray<VkShaderModule, ShaderStagesCount> m_shader_modules = {};
 };
 
 } // namespace Basalt

@@ -6,16 +6,20 @@
 #include "Core/Memory/MemoryOperators.h"
 #include "Renderer/Renderer.h"
 
+// Constants related to cached shader bytecode files.
 #define BT_SHADER_FILE_EXTENSION            ".btshader"sv
 #define BT_SHADER_FILE_STAGES_DIRECTIVE     "#pragma stages"sv
 #define BT_SHADER_FILE_LATEST_VERSION       Version(1, 0, 0, 0)
 #define BT_SHADER_FILE_STAGE_ID_VERTEX      "vertex"sv
+#define BT_SHADER_FILE_STAGE_ID_HULL        "hull"sv
+#define BT_SHADER_FILE_STAGE_ID_DOMAIN      "domain"sv
+#define BT_SHADER_FILE_STAGE_ID_GEOMETRY    "geometry"sv
 #define BT_SHADER_FILE_STAGE_ID_PIXEL       "pixel"sv
 #define BT_SHADER_FILE_STAGE_ID_COMPUTE     "compute"sv
-#define BT_SHADER_FILE_STAGE_ID_GEOMETRY    "geometry"sv
 
 // Path relative the game directory where the shader cache files are located.
 #define BT_CACHED_SHADERS_PATH              "/Saved/Shaders/"sv
+#define BT_ENGINE_RUNTIME_SHADERS_PATH      "/Content/Runtime/Shaders"sv
 
 namespace Basalt
 {
@@ -52,6 +56,7 @@ bool EditorEngine::PostInitialize()
         return false;
     }
 
+    CompileEngineShaders();
     return true;
 }
 
@@ -63,23 +68,21 @@ void EditorEngine::PreShutdown()
     g_editor_engine = nullptr;
 }
 
-void EditorEngine::CompileShaders()
+void EditorEngine::CompileEngineShaders()
 {
     struct DirtyShader
     {
-        String name;
+        String cache_filepath;
         String source_code;
-        U64 source_code_hash;
+        U64 source_code_hash = 0;
     };
 
-    // Get the path where the runtime engine shaders are located.
-    const String engine_shaders_path = GetConfig().GetEnginePath() + "/Content/Shaders/Runtime"sv;
-    
     class ShaderVisitor : public DirectoryVisitor
     {
     public:
-        ShaderVisitor(Array<DirtyShader>& dirty_shaders)
+        ShaderVisitor(Array<DirtyShader>& dirty_shaders, const String& cached_shaders_path)
             : m_dirty_shaders(dirty_shaders)
+            , m_cached_shaders_path(cached_shaders_path)
         {}
 
         virtual IterationDecision Visit(const String& filepath, bool is_directory) override
@@ -90,37 +93,53 @@ void EditorEngine::CompileShaders()
                 return IterationDecision::Continue;
             }
 
-            DirtyShader dirty_shader = {};
-            dirty_shader.name = filepath.Stem();
-            if (!g_editor_engine->ReadShaderFile(filepath.ToView(), dirty_shader.source_code, dirty_shader.source_code_hash))
+            String source_code;
+            U64 source_code_hash;
+
+            if (!g_editor_engine->ReadShaderFile(filepath.ToView(), source_code, source_code_hash))
             {
                 // Failed to read the shader source code file.
                 return IterationDecision::Continue;
             }
 
-            m_dirty_shaders.Add(Move(dirty_shader));
+            String cache_filepath = m_cached_shaders_path + filepath.Stem() + BT_SHADER_FILE_EXTENSION;
+            if (g_editor_engine->IsShaderDirty(source_code_hash, cache_filepath.ToView()))
+            {
+                DirtyShader dirty_shader;
+                dirty_shader.cache_filepath = Move(cache_filepath);
+                dirty_shader.source_code = Move(source_code);
+                dirty_shader.source_code_hash = source_code_hash;
+                m_dirty_shaders.Add(Move(dirty_shader));
+            }
+
             return IterationDecision::Continue;
         }
 
     private:
         Array<DirtyShader>& m_dirty_shaders;
+        const String& m_cached_shaders_path;
     };
 
     // List of shaders that need to be recompiled.
     Array<DirtyShader> dirty_engine_shaders;
+
+    // Get the path where the runtime engine shaders are located.
+    const String engine_shaders_path = GetConfig().GetEnginePath() + BT_ENGINE_RUNTIME_SHADERS_PATH;
+    // Get the path to the directory where shader cache files are located.
+    const String cached_shaders_path = GetConfig().GetGamePath() + BT_CACHED_SHADERS_PATH;
     
     // Iterate over all shader files and store each shader source code.
-    ShaderVisitor visitor = ShaderVisitor(dirty_engine_shaders);
+    ShaderVisitor visitor = ShaderVisitor(dirty_engine_shaders, cached_shaders_path);
     FileManager::IterateDirectoryRecursively(engine_shaders_path.ToView(), visitor);
 
-    // Get the path to the directory where shader cache files are located.
-    const String cache_shaders_path = GetConfig().GetGameName() + BT_CACHED_SHADERS_PATH;
-
-    BT_LOG_ERROR(Editor, "Comiling %d shaders...", dirty_engine_shaders.Count());
-    for (auto& shader : dirty_engine_shaders)
+    if (!dirty_engine_shaders.IsEmpty())
+    if (!dirty_engine_shaders.IsEmpty())
     {
-        String cache_filepath = cache_shaders_path + shader.name + BT_SHADER_FILE_EXTENSION;
-        CompileShader(shader.source_code, shader.source_code_hash, cache_filepath.ToView());
+        BT_LOG_INFO(Editor, "Comiling %d shaders...", dirty_engine_shaders.Count());
+        for (auto& shader : dirty_engine_shaders)
+        {
+            CompileShader(shader.source_code, shader.source_code_hash, shader.cache_filepath.ToView());
+        }
     }
 }
 
@@ -151,7 +170,12 @@ bool EditorEngine::CompileShaderIfNotCached(StringView shader_filepath, StringVi
 
 bool EditorEngine::CompileShader(const String& source_code, U64 source_code_hash, StringView cache_filepath)
 {
-    const U32 shader_stages = ReadShaderStages(source_code, cache_filepath);
+    const U32 shader_stages = ReadShaderStages(source_code, cache_filepath.Stem());
+    if (shader_stages == 0)
+    {
+        BT_LOG_ERROR(Editor, "No shader stages were specified for: '%s'", String(cache_filepath.Stem()).c_str());
+        return false;
+    }
 
     ScopedBuffer bytecodes[ShaderStagesCount] = {};
     Usize bytecodes_count = 0;
@@ -169,7 +193,7 @@ bool EditorEngine::CompileShader(const String& source_code, U64 source_code_hash
             {
                 BT_LOG_ERROR(
                     Editor, "Failed to compile shader: '%s', stage: '%s'",
-                    String(cache_filepath).c_str(), Utils::ShaderStageToString((ShaderStage)shader_stage));
+                    String(cache_filepath.Stem()).c_str(), Utils::ShaderStageToString((ShaderStage)shader_stage));
                 return false;
             }
 
@@ -181,14 +205,14 @@ bool EditorEngine::CompileShader(const String& source_code, U64 source_code_hash
     return true;
 }
 
-U32 EditorEngine::ReadShaderStages(const String& source_code, StringView shader_filepath)
+U32 EditorEngine::ReadShaderStages(const String& source_code, StringView shader_name)
 {
     U32 shader_stages_mask = 0;
 
     const Usize stages_line_offset = source_code.FindFirstOf(BT_SHADER_FILE_STAGES_DIRECTIVE);
     if (stages_line_offset == StringView::InvalidPos)
     {
-        BT_LOG_ERROR(Editor, "Shader '%s' doesn't specify '%s'!", shader_filepath.c_str(), BT_SHADER_FILE_STAGES_DIRECTIVE);
+        BT_LOG_ERROR(Editor, "Shader '%s' doesn't specify '%s'!", String(shader_name).c_str(), String(BT_SHADER_FILE_STAGES_DIRECTIVE).c_str());
         return 0;
     }
 
@@ -264,9 +288,11 @@ U32 EditorEngine::ReadShaderStages(const String& source_code, StringView shader_
     StringView shader_stages_ids[] =
     {
         BT_SHADER_FILE_STAGE_ID_VERTEX,
+        BT_SHADER_FILE_STAGE_ID_HULL,
+        BT_SHADER_FILE_STAGE_ID_DOMAIN,
+        BT_SHADER_FILE_STAGE_ID_GEOMETRY,
         BT_SHADER_FILE_STAGE_ID_PIXEL,
         BT_SHADER_FILE_STAGE_ID_COMPUTE,
-        BT_SHADER_FILE_STAGE_ID_GEOMETRY,
     };
     static_assert(BT_ARRAY_COUNT(shader_stages_ids) == ShaderStagesCount);
 
@@ -344,7 +370,7 @@ bool EditorEngine::ReadShaderFile(StringView filepath, String& out_source_code, 
 void EditorEngine::CacheShaderBytecode(StringView cache_filepath, U64 source_code_hash, U32 shader_stages_mask, ArrayView<const ScopedBuffer> bytecodes)
 {
     FileWriter cache_writer;
-    EFileError file_error_code = FileManager::CreateWriter(&cache_writer, cache_filepath, EFileWrite::AlwaysOpen);
+    EFileError file_error_code = FileManager::CreateWriter(&cache_writer, cache_filepath);
     if (!cache_writer.IsValid() || file_error_code != EFileError::Success)
     {
         BT_LOG_ERROR(Editor, "Failed to open cache file '%s' for writing!", String(cache_filepath).c_str());

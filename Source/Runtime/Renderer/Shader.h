@@ -10,15 +10,19 @@ namespace Basalt
 
 enum class ShaderStage : U8
 {
-    Vertex, Pixel, Compute, Geometry,
-    MaxEnumValue
+    Vertex,
+    Hull,
+    Domain,
+    Geometry,
+    Pixel,
+    Compute,
 };
 
-constexpr U8 ShaderStagesCount = (U8)ShaderStage::MaxEnumValue;
+constexpr U8 ShaderStagesCount = (U8)ShaderStage::Compute + 1;
 
 struct ShaderDescription
 {
-    FixedArray<Buffer, (U8)ShaderStage::MaxEnumValue> bytecodes;
+    FixedArray<Buffer, ShaderStagesCount> bytecodes;
 
     const char* debug_name = "Unnamed";
 };
@@ -38,9 +42,11 @@ FORCEINLINE const char* ShaderStageToString(ShaderStage stage)
     switch (stage)
     {
         case ShaderStage::Vertex:   return "Vertex";
+        case ShaderStage::Hull:     return "Hull";
+        case ShaderStage::Domain:   return "Domain";
+        case ShaderStage::Geometry: return "Geometry";
         case ShaderStage::Pixel:    return "Pixel";
         case ShaderStage::Compute:  return "Compute";
-        case ShaderStage::Geometry: return "Geometry";
     }
 
     Checkf(false, "Invalid ShaderStage!");

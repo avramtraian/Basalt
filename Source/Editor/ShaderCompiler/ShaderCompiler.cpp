@@ -339,7 +339,7 @@ bool ShaderCompiler::CompileSPIRV(const ShaderCompilationOptions& options, Buffe
 
     Buffer source_code_buffer;
     source_code_buffer.data = (U8*)options.source_code.Data();
-    source_code_buffer.size = options.source_code.BytesCount();
+    source_code_buffer.size = options.source_code.BytesCount() - sizeof(char);
 
     // Engage the HLSL compiler.
     if (!Utils::CompileShader(m_data, source_code_buffer, arguments, out_bytecode))
@@ -360,7 +360,7 @@ bool ShaderCompiler::CompileDXIL(const ShaderCompilationOptions& options, Buffer
 
     Buffer source_code_buffer;
     source_code_buffer.data = (U8*)options.source_code.Data();
-    source_code_buffer.size = options.source_code.BytesCount();
+    source_code_buffer.size = options.source_code.BytesCount() - sizeof(char);
 
     // Engage the HLSL compiler.
     if (!Utils::CompileShader(m_data, source_code_buffer, arguments, out_bytecode))

@@ -23,6 +23,7 @@ private:
     struct ShaderCacheFileDescription
     {
         BinaryID<4> file_id;
+        U32 reserved = 0;
         Version file_version;
         U64 source_code_hash;
     };
@@ -33,13 +34,13 @@ private:
         U32 bytecode_containers_sizes[ShaderStagesCount];
     };
 
-	void CompileShaders();
+	void CompileEngineShaders();
 
     bool CompileShaderIfNotCached(StringView shader_filepath, StringView shader_name);
 
 	bool CompileShader(const String& source_code, U64 source_code_hash, StringView cache_filepath);
 
-    U32 ReadShaderStages(const String& source_code, StringView shader_filepath);
+    U32 ReadShaderStages(const String& source_code, StringView shader_name);
 
     bool IsShaderDirty(U64 source_code_hash, StringView cache_filepath);
 

@@ -9,7 +9,7 @@ namespace Basalt
 
 VulkanShader::VulkanShader(const ShaderDescription& description)
 {
-    for (U8 shader_stage = 0; shader_stage < (U8)ShaderStage::MaxEnumValue; ++shader_stage)
+    for (U8 shader_stage = 0; shader_stage < ShaderStagesCount; ++shader_stage)
     {
         Buffer bytecode = description.bytecodes[shader_stage];
 
